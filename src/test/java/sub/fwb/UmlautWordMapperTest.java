@@ -22,7 +22,7 @@ public class UmlautWordMapperTest {
 
 	@Test
 	public void test() {
-		List<String> mappings = mapperSut.createMappings("bärfuß");
+		List<String> mappings = mapperSut.createMappings("bar");
 		
 		for (String mapping : mappings) {
 			System.out.println(mapping);

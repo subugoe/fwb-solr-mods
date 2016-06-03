@@ -10,13 +10,12 @@ public class UmlautWordMapper {
 	private static Map<String, String[]> charMappings = new HashMap<>();
 
 	static {
-		charMappings.put("ä", new String[] { "a", "ae" });
-		charMappings.put("Ä", new String[] { "A", "Ae" });
-		charMappings.put("ö", new String[] { "o", "oe" });
-		charMappings.put("Ö", new String[] { "O", "Oe" });
-		charMappings.put("ü", new String[] { "u", "ue" });
-		charMappings.put("Ü", new String[] { "U", "Ue" });
-		charMappings.put("ß", new String[] { "ss" });
+		charMappings.put("a", new String[] { "ä" });
+		charMappings.put("A", new String[] { "Ä" });
+		charMappings.put("o", new String[] { "ö" });
+		charMappings.put("O", new String[] { "Ö" });
+		charMappings.put("u", new String[] { "ü" });
+		charMappings.put("U", new String[] { "Ü" });
 	}
 
 	private List<String> mappedWords = new ArrayList<String>();
@@ -34,7 +33,6 @@ public class UmlautWordMapper {
 			}
 		}
 
-		mappedWords.remove(0);
 		return mappedWords;
 	}
 
@@ -47,10 +45,10 @@ public class UmlautWordMapper {
 
 	private void replaceUmlautAndAddToList(int umlautPosition) {
 		List<String> wordsToAdd = new ArrayList<>();
-		
+
 		String umlaut = "" + term.charAt(umlautPosition);
 		String[] replacements = charMappings.get(umlaut);
-		
+
 		for (String wordFromList : mappedWords) {
 			String prefix = wordFromList.substring(0, umlautPosition);
 			String postfix = wordFromList.substring(umlautPosition + 1);

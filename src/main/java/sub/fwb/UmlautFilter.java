@@ -8,43 +8,69 @@ import java.util.Queue;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 
 public final class UmlautFilter extends TokenFilter {
-	private CharTermAttribute charTermAttr;
-	private PositionIncrementAttribute posIncAttr;
-	private Queue<char[]> terms;
+	private final CharTermAttribute termAttr = addAttribute(CharTermAttribute.class);
+	private final PositionIncrementAttribute posIncrAttr = addAttribute(PositionIncrementAttribute.class);
+	private final OffsetAttribute offsetAttr = addAttribute(OffsetAttribute.class);
+	private boolean finished = false;
+	private int startOffset = 0;
+	private int endOffset = 0;
+	private int posIncr = 0;
+	private Queue<String> terms;
 
-	protected UmlautFilter(TokenStream ts) {
-		super(ts);
-		this.charTermAttr = addAttribute(CharTermAttribute.class);
-		this.posIncAttr = addAttribute(PositionIncrementAttribute.class);
-		this.terms = new LinkedList<char[]>();
+	public UmlautFilter(TokenStream input) {
+		super(input);
+		finished = false;
+		startOffset = 0;
+		endOffset = 0;
+		posIncr = 1;
+		this.terms = new LinkedList<String>();
+
 	}
 
 	@Override
 	public boolean incrementToken() throws IOException {
-		if (!terms.isEmpty()) {
-			char[] buffer = terms.poll();
-			charTermAttr.setEmpty();
-			charTermAttr.copyBuffer(buffer, 0, buffer.length);
-			posIncAttr.setPositionIncrement(0);
-			return true;
-		}
+		while (!finished) {
+			while (terms.size() > 0) {
+				String buffer = terms.poll();
 
-		if (!input.incrementToken()) {
-			return false;
-		} else {
-			String currentTerm = String.valueOf(charTermAttr.buffer());
-			
-			UmlautWordMapper mapper = new UmlautWordMapper();
-			List<String> mappedWords = mapper.createMappings(currentTerm);
-			
-			for (String mappedWord : mappedWords) {
-				terms.add(mappedWord.toCharArray());
+				termAttr.copyBuffer(buffer.toCharArray(), 0, buffer.length());
+				offsetAttr.setOffset(startOffset, endOffset);
+				posIncrAttr.setPositionIncrement(posIncr);
+
+				posIncr = 0;
+				return true;
 			}
-			// we return true and leave the original token unchanged
-			return true;
+
+			if (input.incrementToken()) {
+				String currentTerm = termAttr.toString();
+				startOffset = offsetAttr.startOffset();
+				endOffset = offsetAttr.endOffset();
+
+				UmlautWordMapper mapper = new UmlautWordMapper();
+				List<String> mappedWords = mapper.createMappings(currentTerm);
+
+				for (String mappedWord : mappedWords) {
+					terms.add(mappedWord);
+				}
+			} else {
+				finished = true;
+			}
 		}
+		return false;
 	}
+
+	@Override
+	public void reset() throws IOException {
+		super.reset();
+		finished = false;
+		terms.clear();
+		startOffset = 0;
+		endOffset = 0;
+		posIncr = 1;
+	}
+
 }

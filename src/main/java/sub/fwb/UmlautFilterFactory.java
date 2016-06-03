@@ -8,7 +8,6 @@ import org.apache.lucene.analysis.util.TokenFilterFactory;
 public class UmlautFilterFactory extends TokenFilterFactory {
 	public UmlautFilterFactory(Map<String, String> args) {
 		super(args);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

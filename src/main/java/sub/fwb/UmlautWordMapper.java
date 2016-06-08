@@ -10,12 +10,12 @@ public class UmlautWordMapper {
 	private static Map<String, String[]> charMappings = new HashMap<>();
 
 	static {
-		charMappings.put("a", new String[] { "ä" });
-		charMappings.put("A", new String[] { "Ä" });
-		charMappings.put("o", new String[] { "ö" });
-		charMappings.put("O", new String[] { "Ö" });
-		charMappings.put("u", new String[] { "ü" });
-		charMappings.put("U", new String[] { "Ü" });
+		charMappings.put("ä", new String[] { "a" });
+		charMappings.put("Ä", new String[] { "A" });
+		charMappings.put("ö", new String[] { "o" });
+		charMappings.put("Ö", new String[] { "O" });
+		charMappings.put("ü", new String[] { "u" });
+		charMappings.put("Ü", new String[] { "U" });
 	}
 
 	private List<String> mappedWords = new ArrayList<String>();

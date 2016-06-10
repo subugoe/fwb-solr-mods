@@ -49,6 +49,7 @@ public final class UmlautFilter extends TokenFilter {
 				String currentTerm = termAttr.toString();
 				startOffset = offsetAttr.startOffset();
 				endOffset = offsetAttr.endOffset();
+				posIncr = 1;
 
 				UmlautWordMapper mapper = new UmlautWordMapper();
 				List<String> mappedWords = mapper.createMappings(currentTerm);

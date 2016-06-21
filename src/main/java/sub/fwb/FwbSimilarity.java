@@ -12,7 +12,12 @@ public class FwbSimilarity extends DefaultSimilarity {
 
 	@Override
 	public float idf(long docFreq, long numDocs) {
-		return (float)1.0;
+		return (float) 1.0;
+	}
+
+	@Override
+	public float queryNorm(float sumOfSquaredWeights) {
+		return (float) 1.0;
 	}
 
 }

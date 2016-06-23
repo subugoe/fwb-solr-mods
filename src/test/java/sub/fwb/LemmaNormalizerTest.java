@@ -2,7 +2,6 @@ package sub.fwb;
 
 import static org.junit.Assert.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
@@ -28,6 +27,12 @@ public class LemmaNormalizerTest {
 	}
 
 	@Test
+	public void shouldRemoveAllPipes() {
+		List<String> results = norm.createMappings("bar|tu|c|h");
+		System.out.println(results);
+	}
+
+	@Test
 	public void shouldExtendParentheses() {
 		List<String> results = norm.createMappings("bla(s)gericht");
 		System.out.println(results);
@@ -36,6 +41,18 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendTwoParentheses() {
 		List<String> results = norm.createMappings("bla(s)gericht(en)geld");
+		System.out.println(results);
+	}
+
+	@Test
+	public void shouldExtendPrefixedParentheses() {
+		List<String> results = norm.createMappings("(sankt)gericht");
+		System.out.println(results);
+	}
+
+	@Test
+	public void shouldExtendPostfixedParentheses() {
+		List<String> results = norm.createMappings("gericht(geld)");
 		System.out.println(results);
 	}
 

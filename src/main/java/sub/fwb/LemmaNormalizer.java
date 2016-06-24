@@ -13,12 +13,22 @@ public class LemmaNormalizer {
 
 	public List<String> createMappings(String currentTerm) {
 		
-		if (currentTerm.contains("|")) {
-			mappedWords.add(currentTerm.replaceAll("\\|", ""));
+		boolean containsPipe = currentTerm.contains("|");
+		if (containsPipe) {
+			currentTerm = currentTerm.replaceAll("\\|", "");
 		}
 		
-		if (currentTerm.contains("(") && currentTerm.contains(")")) {
+		boolean containsParentheses = currentTerm.contains("(") && currentTerm.contains(")");
+		if (containsParentheses) {
 			extendByParentheses(currentTerm);
+		}
+		
+		if (containsPipe && !containsParentheses) {
+			mappedWords.add(currentTerm);
+		}
+		
+		if (!containsPipe && !containsParentheses) {
+			mappedWords.add(currentTerm);
 		}
 		
 		return mappedWords;

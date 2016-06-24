@@ -41,7 +41,13 @@ public class LemmaNormalizeFilter extends TokenFilter {
 
 				termAttr.copyBuffer(buffer.toCharArray(), 0, buffer.length());
 				offsetAttr.setOffset(startOffset, endOffset);
-				posIncrAttr.setPositionIncrement(posIncr);
+				
+				int currentIncr = posIncrAttr.getPositionIncrement();
+				if (currentIncr == 0) {
+					posIncrAttr.setPositionIncrement(0);
+				} else {
+					posIncrAttr.setPositionIncrement(posIncr);
+				}
 
 				posIncr = 0;
 				return true;

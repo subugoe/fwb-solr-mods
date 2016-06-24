@@ -21,39 +21,58 @@ public class LemmaNormalizerTest {
 	}
 
 	@Test
+	public void shouldLeaveNormalWordAsIs() {
+		List<String> results = norm.createMappings("imbis");
+		assertEquals("imbis", results.get(0));
+	}
+
+	@Test
 	public void shouldRemovePipe() {
 		List<String> results = norm.createMappings("bar|tuch");
-		System.out.println(results);
+		assertEquals("bartuch", results.get(0));
 	}
 
 	@Test
 	public void shouldRemoveAllPipes() {
 		List<String> results = norm.createMappings("bar|tu|c|h");
-		System.out.println(results);
+		assertEquals("bartuch", results.get(0));
 	}
 
 	@Test
 	public void shouldExtendParentheses() {
-		List<String> results = norm.createMappings("bla(s)gericht");
-		System.out.println(results);
+		List<String> results = norm.createMappings("amt(s)gericht");
+		assertEquals("amtgericht", results.get(0));
+		assertEquals("amtsgericht", results.get(1));
 	}
 
 	@Test
 	public void shouldExtendTwoParentheses() {
-		List<String> results = norm.createMappings("bla(s)gericht(en)geld");
-		System.out.println(results);
+		List<String> results = norm.createMappings("amt(s)gericht(en)geld");
+		assertEquals("amtgerichtgeld", results.get(0));
+		assertEquals("amtsgerichtgeld", results.get(1));
+		assertEquals("amtgerichtengeld", results.get(2));
+		assertEquals("amtsgerichtengeld", results.get(3));
 	}
 
 	@Test
 	public void shouldExtendPrefixedParentheses() {
 		List<String> results = norm.createMappings("(sankt)gericht");
-		System.out.println(results);
+		assertEquals("gericht", results.get(0));
+		assertEquals("sanktgericht", results.get(1));
 	}
 
 	@Test
 	public void shouldExtendPostfixedParentheses() {
 		List<String> results = norm.createMappings("gericht(geld)");
-		System.out.println(results);
+		assertEquals("gericht", results.get(0));
+		assertEquals("gerichtgeld", results.get(1));
+	}
+
+	@Test
+	public void shouldDealwithBothCases() {
+		List<String> results = norm.createMappings("bar|gericht(geld)");
+		assertEquals("bargericht", results.get(0));
+		assertEquals("bargerichtgeld", results.get(1));
 	}
 
 }

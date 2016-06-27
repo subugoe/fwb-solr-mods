@@ -4,22 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class UmlautWordMapper {
 
-	private static Map<String, String[]> charMappings = new HashMap<>();
-
-	static {
-		charMappings.put("ä", new String[] { "a" });
-		charMappings.put("Ä", new String[] { "A" });
-		charMappings.put("ö", new String[] { "o" });
-		charMappings.put("Ö", new String[] { "O" });
-		charMappings.put("ü", new String[] { "u" });
-		charMappings.put("Ü", new String[] { "U" });
-	}
-
+	private Map<String, String[]> charMappings = new HashMap<>();
 	private List<String> mappedWords = new ArrayList<String>();
 	private String term;
+	
+	public UmlautWordMapper(Set<String> mappingsSet) {
+		for (String mapping : mappingsSet) {
+			String umlaut = mapping.split(":")[0];
+			String replacements = mapping.split(":")[1];
+			charMappings.put(umlaut, replacements.split(","));
+		}
+	}
 
 	public List<String> createMappings(String currentTerm) {
 		term = currentTerm;

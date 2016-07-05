@@ -23,56 +23,72 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldLeaveNormalWordAsIs() {
 		List<String> results = norm.createMappings("imbis");
+		assertEquals(1, results.size());
 		assertEquals("imbis", results.get(0));
 	}
 
 	@Test
 	public void shouldRemovePipe() {
 		List<String> results = norm.createMappings("bar|tuch");
-		assertEquals("bartuch", results.get(0));
+		assertEquals("bar|tuch", results.get(0));
+		assertEquals("bartuch", results.get(1));
 	}
 
 	@Test
 	public void shouldRemoveAllPipes() {
 		List<String> results = norm.createMappings("bar|tu|c|h");
-		assertEquals("bartuch", results.get(0));
+		assertEquals("bar|tu|c|h", results.get(0));
+		assertEquals("bartuch", results.get(1));
 	}
 
 	@Test
 	public void shouldExtendParentheses() {
 		List<String> results = norm.createMappings("amt(s)gericht");
-		assertEquals("amtgericht", results.get(0));
-		assertEquals("amtsgericht", results.get(1));
+		assertEquals("amt(s)gericht", results.get(0));
+		assertEquals("amtgericht", results.get(1));
+		assertEquals("amtsgericht", results.get(2));
 	}
 
 	@Test
 	public void shouldExtendTwoParentheses() {
 		List<String> results = norm.createMappings("amt(s)gericht(en)geld");
-		assertEquals("amtgerichtgeld", results.get(0));
-		assertEquals("amtsgerichtgeld", results.get(1));
-		assertEquals("amtgerichtengeld", results.get(2));
-		assertEquals("amtsgerichtengeld", results.get(3));
+		assertEquals("amt(s)gericht(en)geld", results.get(0));
+		assertEquals("amtgerichtgeld", results.get(1));
+		assertEquals("amtsgerichtgeld", results.get(2));
+		assertEquals("amtgerichtengeld", results.get(3));
+		assertEquals("amtsgerichtengeld", results.get(4));
 	}
 
 	@Test
 	public void shouldExtendPrefixedParentheses() {
 		List<String> results = norm.createMappings("(sankt)gericht");
-		assertEquals("gericht", results.get(0));
-		assertEquals("sanktgericht", results.get(1));
+		assertEquals("(sankt)gericht", results.get(0));
+		assertEquals("gericht", results.get(1));
+		assertEquals("sanktgericht", results.get(2));
 	}
 
 	@Test
 	public void shouldExtendPostfixedParentheses() {
 		List<String> results = norm.createMappings("gericht(geld)");
-		assertEquals("gericht", results.get(0));
-		assertEquals("gerichtgeld", results.get(1));
+		assertEquals("gericht(geld)", results.get(0));
+		assertEquals("gericht", results.get(1));
+		assertEquals("gerichtgeld", results.get(2));
 	}
 
 	@Test
 	public void shouldDealwithBothCases() {
 		List<String> results = norm.createMappings("bar|gericht(geld)");
-		assertEquals("bargericht", results.get(0));
-		assertEquals("bargerichtgeld", results.get(1));
+		assertEquals("bar|gericht(geld)", results.get(0));
+		assertEquals("bargericht", results.get(1));
+		assertEquals("bargerichtgeld", results.get(2));
+	}
+
+	@Test
+	public void shouldWhitespace() {
+		List<String> results = norm.createMappings("(geld)");
+		System.out.println(results);
+//		assertEquals("bargericht", results.get(0));
+//		assertEquals("bargerichtgeld", results.get(1));
 	}
 
 }

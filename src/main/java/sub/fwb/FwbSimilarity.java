@@ -5,6 +5,11 @@ import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 public class FwbSimilarity extends DefaultSimilarity {
 
+//	@Override
+//	public float coord(int overlap, int maxOverlap) {
+//		return (float) 1.0;
+//	}
+
 	@Override
 	public float lengthNorm(FieldInvertState state) {
 		return state.getBoost();

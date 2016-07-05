@@ -12,41 +12,36 @@ public class LemmaNormalizer {
 	private List<String> mappedWords = new ArrayList<String>();
 
 	public List<String> createMappings(String currentTerm) {
-		
+
+		mappedWords.add(currentTerm);
 		boolean containsPipe = currentTerm.contains("|");
+		boolean containsParentheses = currentTerm.contains("(") && currentTerm.contains(")");
 		if (containsPipe) {
 			currentTerm = currentTerm.replaceAll("\\|", "");
 		}
-		
-		boolean containsParentheses = currentTerm.contains("(") && currentTerm.contains(")");
-		if (containsParentheses) {
-			extendByParentheses(currentTerm);
-		}
-		
 		if (containsPipe && !containsParentheses) {
 			mappedWords.add(currentTerm);
 		}
-		
-		if (!containsPipe && !containsParentheses) {
-			mappedWords.add(currentTerm);
+		if (containsParentheses) {
+			extendByParentheses(currentTerm);
 		}
-		
+
 		return mappedWords;
 	}
 
 	private void extendByParentheses(String currentTerm) {
 		String parensRegex = "\\((.*?)\\)";
-		
+
 		mappedWords.add(currentTerm.replaceAll(parensRegex, ""));
-		
+
 		String[] termParts = currentTerm.split(parensRegex);
-		
+
 		List<String> parensParts = extractUsingRegex(parensRegex, currentTerm);
-		
+
 		for (Set<Integer> combination : generateAllCombinations(parensParts.size())) {
 			addToMappedWords(combination, parensParts, termParts);
 		}
-		
+
 	}
 
 	private void addToMappedWords(Set<Integer> combination, List<String> parensParts, String[] termParts) {

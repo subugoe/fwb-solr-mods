@@ -14,6 +14,8 @@ public class LemmaNormalizer {
 	public List<String> createMappings(String currentTerm) {
 
 		mappedWords.add(currentTerm);
+		currentTerm = cleanFromOutsideParens(currentTerm, "(", ")");
+		currentTerm = cleanFromOutsideParens(currentTerm, "[", "]");
 		boolean containsPipe = currentTerm.contains("|");
 		boolean containsParentheses = currentTerm.contains("(") && currentTerm.contains(")");
 		if (containsPipe) {
@@ -23,14 +25,36 @@ public class LemmaNormalizer {
 			mappedWords.add(currentTerm);
 		}
 		if (containsParentheses) {
-			extendByParentheses(currentTerm);
+			extendByParentheses(currentTerm, "\\((.*?)\\)");
 		}
-
+		boolean containsBrackets = currentTerm.contains("[") && currentTerm.contains("]");
+		if (containsBrackets) {
+			extendByParentheses(currentTerm, "\\[(.*?)\\]");
+		}
+		boolean containsLittleParens = currentTerm.contains("⁽") && currentTerm.contains("⁾");
+		if (containsLittleParens) {
+			currentTerm = currentTerm.replaceAll("⁽", "").replaceAll("⁾", "");
+			mappedWords.add(currentTerm);
+		}
+		
 		return mappedWords;
 	}
+	
+	private String cleanFromOutsideParens(String term, String leftP, String rightP) {
+		if (term.startsWith(leftP) && term.endsWith(rightP)) {
+			term = term.substring(1, term.length() - 1);
+			mappedWords.add(term);
+		} else if (term.startsWith(leftP) && !term.contains(rightP)) {
+			term = term.substring(1);
+			mappedWords.add(term);
+		} else if (!term.contains(leftP) && term.endsWith(rightP)) {
+			term = term.substring(0, term.length() - 1);
+			mappedWords.add(term);
+		}
+		return term;
+	}
 
-	private void extendByParentheses(String currentTerm) {
-		String parensRegex = "\\((.*?)\\)";
+	private void extendByParentheses(String currentTerm, String parensRegex) {
 
 		mappedWords.add(currentTerm.replaceAll(parensRegex, ""));
 

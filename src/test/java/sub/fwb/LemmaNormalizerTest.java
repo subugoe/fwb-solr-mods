@@ -84,11 +84,46 @@ public class LemmaNormalizerTest {
 	}
 
 	@Test
-	public void shouldWhitespace() {
+	public void shouldExtendLittleParens() {
+		List<String> results = norm.createMappings("b⁽ä⁾ren");
+		assertEquals("b⁽ä⁾ren", results.get(0));
+		assertEquals("bären", results.get(1));
+	}
+
+	@Test
+	public void shouldExtendBrackets() {
+		List<String> results = norm.createMappings("geld[los]");
+		assertEquals("geld[los]", results.get(0));
+		assertEquals("geld", results.get(1));
+		assertEquals("geldlos", results.get(2));
+	}
+
+	@Test
+	public void shouldRemoveOutsideBrackets() {
+		List<String> results = norm.createMappings("[geld]");
+		assertEquals("[geld]", results.get(0));
+		assertEquals("geld", results.get(1));
+	}
+
+	@Test
+	public void shouldRemoveOutsideParens() {
 		List<String> results = norm.createMappings("(geld)");
-		System.out.println(results);
-//		assertEquals("bargericht", results.get(0));
-//		assertEquals("bargerichtgeld", results.get(1));
+		assertEquals("(geld)", results.get(0));
+		assertEquals("geld", results.get(1));
+	}
+
+	@Test
+	public void shouldRemoveLeftParen() {
+		List<String> results = norm.createMappings("(geld");
+		assertEquals("(geld", results.get(0));
+		assertEquals("geld", results.get(1));
+	}
+
+	@Test
+	public void shouldRemoveRightParen() {
+		List<String> results = norm.createMappings("geld)");
+		assertEquals("geld)", results.get(0));
+		assertEquals("geld", results.get(1));
 	}
 
 }

@@ -11,7 +11,7 @@ public class UmlautWordMapper {
 	private Map<String, String[]> charMappings = new HashMap<>();
 	private List<String> mappedWords = new ArrayList<String>();
 	private String term;
-	
+
 	public UmlautWordMapper(Set<String> mappingsSet) {
 		for (String mapping : mappingsSet) {
 			String umlaut = mapping.split(":")[0];
@@ -26,31 +26,39 @@ public class UmlautWordMapper {
 
 		int termLength = term.length();
 		for (int i = termLength - 1; i >= 0; i--) {
-			char ch = term.charAt(i);
+			if (i >= 1) {
+				String twoCh = term.substring(i - 1, i + 1);
+				if (isUmlaut(twoCh)) {
+					replaceUmlautAndAddToList(i - 1, i + 1);
+					i--;
+					continue;
+				}
+			}
+			String ch = term.substring(i, i + 1);
 			if (isUmlaut(ch)) {
-				replaceUmlautAndAddToList(i);
+				replaceUmlautAndAddToList(i, i + 1);
 			}
 		}
 
 		return mappedWords;
 	}
 
-	private boolean isUmlaut(char ch) {
-		if (charMappings.containsKey("" + ch)) {
+	private boolean isUmlaut(String ch) {
+		if (charMappings.containsKey(ch)) {
 			return true;
 		}
 		return false;
 	}
 
-	private void replaceUmlautAndAddToList(int umlautPosition) {
+	private void replaceUmlautAndAddToList(int from, int to) {
 		List<String> wordsToAdd = new ArrayList<>();
 
-		String umlaut = "" + term.charAt(umlautPosition);
+		String umlaut = term.substring(from, to);
 		String[] replacements = charMappings.get(umlaut);
 
 		for (String wordFromList : mappedWords) {
-			String prefix = wordFromList.substring(0, umlautPosition);
-			String postfix = wordFromList.substring(umlautPosition + 1);
+			String prefix = wordFromList.substring(0, from);
+			String postfix = wordFromList.substring(to);
 			for (String replacement : replacements) {
 				wordsToAdd.add(prefix + replacement + postfix);
 			}

@@ -24,6 +24,7 @@ public class UmlautWordMapperTest {
 		alternativeChars.add("u:v");
 		alternativeChars.add("d:t");
 		alternativeChars.add("sz:s,ß");
+		alternativeChars.add("\\u0364:"); // combining letter e
 
 		mapperSut = new UmlautWordMapper(alternativeChars);
 	}
@@ -31,6 +32,14 @@ public class UmlautWordMapperTest {
 	@After
 	public void tearDown() throws Exception {
 		// System.out.println(mappings);
+	}
+
+	@Test
+	public void shouldRemoveCombiningLetter() throws Exception {
+		mappings = mapperSut.createMappings("svͤlen");
+
+		assertEquals("svͤlen", mappings.get(0));
+		assertEquals("svlen", mappings.get(1));
 	}
 
 	@Test

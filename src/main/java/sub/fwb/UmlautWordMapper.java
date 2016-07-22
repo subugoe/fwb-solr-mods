@@ -14,9 +14,18 @@ public class UmlautWordMapper {
 
 	public UmlautWordMapper(Set<String> mappingsSet) {
 		for (String mapping : mappingsSet) {
-			String umlaut = mapping.split(":")[0];
-			String replacements = mapping.split(":")[1];
-			charMappings.put(umlaut, replacements.split(","));
+			String[] umlautAndReplacements = mapping.split(":");
+			String umlaut = umlautAndReplacements[0];
+			if (umlaut.startsWith("\\u")) {
+				String hex = "0x" + umlaut.substring(2);
+				umlaut = Character.toString((char)(int)Integer.decode(hex));
+			}
+			if (umlautAndReplacements.length >= 2) {
+				String replacements = umlautAndReplacements[1];
+				charMappings.put(umlaut, replacements.split(","));
+			} else {
+				charMappings.put(umlaut, new String[]{""});
+			}
 		}
 	}
 

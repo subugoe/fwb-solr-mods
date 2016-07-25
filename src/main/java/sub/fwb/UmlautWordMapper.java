@@ -16,7 +16,7 @@ public class UmlautWordMapper {
 		for (String mapping : mappingsSet) {
 			String[] umlautAndReplacements = mapping.split(":");
 			String umlaut = umlautAndReplacements[0];
-			if (umlaut.startsWith("\\u")) {
+			if (umlaut.startsWith("U+")) {
 				String hex = "0x" + umlaut.substring(2);
 				umlaut = Character.toString((char)(int)Integer.decode(hex));
 			}

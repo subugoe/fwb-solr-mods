@@ -24,7 +24,7 @@ public class UmlautWordMapperTest {
 		alternativeChars.add("u:v");
 		alternativeChars.add("d:t");
 		alternativeChars.add("sz:s,ß");
-		alternativeChars.add("\\u0364:"); // combining letter e
+		alternativeChars.add("U+0364:"); // combining letter e
 
 		mapperSut = new UmlautWordMapper(alternativeChars);
 	}
@@ -35,7 +35,7 @@ public class UmlautWordMapperTest {
 	}
 
 	// @Test
-	public void allCombinedLetters() throws Exception {
+	public void shouldFindAllCombiningLetters() throws Exception {
 
 		String all = "v́:v ÿ:y ů:u ï:i ŷ:y ǔ:u ı:i ē:e ý:y ã:a õ:o v̈:v u̇:u ŭ:u ā:a ō:o ē:e ī:i ū:u ė:e m̃:m ŭ:u ẽ:e ũ:u ś:s ŏ:o ǒ:o ǎ:a ǔ:u ẅ:w ẹ:e ǹ:n ă:a ṣ:s ẏ:y ẙ:y ẹ:e σ:o ĕ:e ĩ:i ẃ:w å:a g̮:g ń:n ỹ:y ě:e ṅ:n ȳ:y ň:n ṡ:s ć:c ę:e č:c ẘ:w ị:i ǧ:g ḥ:h ṁ:m ạ:a ṙ:r ľ:l Γ:g γ:g";
 		all += " ú:u ñ:n Ø:0 ó:o à:a ê:e ë:e â:a ô:o î:i û:u æ:ae á:a é:e ò:o œ:oe è:e ù:u ì:i í:i ç:c ъ:b";

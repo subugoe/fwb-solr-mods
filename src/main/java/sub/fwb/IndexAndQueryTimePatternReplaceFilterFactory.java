@@ -27,12 +27,12 @@ import org.apache.lucene.analysis.util.AbstractAnalysisFactory;
 import org.apache.lucene.analysis.util.MultiTermAwareComponent;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
 
-public class FwbPatternReplaceFilterFactory extends TokenFilterFactory implements MultiTermAwareComponent {
+public class IndexAndQueryTimePatternReplaceFilterFactory extends TokenFilterFactory implements MultiTermAwareComponent {
 	final Pattern pattern;
 	final String replacement;
 	final boolean replaceAll;
 
-	public FwbPatternReplaceFilterFactory(Map<String, String> args) {
+	public IndexAndQueryTimePatternReplaceFilterFactory(Map<String, String> args) {
 		super(args);
 		pattern = getPattern(args, "pattern");
 		replacement = get(args, "replacement");

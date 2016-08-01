@@ -1,9 +1,9 @@
 package sub.fwb;
 
 import org.apache.lucene.index.FieldInvertState;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 
-public class FwbSimilarity extends DefaultSimilarity {
+public class SimplifiedSimilarity extends ClassicSimilarity {
 
 //	@Override
 //	public float coord(int overlap, int maxOverlap) {

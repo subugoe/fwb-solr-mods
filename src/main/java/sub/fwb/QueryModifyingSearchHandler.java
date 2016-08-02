@@ -13,19 +13,19 @@ public class QueryModifyingSearchHandler extends SearchHandler {
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 
-		NamedList<String> nl = new SimpleOrderedMap<>();
-		
 		String oldQuery = req.getParams().get(CommonParams.Q);
-		System.out.println("old: " + oldQuery);
-		nl.add("original q", oldQuery);
+		QueryModifier modifier = new QueryModifier();
+		String newQuery = modifier.expandQuery(oldQuery);
 
-		ModifiableSolrParams par = new ModifiableSolrParams(req.getParams());
-		par.set(CommonParams.Q, "lemma:imbis");
-		req.setParams(par);
-		String newQuery = req.getParams().get(CommonParams.Q);
-		System.out.println("new: " + newQuery);
-		nl.add("modified q", newQuery);
-		rsp.add("queryModifier", nl);
+		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
+		newParams.set(CommonParams.Q, newQuery);
+		req.setParams(newParams);
+
+		NamedList<String> queryInfoList = new SimpleOrderedMap<>();
+		queryInfoList.add("original q", oldQuery);
+		queryInfoList.add("modified q", newQuery);
+		rsp.add("queryModifier", queryInfoList);
+
 		super.handleRequestBody(req, rsp);
 	}
 

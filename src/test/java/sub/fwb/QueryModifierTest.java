@@ -23,6 +23,31 @@ public class QueryModifierTest {
 		System.out.println(expanded);
 	}
 
+	@Test(expected = ParseException.class)
+	public void shouldRejectLeadingWildcardsInPhrase() throws Exception {
+		expanded = modifier.expandQuery("\"imbis ?ard\"");
+	}
+
+	@Test
+	public void shouldExpandComplexQuery() throws Exception {
+		expanded = modifier.expandQuery("\"imb*s ward\"");
+		assertEquals(
+				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\"",
+				expanded);
+	}
+
+	@Test
+	public void shouldExpandOneWordPhraseWithPrefix() throws Exception {
+		expanded = modifier.expandQuery("lemma:\"imbis\"");
+		assertEquals("+lemma:\"imbis\"", expanded);
+	}
+
+	@Test
+	public void shouldExpandOneWordPhrase() throws Exception {
+		expanded = modifier.expandQuery("\"imbis\"");
+		assertEquals("\"imbis\" +artikel:\"imbis\"", expanded);
+	}
+
 	@Test
 	public void shouldEscapeBrackets() throws Exception {
 		expanded = modifier.expandQuery("imb[i]s");
@@ -49,7 +74,7 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpandPrefixedSearch() throws Exception {
 		expanded = modifier.expandQuery("lemma:imbis");
-		assertEquals("+(lemma:imbis lemma:imbis* lemma:*imbis*)", expanded);
+		assertEquals("+lemma:(imbis imbis* *imbis*)", expanded);
 	}
 
 	@Test(expected = ParseException.class)

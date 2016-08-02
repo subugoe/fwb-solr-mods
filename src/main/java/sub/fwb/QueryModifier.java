@@ -24,18 +24,19 @@ public class QueryModifier {
 		String[] qParts = origQuery.split(" ");
 		String currentPhrase = "";
 		for (String q : qParts) {
-			if (startingAPhrase(q) || insideAPhrase(currentPhrase, q)) {
+			if (isAPhrase(q)) {
+				qPhrases.add(q);
+			} else if (startingAPhrase(q) || insideAPhrase(currentPhrase, q)) {
 				currentPhrase += q + " ";
-				continue;
 			} else if (finishingAPhrase(q)) {
 				if (currentPhrase.isEmpty()) {
 					throw new ParseException("Phrase ohne Anfang: " + q);
 				}
 				qPhrases.add(currentPhrase + q);
 				currentPhrase = "";
-				continue;
+			} else {
+				qTerms.add(q);
 			}
-			qTerms.add(q);
 		}
 		if (!currentPhrase.isEmpty()) {
 			throw new ParseException("Phrase nicht komplett: " + currentPhrase);
@@ -52,11 +53,10 @@ public class QueryModifier {
 				}
 				String prefix = prePost[0];
 				String postfix = prePost[1];
-				expandedQuery += String.format("+(%s:%s %s:%s* %s:*%s*) ", prefix, postfix, prefix, postfix, prefix,
-						postfix);
+				expandedQuery += String.format("+%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
 			} else {
 				expandedQuery += String.format("%s %s* *%s* +artikel:*%s* ", escapedTerm, escapedTerm, escapedTerm,
-						escapedTerm, escapedTerm);
+						escapedTerm);
 			}
 		}
 	}
@@ -70,9 +70,46 @@ public class QueryModifier {
 		return term;
 	}
 
-	private void processPhrases() {
+	private void processPhrases() throws ParseException {
 		for (String phrase : qPhrases) {
-			expandedQuery += String.format("%s +artikel:%s ", phrase, phrase);
+			checkForLeadingWildcards(phrase);
+			if (isComplex(phrase) && hasPrefix(phrase)) {
+
+			} else if (isComplex(phrase) && !hasPrefix(phrase)) {
+				checkIfOneWord(phrase);
+				String escapedPhrase = phrase.replaceAll("\"", "\\\\\"");
+				expandedQuery += String.format(
+						"_query_:\"{!complexphrase}%s\" +_query_:\"{!complexphrase}artikel:%s\" ", escapedPhrase,
+						escapedPhrase);
+			} else if (!isComplex(phrase) && hasPrefix(phrase)) {
+				expandedQuery += String.format("+%s ", phrase);
+			} else {
+				expandedQuery += String.format("%s +artikel:%s ", phrase, phrase);
+			}
+		}
+	}
+
+	private void checkIfOneWord(String phrase) throws ParseException {
+		if (phrase.split("[\" ]+").length == 2) {
+			throw new ParseException("Phrasen mit * oder ? müssen mehrere Wörter enthalten: " + phrase);
+		}
+
+	}
+
+	private boolean hasPrefix(String phrase) {
+		return phrase.matches("[a-z]+:.*");
+	}
+
+	private boolean isComplex(String phrase) {
+		return phrase.contains("*") || phrase.contains("?");
+	}
+
+	private void checkForLeadingWildcards(String phrase) throws ParseException {
+		String[] parts = phrase.split("[\" ]");
+		for (String part : parts) {
+			if (part.startsWith("*") || part.startsWith("?")) {
+				throw new ParseException("Bei Phrasen sind * und ? am Wortanfang nicht erlaubt: " + part);
+			}
 		}
 	}
 
@@ -86,6 +123,10 @@ public class QueryModifier {
 
 	private boolean finishingAPhrase(String q) {
 		return q.endsWith("\"");
+	}
+
+	private boolean isAPhrase(String q) {
+		return (q.indexOf("\"") < q.length() - 1) && q.endsWith("\"");
 	}
 
 }

@@ -23,13 +23,41 @@ public class QueryModifierTest {
 		System.out.println(expanded);
 	}
 
+	@Test
+	public void shouldExpandRegexWithPrefix() throws Exception {
+		expanded = modifier.expandQuery("lemma:/imbis/");
+		assertEquals("+lemma:/imbis/", expanded);
+	}
+
+	@Test
+	public void shouldExpandRegex() throws Exception {
+		expanded = modifier.expandQuery("/imbis/");
+		assertEquals("+artikel:/imbis/", expanded);
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectOneWordInComplexPhraseWithPrefix() throws Exception {
+		expanded = modifier.expandQuery("zitat:\"imb?s\"");
+	}
+
+	@Test
+	public void shouldExpandComplexPhraseWithPrefix() throws Exception {
+		expanded = modifier.expandQuery("zitat:\"imb*s ward\"");
+		assertEquals("+_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\"", expanded);
+	}
+
 	@Test(expected = ParseException.class)
 	public void shouldRejectLeadingWildcardsInPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imbis ?ard\"");
 	}
 
+	@Test(expected = ParseException.class)
+	public void shouldRejectOneWordInComplexPhrase() throws Exception {
+		expanded = modifier.expandQuery("\"imb?s\"");
+	}
+
 	@Test
-	public void shouldExpandComplexQuery() throws Exception {
+	public void shouldExpandComplexPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imb*s ward\"");
 		assertEquals(
 				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\"",

@@ -9,22 +9,26 @@ public class QueryModifier {
 
 	private List<String> qTerms = new ArrayList<>();
 	private List<String> qPhrases = new ArrayList<>();
+	private List<String> qRegexes = new ArrayList<>();
 	private String expandedQuery = "";
 
 	public String expandQuery(String origQuery) throws ParseException {
-		splitInTermsAndPhrases(origQuery);
+		splitIntoTermsAndPhrasesAndRegexes(origQuery);
 
 		processTerms();
 		processPhrases();
+		processRegexes();
 
 		return expandedQuery.trim();
 	}
 
-	private void splitInTermsAndPhrases(String origQuery) throws ParseException {
+	private void splitIntoTermsAndPhrasesAndRegexes(String origQuery) throws ParseException {
 		String[] qParts = origQuery.split(" ");
 		String currentPhrase = "";
 		for (String q : qParts) {
-			if (isAPhrase(q)) {
+			if (isARegex(q)) {
+				qRegexes.add(q);
+			} else if (isAPhrase(q)) {
 				qPhrases.add(q);
 			} else if (startingAPhrase(q) || insideAPhrase(currentPhrase, q)) {
 				currentPhrase += q + " ";
@@ -74,7 +78,9 @@ public class QueryModifier {
 		for (String phrase : qPhrases) {
 			checkForLeadingWildcards(phrase);
 			if (isComplex(phrase) && hasPrefix(phrase)) {
-
+				checkIfOneWord(phrase);
+				String escapedPhrase = phrase.replaceAll("\"", "\\\\\"");
+				expandedQuery += String.format("+_query_:\"{!complexphrase}%s\" ", escapedPhrase);
 			} else if (isComplex(phrase) && !hasPrefix(phrase)) {
 				checkIfOneWord(phrase);
 				String escapedPhrase = phrase.replaceAll("\"", "\\\\\"");
@@ -85,6 +91,16 @@ public class QueryModifier {
 				expandedQuery += String.format("+%s ", phrase);
 			} else {
 				expandedQuery += String.format("%s +artikel:%s ", phrase, phrase);
+			}
+		}
+	}
+
+	private void processRegexes() throws ParseException {
+		for (String phrase : qRegexes) {
+			if (hasPrefix(phrase)) {
+				expandedQuery += String.format("+%s ", phrase);
+			} else {
+				expandedQuery += String.format("+artikel:%s ", phrase);
 			}
 		}
 	}
@@ -123,6 +139,10 @@ public class QueryModifier {
 
 	private boolean finishingAPhrase(String q) {
 		return q.endsWith("\"");
+	}
+
+	private boolean isARegex(String q) {
+		return (q.indexOf("/") < q.length() - 1) && q.endsWith("/");
 	}
 
 	private boolean isAPhrase(String q) {

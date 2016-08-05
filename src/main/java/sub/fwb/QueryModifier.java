@@ -51,9 +51,13 @@ public class QueryModifier {
 		for (String term : qTerms) {
 			String escapedTerm = escapeSpecialChars(term);
 			if (escapedTerm.contains(":")) {
-				String[] prePost = escapedTerm.split(":");
-				if (prePost.length > 2) {
+				int colonCount = escapedTerm.length() - escapedTerm.replaceAll(":", "").length();
+				if (colonCount > 1) {
 					throw new ParseException("Doppelpunkt nur einmal erlaubt: " + term);
+				}
+				String[] prePost = escapedTerm.split(":");
+				if (prePost.length == 1) {
+					throw new ParseException("Unvollständige Suchanfrage: " + term);
 				}
 				String prefix = prePost[0];
 				String postfix = prePost[1];

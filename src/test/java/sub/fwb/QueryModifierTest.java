@@ -23,6 +23,16 @@ public class QueryModifierTest {
 		System.out.println(expanded);
 	}
 
+	@Test(expected = ParseException.class)
+	public void shouldRejectIncomplete() throws Exception {
+		expanded = modifier.expandQuery("zitat:");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectEndingWithColon() throws Exception {
+		expanded = modifier.expandQuery("zitat:bla:");
+	}
+
 	@Test
 	public void shouldExpandRegexWithPrefix() throws Exception {
 		expanded = modifier.expandQuery("lemma:/imbis/");

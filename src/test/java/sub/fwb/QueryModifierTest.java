@@ -42,7 +42,7 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpandRegex() throws Exception {
 		expanded = modifier.expandQuery("/imbis/");
-		assertEquals("+artikel:/imbis/", expanded);
+		assertEquals("+(artikel:/imbis/ zitat:/imbis/)", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -70,7 +70,7 @@ public class QueryModifierTest {
 	public void shouldExpandComplexPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imb*s ward\"");
 		assertEquals(
-				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\"",
+				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\")",
 				expanded);
 	}
 
@@ -83,25 +83,25 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpandOneWordPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imbis\"");
-		assertEquals("\"imbis\" +artikel:\"imbis\"", expanded);
+		assertEquals("\"imbis\" +(artikel:\"imbis\" zitat:\"imbis\")", expanded);
 	}
 
 	@Test
 	public void shouldEscapeBrackets() throws Exception {
 		expanded = modifier.expandQuery("imb[i]s");
-		assertEquals("imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +artikel:*imb\\[i\\]s*", expanded);
+		assertEquals("imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s*)", expanded);
 	}
 
 	@Test
 	public void shouldEscapeParentheses() throws Exception {
 		expanded = modifier.expandQuery("imb(i)s");
-		assertEquals("imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +artikel:*imb\\(i\\)s*", expanded);
+		assertEquals("imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s*)", expanded);
 	}
 
 	@Test
 	public void shouldEscapePipe() throws Exception {
 		expanded = modifier.expandQuery("bar|tuch");
-		assertEquals("bar\\|tuch bar\\|tuch* *bar\\|tuch* +artikel:*bar\\|tuch*", expanded);
+		assertEquals("bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch*)", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -128,31 +128,35 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpandWordAndPhrase() throws Exception {
 		expanded = modifier.expandQuery("test \"my imbis\"");
-		assertEquals("test test* *test* +artikel:*test* \"my imbis\" +artikel:\"my imbis\"", expanded);
+		assertEquals(
+				"test test* *test* +(artikel:*test* zitat:*test*) \"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\")",
+				expanded);
 	}
 
 	@Test
 	public void shouldExpandTwoSimplePhrases() throws Exception {
 		expanded = modifier.expandQuery("\"my imbis\" \"your imbs\"");
-		assertEquals("\"my imbis\" +artikel:\"my imbis\" \"your imbs\" +artikel:\"your imbs\"", expanded);
+		assertEquals(
+				"\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\") \"your imbs\" +(artikel:\"your imbs\" zitat:\"your imbs\")",
+				expanded);
 	}
 
 	@Test
 	public void shouldExpandSimplePhrase() throws Exception {
 		expanded = modifier.expandQuery("\"my imbis\"");
-		assertEquals("\"my imbis\" +artikel:\"my imbis\"", expanded);
+		assertEquals("\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\")", expanded);
 	}
 
 	@Test
 	public void shouldExpandTwoWords() throws Exception {
 		expanded = modifier.expandQuery("imb is");
-		assertEquals("imb imb* *imb* +artikel:*imb* is is* *is* +artikel:*is*", expanded);
+		assertEquals("imb imb* *imb* +(artikel:*imb* zitat:*imb*) is is* *is* +(artikel:*is* zitat:*is*)", expanded);
 	}
 
 	@Test
 	public void shouldExpandOneWord() throws Exception {
 		expanded = modifier.expandQuery("imbis");
-		assertEquals("imbis imbis* *imbis* +artikel:*imbis*", expanded);
+		assertEquals("imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)", expanded);
 	}
 
 }

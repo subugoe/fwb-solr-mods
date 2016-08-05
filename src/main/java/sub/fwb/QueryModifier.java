@@ -63,8 +63,8 @@ public class QueryModifier {
 				String postfix = prePost[1];
 				expandedQuery += String.format("+%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
 			} else {
-				expandedQuery += String.format("%s %s* *%s* +artikel:*%s* ", escapedTerm, escapedTerm, escapedTerm,
-						escapedTerm);
+				expandedQuery += String.format("%s %s* *%s* +(artikel:*%s* zitat:*%s*) ", escapedTerm, escapedTerm,
+						escapedTerm, escapedTerm, escapedTerm);
 			}
 		}
 	}
@@ -89,12 +89,12 @@ public class QueryModifier {
 				checkIfOneWord(phrase);
 				String escapedPhrase = phrase.replaceAll("\"", "\\\\\"");
 				expandedQuery += String.format(
-						"_query_:\"{!complexphrase}%s\" +_query_:\"{!complexphrase}artikel:%s\" ", escapedPhrase,
-						escapedPhrase);
+						"_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}artikel:%s\" _query_:\"{!complexphrase}zitat:%s\") ",
+						escapedPhrase, escapedPhrase, escapedPhrase);
 			} else if (!isComplex(phrase) && hasPrefix(phrase)) {
 				expandedQuery += String.format("+%s ", phrase);
 			} else {
-				expandedQuery += String.format("%s +artikel:%s ", phrase, phrase);
+				expandedQuery += String.format("%s +(artikel:%s zitat:%s) ", phrase, phrase, phrase);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ public class QueryModifier {
 			if (hasPrefix(phrase)) {
 				expandedQuery += String.format("+%s ", phrase);
 			} else {
-				expandedQuery += String.format("+artikel:%s ", phrase);
+				expandedQuery += String.format("+(artikel:%s zitat:%s) ", phrase, phrase);
 			}
 		}
 	}

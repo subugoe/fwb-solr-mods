@@ -23,6 +23,12 @@ public class QueryModifierTest {
 		System.out.println(expanded);
 	}
 
+	@Test
+	public void shouldExpand() throws Exception {
+		expanded = modifier.expandQuery("lemma:imbis OR lemma:bla");
+		assertEquals("lemma:(imbis imbis* *imbis*) OR lemma:(bla bla* *bla*)", expanded);
+	}
+
 	@Test(expected = ParseException.class)
 	public void shouldRejectIncomplete() throws Exception {
 		expanded = modifier.expandQuery("zitat:");

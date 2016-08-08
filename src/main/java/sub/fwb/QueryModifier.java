@@ -48,7 +48,8 @@ public class QueryModifier {
 	}
 
 	private void processTerms() throws ParseException {
-		for (String term : qTerms) {
+		for (int i = 0; i < qTerms.size(); i++) {
+			String term = qTerms.get(i);
 			String escapedTerm = escapeSpecialChars(term);
 			if (escapedTerm.contains(":")) {
 				int colonCount = escapedTerm.length() - escapedTerm.replaceAll(":", "").length();
@@ -61,7 +62,17 @@ public class QueryModifier {
 				}
 				String prefix = prePost[0];
 				String postfix = prePost[1];
-				expandedQuery += String.format("+%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
+				boolean isFirst = i == 0;
+				boolean isLast = i == qTerms.size() - 1;
+				if (!isLast && qTerms.get(i + 1).equals("OR") || !isFirst && qTerms.get(i - 1).equals("OR")) {
+					expandedQuery += String.format("%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
+				} else {
+					expandedQuery += String.format("+%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
+				}
+			} else if (escapedTerm.equals("AND")) {
+				// ignore
+			} else if (escapedTerm.equals("OR")) {
+				expandedQuery += "OR ";
 			} else {
 				expandedQuery += String.format("%s %s* *%s* +(artikel:*%s* zitat:*%s*) ", escapedTerm, escapedTerm,
 						escapedTerm, escapedTerm, escapedTerm);

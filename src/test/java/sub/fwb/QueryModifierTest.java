@@ -29,6 +29,12 @@ public class QueryModifierTest {
 		assertEquals("lemma:(imbis imbis* *imbis*) OR lemma:(bla bla* *bla*)", expanded);
 	}
 
+	@Test
+	public void shouldIgnoreSeveralSpaces() throws Exception {
+		expanded = modifier.expandQuery(" a  b ");
+		assertEquals("a a* *a* +(artikel:*a* zitat:*a*) b b* *b* +(artikel:*b* zitat:*b*)", expanded);
+	}
+
 	@Test(expected = ParseException.class)
 	public void shouldRejectIncomplete() throws Exception {
 		expanded = modifier.expandQuery("zitat:");

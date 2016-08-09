@@ -23,7 +23,7 @@ public class QueryModifier {
 	}
 
 	private void splitIntoTermsAndPhrasesAndRegexes(String origQuery) throws ParseException {
-		String[] qParts = origQuery.split(" ");
+		String[] qParts = origQuery.trim().split("\\s+");
 		String currentPhrase = "";
 		for (String q : qParts) {
 			if (isARegex(q)) {

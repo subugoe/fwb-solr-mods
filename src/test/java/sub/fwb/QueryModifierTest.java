@@ -15,7 +15,7 @@ public class QueryModifierTest {
 
 	@Before
 	public void setUp() throws Exception {
-		modifier = new QueryModifier();
+		modifier = new QueryModifier("lemma^1000 zitat^50");
 	}
 
 	@After
@@ -26,13 +26,18 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpand() throws Exception {
 		expanded = modifier.expandQuery("lemma:imbis OR lemma:bla");
-		assertEquals("lemma:(imbis imbis* *imbis*) OR lemma:(bla bla* *bla*)", expanded);
+		assertEquals("lemma:(imbis imbis* *imbis*)^1000 OR lemma:(bla bla* *bla*)^1000", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreSeveralSpaces() throws Exception {
 		expanded = modifier.expandQuery(" a  b ");
 		assertEquals("a a* *a* +(artikel:*a* zitat:*a*) b b* *b* +(artikel:*b* zitat:*b*)", expanded);
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectUnknownFieldName() throws Exception {
+		expanded = modifier.expandQuery("lemma2:imbis");
 	}
 
 	@Test(expected = ParseException.class)
@@ -124,7 +129,7 @@ public class QueryModifierTest {
 	@Test
 	public void shouldExpandPrefixedSearch() throws Exception {
 		expanded = modifier.expandQuery("lemma:imbis");
-		assertEquals("+lemma:(imbis imbis* *imbis*)", expanded);
+		assertEquals("+lemma:(imbis imbis* *imbis*)^1000", expanded);
 	}
 
 	@Test(expected = ParseException.class)

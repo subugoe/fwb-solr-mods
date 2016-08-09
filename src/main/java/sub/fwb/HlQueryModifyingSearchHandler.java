@@ -14,7 +14,8 @@ public class HlQueryModifyingSearchHandler extends SearchHandler {
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 
 		String oldQuery = req.getParams().get(HighlightParams.Q);
-		QueryModifier modifier = new QueryModifier();
+		String queryFieldsWithBoosts = req.getParams().get("qf");
+		QueryModifier modifier = new QueryModifier(queryFieldsWithBoosts);
 		String newQuery = modifier.expandQuery(oldQuery);
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());

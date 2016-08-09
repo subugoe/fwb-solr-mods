@@ -1,7 +1,9 @@
 package sub.fwb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
 
@@ -11,6 +13,22 @@ public class QueryModifier {
 	private List<String> qPhrases = new ArrayList<>();
 	private List<String> qRegexes = new ArrayList<>();
 	private String expandedQuery = "";
+	private Map<String, String> boosts;
+
+	public QueryModifier(String qf) {
+		createMapWithBoosts(qf);
+	}
+
+	private void createMapWithBoosts(String qf) {
+		boosts = new HashMap<String, String>();
+		boosts.put("artikel", "");
+		String[] fields = qf.trim().split("\\s+");
+		for (String fieldWithBoost : fields) {
+			String fieldName = fieldWithBoost.split("\\^")[0];
+			String boostValue = "^" + fieldWithBoost.split("\\^")[1];
+			boosts.put(fieldName, boostValue);
+		}
+	}
 
 	public String expandQuery(String origQuery) throws ParseException {
 		splitIntoTermsAndPhrasesAndRegexes(origQuery);
@@ -61,13 +79,14 @@ public class QueryModifier {
 					throw new ParseException("Unvollständige Suchanfrage: " + term);
 				}
 				String prefix = prePost[0];
+				String boost = getBoost(prefix);
 				String postfix = prePost[1];
 				boolean isFirst = i == 0;
 				boolean isLast = i == qTerms.size() - 1;
 				if (!isLast && qTerms.get(i + 1).equals("OR") || !isFirst && qTerms.get(i - 1).equals("OR")) {
-					expandedQuery += String.format("%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
+					expandedQuery += String.format("%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
 				} else {
-					expandedQuery += String.format("+%s:(%s %s* *%s*) ", prefix, postfix, postfix, postfix);
+					expandedQuery += String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
 				}
 			} else if (escapedTerm.equals("AND")) {
 				// ignore
@@ -78,6 +97,14 @@ public class QueryModifier {
 						escapedTerm, escapedTerm, escapedTerm);
 			}
 		}
+	}
+
+	private String getBoost(String prefix) throws ParseException {
+		String boost = boosts.get(prefix);
+		if (boost == null) {
+			throw new ParseException("Suchfeld existiert nicht: " + prefix);
+		}
+		return boost;
 	}
 
 	private String escapeSpecialChars(String term) {

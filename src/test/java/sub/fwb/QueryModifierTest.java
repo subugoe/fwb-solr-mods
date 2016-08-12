@@ -30,6 +30,12 @@ public class QueryModifierTest {
 	}
 
 	@Test
+	public void shouldExpandWithDash() throws Exception {
+		expanded = modifier.expandQuery("-lach");
+		assertEquals("\\-lach \\-lach* *\\-lach* +(artikel:*\\-lach* zitat:*\\-lach*)", expanded);
+	}
+
+	@Test
 	public void shouldIgnoreSeveralSpaces() throws Exception {
 		expanded = modifier.expandQuery(" a  b ");
 		assertEquals("a a* *a* +(artikel:*a* zitat:*a*) b b* *b* +(artikel:*b* zitat:*b*)", expanded);

@@ -113,6 +113,7 @@ public class QueryModifier {
 		term = term.replaceAll("\\)", "\\\\)");
 		term = term.replaceAll("\\[", "\\\\[");
 		term = term.replaceAll("\\]", "\\\\]");
+		term = term.replaceAll("-", "\\\\-");
 		return term;
 	}
 

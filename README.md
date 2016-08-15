@@ -1,4 +1,4 @@
-# Some Solr modifications for FWB (Frühneuhochdeutsches Wörterbuch)
+# Solr modifications for FWB (Frühneuhochdeutsches Wörterbuch)
 
 ## Description
 
@@ -9,17 +9,21 @@ Filters, and Search Handlers that change their functionality or add something ne
 
   These classes deal with German umlauts and other accented letters. The Factory expects a file (parameter file="...")
   containing the mappings in the form 
+
   ä:a,ae
+
   on each line. In this example, you will have the terms bär, bar, and baer
   in your index, if the original text contains the word bär. The three terms will have the same offsets, so that
   the highlighter will highlight the original bär, no matter which of the three terms you search for.
   
   The Filter can also deal with so-called combining letters, like for example a little i over u: uͥ. If you want to 
-  also find uͥ with a normal u, you can add the following to the mapping file: 
+  also find uͥ with a normal u, you can add the following to the mapping file:
+
   U+0365:
+
   After the colon, there is nothing there, i. e., an empty string.
   
-  Here is an example of a complete file: {{https://github.com/subugoe/fwb-index-creator/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt}}.
+  Here is an example of a complete file: https://github.com/subugoe/fwb-index-creator/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt.
   
 * LemmaNormalizingFilterFactory and LemmaNormalizingFilter
 

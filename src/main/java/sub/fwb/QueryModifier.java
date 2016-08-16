@@ -13,6 +13,7 @@ public class QueryModifier {
 	private List<String> qPhrases = new ArrayList<>();
 	private List<String> qRegexes = new ArrayList<>();
 	private String expandedQuery = "";
+	private String hlQuery = "";
 	private Map<String, String> boosts;
 
 	public QueryModifier(String qf) {
@@ -30,14 +31,14 @@ public class QueryModifier {
 		}
 	}
 
-	public String expandQuery(String origQuery) throws ParseException {
+	public String[] expandQuery(String origQuery) throws ParseException {
 		splitIntoTermsAndPhrasesAndRegexes(origQuery);
 
 		processTerms();
 		processPhrases();
 		processRegexes();
 
-		return expandedQuery.trim();
+		return new String[] {expandedQuery.trim(), hlQuery.trim()};
 	}
 
 	private void splitIntoTermsAndPhrasesAndRegexes(String origQuery) throws ParseException {
@@ -81,6 +82,7 @@ public class QueryModifier {
 				String prefix = prePost[0];
 				String boost = getBoost(prefix);
 				String postfix = prePost[1];
+				addToHlQuery(prefix, postfix);
 				boolean isFirst = i == 0;
 				boolean isLast = i == qTerms.size() - 1;
 				if (!isLast && qTerms.get(i + 1).equals("OR") || !isFirst && qTerms.get(i - 1).equals("OR")) {
@@ -96,6 +98,14 @@ public class QueryModifier {
 				expandedQuery += String.format("%s %s* *%s* +(artikel:*%s* zitat:*%s*) ", escapedTerm, escapedTerm,
 						escapedTerm, escapedTerm, escapedTerm);
 			}
+		}
+	}
+
+	private void addToHlQuery(String prefix, String postfix) {
+		if (prefix.equals("zitat")) {
+			hlQuery += "zitat_text:*" + postfix + "* ";
+		} else {
+			hlQuery += "artikel_text:*" + postfix + "* ";
 		}
 	}
 

@@ -16,15 +16,23 @@ public class QueryModifyingSearchHandler extends SearchHandler {
 		String oldQuery = req.getParams().get(CommonParams.Q);
 		String queryFieldsWithBoosts = req.getParams().get("qf");
 		QueryModifier modifier = new QueryModifier(queryFieldsWithBoosts);
-		String newQuery = modifier.expandQuery(oldQuery);
+		String[] changedQueries = modifier.expandQuery(oldQuery);
+		String newQuery = changedQueries[0];
+		String hlQuery = changedQueries[1];
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set(CommonParams.Q, newQuery);
+		if (!hlQuery.isEmpty()) {
+			newParams.set("hl.q", hlQuery);
+		}
 		req.setParams(newParams);
 
 		NamedList<String> queryInfoList = new SimpleOrderedMap<>();
 		queryInfoList.add("original q", oldQuery);
 		queryInfoList.add("modified q", newQuery);
+		if (!hlQuery.isEmpty()) {
+			queryInfoList.add("modified hl.q", hlQuery);
+		}
 		rsp.add("queryModifier", queryInfoList);
 
 		super.handleRequestBody(req, rsp);

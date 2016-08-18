@@ -44,6 +44,7 @@ public class QueryModifierTest {
 		assertEquals("lemma:(imbis imbis* *imbis*)^1000 OR lemma:(bla bla* *bla*)^1000", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandWithDash() throws Exception {
 		expanded = modifier.expandQuery("-lach")[0];
@@ -56,6 +57,7 @@ public class QueryModifierTest {
 		assertEquals("a a* *a* +(artikel:*a* zitat:*a*) b b* *b* +(artikel:*b* zitat:*b*)", expanded);
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectUnknownFieldName() throws Exception {
 		expanded = modifier.expandQuery("lemma2:imbis")[0];
@@ -112,30 +114,35 @@ public class QueryModifierTest {
 				expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandOneWordPhraseWithPrefix() throws Exception {
 		expanded = modifier.expandQuery("lemma:\"imbis\"")[0];
 		assertEquals("+lemma:\"imbis\"", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandOneWordPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imbis\"")[0];
 		assertEquals("\"imbis\" +(artikel:\"imbis\" zitat:\"imbis\")", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldEscapeBrackets() throws Exception {
 		expanded = modifier.expandQuery("imb[i]s")[0];
 		assertEquals("imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s*)", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldEscapeParentheses() throws Exception {
 		expanded = modifier.expandQuery("imb(i)s")[0];
 		assertEquals("imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s*)", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldEscapePipe() throws Exception {
 		expanded = modifier.expandQuery("bar|tuch")[0];
@@ -147,17 +154,20 @@ public class QueryModifierTest {
 		expanded = modifier.expandQuery("lemma:imbis:bla")[0];
 	}
 
+	// remove
 	@Test
 	public void shouldExpandPrefixedSearch() throws Exception {
 		expanded = modifier.expandQuery("lemma:imbis")[0];
 		assertEquals("+lemma:(imbis imbis* *imbis*)^1000", expanded);
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectIncompletePhrase() throws Exception {
 		expanded = modifier.expandQuery("my imbis\"")[0];
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectUnfinishedPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"my imbis")[0];
@@ -179,6 +189,7 @@ public class QueryModifierTest {
 				expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandSimplePhrase() throws Exception {
 		expanded = modifier.expandQuery("\"my imbis\"")[0];
@@ -191,6 +202,7 @@ public class QueryModifierTest {
 		assertEquals("imb imb* *imb* +(artikel:*imb* zitat:*imb*) is is* *is* +(artikel:*is* zitat:*is*)", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandOneWord() throws Exception {
 		expanded = modifier.expandQuery("imbis")[0];

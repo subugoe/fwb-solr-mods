@@ -8,14 +8,15 @@ public class PrefixedTerm extends PrefixedQueryToken {
 	
 	private Map<String, String> boosts;
 
-	public PrefixedTerm(String termString, Map<String, String> qfWithBoosts) {
+	public PrefixedTerm(String termString, Map<String, String> qfWithBoosts) throws ParseException {
 		originalTokenString = termString;
 		escapeSpecialChars();
+		checkForCorrectness();
+		splitIntoPrefixAndPostfix();
 		boosts = qfWithBoosts;
 	}
 	
-	@Override
-	public String getModifiedQuery() throws ParseException {
+	private void checkForCorrectness() throws ParseException {
 		int colonCount = escapedString.length() - escapedString.replaceAll(":", "").length();
 		if (colonCount > 1) {
 			throw new ParseException("Doppelpunkt nur einmal erlaubt: " + originalTokenString);
@@ -24,9 +25,11 @@ public class PrefixedTerm extends PrefixedQueryToken {
 		if (prePost.length == 1) {
 			throw new ParseException("Unvollständige Suchanfrage: " + originalTokenString);
 		}
-		String prefix = prePost[0];
+	}
+
+	@Override
+	public String getModifiedQuery() throws ParseException {
 		String boost = getBoost(prefix);
-		String postfix = prePost[1];
 		return String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
 	}
 
@@ -36,6 +39,15 @@ public class PrefixedTerm extends PrefixedQueryToken {
 			throw new ParseException("Suchfeld existiert nicht: " + prefix);
 		}
 		return boost;
+	}
+
+	@Override
+	public String getHlQuery() throws ParseException {
+		if (prefix.equals("zitat")) {
+			return "zitat_text:*" + postfix + "* ";
+		} else {
+			return "artikel_text:*" + postfix + "* ";
+		}
 	}
 
 }

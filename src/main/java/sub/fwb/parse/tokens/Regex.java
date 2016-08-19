@@ -2,16 +2,15 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
-public class Phrase extends QueryToken {
+public class Regex extends QueryToken {
 
-	public Phrase(String phraseString) {
-		originalTokenString = phraseString;
-		escapeSpecialChars();
+	public Regex(String regexString) {
+		originalTokenString = regexString;
 	}
-	
+
 	@Override
 	public String getModifiedQuery() {
-		return String.format("%s +(artikel:%s zitat:%s) ", escapedString, escapedString, escapedString);
+		return String.format("+(artikel:%s zitat:%s) ", originalTokenString, originalTokenString);
 	}
 
 	@Override

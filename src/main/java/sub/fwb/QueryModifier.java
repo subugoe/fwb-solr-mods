@@ -2,10 +2,14 @@ package sub.fwb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
+
+import sub.fwb.parse.TokenFactory;
+import sub.fwb.parse.tokens.QueryToken;
 
 public class QueryModifier {
 
@@ -15,9 +19,12 @@ public class QueryModifier {
 	private String expandedQuery = "";
 	private String hlQuery = "";
 	private Map<String, String> boosts;
+	
+	private String queryFieldsWithBoosts = "";
 
 	public QueryModifier(String qf) {
 		createMapWithBoosts(qf);
+		// queryFieldsWithBoosts = qf;
 	}
 
 	private void createMapWithBoosts(String qf) {
@@ -37,6 +44,14 @@ public class QueryModifier {
 		processTerms();
 		processPhrases();
 		processRegexes();
+		
+//		TokenFactory factory = new TokenFactory(queryFieldsWithBoosts);
+//		LinkedList<QueryToken> allTokens = factory.createTokens(origQuery);
+//		
+//		for (QueryToken token : allTokens) {
+//			expandedQuery += token.getModifiedQuery();
+//			hlQuery += token.getHlQuery();
+//		}
 
 		return new String[] {expandedQuery.trim(), hlQuery.trim()};
 	}

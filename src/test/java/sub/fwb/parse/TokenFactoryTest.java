@@ -12,6 +12,7 @@ public class TokenFactoryTest {
 	
 	private TokenFactory factory;
 	private String expanded = "";
+	private String hlQuery = "";
 
 	@Before
 	public void beforeEach() throws Exception {
@@ -21,6 +22,76 @@ public class TokenFactoryTest {
 	@After
 	public void afterEach() throws Exception {
 		System.out.println(expanded);
+		System.out.println(hlQuery);
+	}
+
+	// TODO
+	// @Test
+	public void shouldAddHlQueryToPhrase() throws Exception {
+		hlQuery = hlQueryFrom("zitat:\"imbis ward\"");
+		assertEquals("zitat_text:\"imbis ward\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldAddHlQuery() throws Exception {
+		hlQuery = hlQueryFrom("zitat:imbis");
+		assertEquals("zitat_text:*imbis* ", hlQuery);
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectIncomplete() throws Exception {
+		expanded = expandOneTokenString("zitat:");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectEndingWithColon() throws Exception {
+		expanded = expandOneTokenString("zitat:bla:");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectTwoColons() throws Exception {
+		expanded = expandOneTokenString("lemma:imbis:bla");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectOneWordInComplexPhraseWithPrefix() throws Exception {
+		expanded = expandOneTokenString("zitat:\"imb?s\"");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectLeadingWildcardsInPhrase() throws Exception {
+		expanded = expandOneTokenString("\"imbis ?ard\"");
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectOneWordInComplexPhrase() throws Exception {
+		expanded = expandOneTokenString("\"imb?s\"");
+	}
+
+	@Test
+	public void shouldExpandComplexPhraseWithPrefix() throws Exception {
+		expanded = expandOneTokenString("zitat:\"imb*s ward\"");
+		assertEquals("+_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\" ", expanded);
+	}
+
+	@Test
+	public void shouldExpandComplexPhrase() throws Exception {
+		expanded = expandOneTokenString("\"imb*s ward\"");
+		assertEquals(
+				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\") ",
+				expanded);
+	}
+
+	@Test
+	public void shouldExpandRegexWithPrefix() throws Exception {
+		expanded = expandOneTokenString("lemma:/imbis/");
+		assertEquals("+lemma:/imbis/ ", expanded);
+	}
+
+	@Test
+	public void shouldExpandRegex() throws Exception {
+		expanded = expandOneTokenString("/imbis/");
+		assertEquals("+(artikel:/imbis/ zitat:/imbis/) ", expanded);
 	}
 
 	@Test
@@ -96,4 +167,7 @@ public class TokenFactoryTest {
 		return factory.createTokens(ts).get(0).getModifiedQuery();
 	}
 
+	private String hlQueryFrom(String query) throws Exception {
+		return factory.createTokens(query).get(0).getHlQuery();
+	}
 }

@@ -32,6 +32,7 @@ public class QueryModifierTest {
 		assertEquals("zitat_text:\"imbis ward\"", hlQuery);
 	}
 
+	// remove
 	@Test
 	public void shouldAddHlQuery() throws Exception {
 		hlQuery = modifier.expandQuery("zitat:imbis")[1];
@@ -63,49 +64,58 @@ public class QueryModifierTest {
 		expanded = modifier.expandQuery("lemma2:imbis")[0];
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectIncomplete() throws Exception {
 		expanded = modifier.expandQuery("zitat:")[0];
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectEndingWithColon() throws Exception {
 		expanded = modifier.expandQuery("zitat:bla:")[0];
 	}
 
+	// remove
 	@Test
 	public void shouldExpandRegexWithPrefix() throws Exception {
 		expanded = modifier.expandQuery("lemma:/imbis/")[0];
 		assertEquals("+lemma:/imbis/", expanded);
 	}
 
+	// remove
 	@Test
 	public void shouldExpandRegex() throws Exception {
 		expanded = modifier.expandQuery("/imbis/")[0];
 		assertEquals("+(artikel:/imbis/ zitat:/imbis/)", expanded);
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectOneWordInComplexPhraseWithPrefix() throws Exception {
 		expanded = modifier.expandQuery("zitat:\"imb?s\"")[0];
 	}
 
+	// remove
 	@Test
 	public void shouldExpandComplexPhraseWithPrefix() throws Exception {
 		expanded = modifier.expandQuery("zitat:\"imb*s ward\"")[0];
 		assertEquals("+_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\"", expanded);
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectLeadingWildcardsInPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imbis ?ard\"")[0];
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectOneWordInComplexPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imb?s\"")[0];
 	}
 
+	// remove
 	@Test
 	public void shouldExpandComplexPhrase() throws Exception {
 		expanded = modifier.expandQuery("\"imb*s ward\"")[0];
@@ -149,6 +159,7 @@ public class QueryModifierTest {
 		assertEquals("bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch*)", expanded);
 	}
 
+	// remove
 	@Test(expected = ParseException.class)
 	public void shouldRejectTwoColons() throws Exception {
 		expanded = modifier.expandQuery("lemma:imbis:bla")[0];

@@ -25,11 +25,12 @@ import sub.fwb.parse.tokens.Term;
 public class TokenFactory {
 
 	private Map<String, String> boosts;
+	private List<QueryToken> allTokens = new ArrayList<>();
 
 	public TokenFactory(String qfWithBoosts) {
 		createMapWithBoosts(qfWithBoosts);
 	}
-	
+
 	private void createMapWithBoosts(String qf) {
 		boosts = new HashMap<String, String>();
 		boosts.put("artikel", "");
@@ -42,10 +43,22 @@ public class TokenFactory {
 	}
 
 	public List<QueryToken> createTokens(String queryString) throws ParseException {
-		List<QueryToken> allTokens = new ArrayList<>();
+		allTokens = new ArrayList<>();
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
 		for (String q : qParts) {
+
+			String qOrig = q;
+			if (!q.equals("(") && startsWithParen(q)) {
+				allTokens.add(new ParenthesisLeft());
+				q = q.substring(1);
+			}
+			boolean addRightParen = false;
+			if (!qOrig.equals(")") && endsWithParen(qOrig)) {
+				q = q.substring(0, q.length() - 1);
+				addRightParen = true;
+			}
+
 			if ("OR".equals(q)) {
 				allTokens.add(new OperatorOr());
 			} else if ("AND".equals(q)) {
@@ -57,16 +70,20 @@ public class TokenFactory {
 			} else if (")".equals(q)) {
 				allTokens.add(new ParenthesisRight());
 			} else if (isRegex(q)) {
-				addRegexOrPrefixedRegex(allTokens, q);
+				addRegexOrPrefixedRegex(q);
 			} else if (isOneWordPhrase(q)) {
-				addPhraseOrPrefixedPhrase(allTokens, q);
+				addPhraseOrPrefixedPhrase(q);
 			} else if (startingAPhrase(q) || insideAPhrase(currentPhrase, q)) {
 				currentPhrase += q + " ";
 			} else if (finishingAPhrase(currentPhrase, q)) {
-				addPhraseOrPrefixedPhrase(allTokens, currentPhrase + q);
+				addPhraseOrPrefixedPhrase(currentPhrase + q);
 				currentPhrase = "";
 			} else {
-				addTermOrPrefixedTerm(allTokens, q);
+				addTermOrPrefixedTerm(q);
+			}
+
+			if (addRightParen) {
+				allTokens.add(new ParenthesisRight());
 			}
 		}
 		checkIfIncomplete(currentPhrase);
@@ -74,7 +91,30 @@ public class TokenFactory {
 		return allTokens;
 	}
 
-	private void addPhraseOrPrefixedPhrase(List<QueryToken> allTokens, String phraseString) {
+	private boolean startsWithParen(String q) {
+		return q.startsWith("(");
+	}
+
+	private boolean endsWithParen(String q) {
+		if (q.startsWith("(") && q.endsWith(")") && parensMatch(q.substring(1, q.length() - 1))) {
+			// (imbis)
+			// (legatar(ius))
+			return true;
+		} else if (q.endsWith(")") && parensMatch(q.substring(0, q.length() - 1))) {
+			// imbis)
+			// legatar(ius))
+			return true;
+		}
+		// legatar(ius)
+		// (legatar(ius)
+		return false;
+	}
+
+	private boolean parensMatch(String s) {
+		return s.contains("(") && s.contains(")") || !s.contains("(") && !s.contains(")");
+	}
+
+	private void addPhraseOrPrefixedPhrase(String phraseString) {
 		if (hasPrefix(phraseString) && isComplex(phraseString)) {
 			allTokens.add(new ComplexPhrasePrefixed(phraseString));
 		} else if (hasPrefix(phraseString)) {
@@ -86,7 +126,7 @@ public class TokenFactory {
 		}
 	}
 
-	private void addTermOrPrefixedTerm(List<QueryToken> allTokens, String termString) throws ParseException {
+	private void addTermOrPrefixedTerm(String termString) throws ParseException {
 		if (hasPrefix(termString)) {
 			allTokens.add(new TermPrefixed(termString, boosts));
 		} else {
@@ -94,7 +134,7 @@ public class TokenFactory {
 		}
 	}
 
-	private void addRegexOrPrefixedRegex(List<QueryToken> allTokens, String regexString) {
+	private void addRegexOrPrefixedRegex(String regexString) {
 		if (hasPrefix(regexString)) {
 			allTokens.add(new RegexPrefixed(regexString));
 		} else {
@@ -130,11 +170,11 @@ public class TokenFactory {
 			throw new ParseException("Phrase nicht komplett: " + currentPhrase);
 		}
 	}
-	
+
 	private boolean hasPrefix(String tokenString) {
 		return tokenString.matches("[a-z0-9_]+:.*");
 	}
-	
+
 	private boolean isComplex(String phrase) {
 		return phrase.contains("*") || phrase.contains("?");
 	}
@@ -142,5 +182,5 @@ public class TokenFactory {
 	public QueryToken createOneToken(String tokenString) throws ParseException {
 		return createTokens(tokenString).get(0);
 	}
-	
+
 }

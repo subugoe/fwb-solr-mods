@@ -1,6 +1,8 @@
 package sub.fwb;
 
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.solr.parser.ParseException;
 
@@ -28,6 +30,8 @@ public class QueryModifier {
 
 		if (mustAddParens(allTokens)) {
 			addParenthesesWhereNecessary(allTokens, factory);
+		} else {
+			checkIfParensCorrect(allTokens);
 		}
 
 		for (QueryToken token : allTokens) {
@@ -63,6 +67,25 @@ public class QueryModifier {
 				allTokens.add(i + 2, factory.createOneToken(")"));
 				allTokens.add(i + 1, factory.createOneToken("("));
 			}
+		}
+	}
+
+	private void checkIfParensCorrect(List<QueryToken> allTokens) throws ParseException {
+		String wrongParensMessage = "Klammern sind nicht richtig gesetzt";
+		Stack<QueryToken> stack = new Stack<>();
+		try {
+			for (QueryToken token : allTokens) {
+				if (token instanceof ParenthesisLeft) {
+					stack.push(token);
+				} else if (token instanceof ParenthesisRight) {
+					stack.pop();
+				}
+			}
+			if (!stack.isEmpty()) {
+				throw new ParseException(wrongParensMessage);
+			}
+		} catch (EmptyStackException e) {
+			throw new ParseException(wrongParensMessage);
 		}
 	}
 

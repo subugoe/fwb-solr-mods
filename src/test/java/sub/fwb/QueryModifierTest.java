@@ -1,7 +1,8 @@
 package sub.fwb;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import org.apache.solr.parser.ParseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,8 +10,8 @@ import org.junit.Test;
 public class QueryModifierTest {
 
 	private QueryModifier modifier;
-	private String expanded;
-	private String hlQuery;
+	private String expanded = "";
+	private String hlQuery = "";
 
 	@Before
 	public void setUp() throws Exception {
@@ -21,6 +22,28 @@ public class QueryModifierTest {
 	public void tearDown() throws Exception {
 		System.out.println(expanded);
 		System.out.println(hlQuery);
+	}
+
+	@Test
+	public void shouldAcceptTwoParensInOneWord() throws Exception {
+		expanded = modifier.expandQuery("imbi(s)")[0];
+		// no exception
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectRightParenOnly() throws Exception {
+		expanded = modifier.expandQuery("imbi(s))")[0];
+	}
+
+	@Test(expected = ParseException.class)
+	public void shouldRejectLeftParenOnly() throws Exception {
+		expanded = modifier.expandQuery("(imbis")[0];
+	}
+
+	@Test
+	public void shouldKeepParens() throws Exception {
+		expanded = modifier.expandQuery("NOT (lemma:imbis)")[0];
+		assertEquals("NOT (+lemma:(imbis imbis* *imbis*)^1000 )", expanded);
 	}
 
 	@Test

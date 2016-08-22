@@ -1,14 +1,18 @@
 package sub.fwb.parse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.tokens.AndOperator;
 import sub.fwb.parse.tokens.ComplexPhrase;
+import sub.fwb.parse.tokens.OperatorNot;
 import sub.fwb.parse.tokens.OrOperator;
+import sub.fwb.parse.tokens.ParenthesisLeft;
+import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.Phrase;
 import sub.fwb.parse.tokens.PrefixedComplexPhrase;
 import sub.fwb.parse.tokens.PrefixedPhrase;
@@ -37,8 +41,8 @@ public class TokenFactory {
 		}
 	}
 
-	public LinkedList<QueryToken> createTokens(String queryString) throws ParseException {
-		LinkedList<QueryToken> allTokens = new LinkedList<>();
+	public List<QueryToken> createTokens(String queryString) throws ParseException {
+		List<QueryToken> allTokens = new ArrayList<>();
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
 		for (String q : qParts) {
@@ -46,6 +50,12 @@ public class TokenFactory {
 				allTokens.add(new OrOperator());
 			} else if ("AND".equals(q)) {
 				allTokens.add(new AndOperator());
+			} else if ("NOT".equals(q)) {
+				allTokens.add(new OperatorNot());
+			} else if ("(".equals(q)) {
+				allTokens.add(new ParenthesisLeft());
+			} else if (")".equals(q)) {
+				allTokens.add(new ParenthesisRight());
 			} else if (isRegex(q)) {
 				addRegexOrPrefixedRegex(allTokens, q);
 			} else if (isOneWordPhrase(q)) {
@@ -64,7 +74,7 @@ public class TokenFactory {
 		return allTokens;
 	}
 
-	private void addPhraseOrPrefixedPhrase(LinkedList<QueryToken> allTokens, String phraseString) {
+	private void addPhraseOrPrefixedPhrase(List<QueryToken> allTokens, String phraseString) {
 		if (hasPrefix(phraseString) && isComplex(phraseString)) {
 			allTokens.add(new PrefixedComplexPhrase(phraseString));
 		} else if (hasPrefix(phraseString)) {
@@ -76,7 +86,7 @@ public class TokenFactory {
 		}
 	}
 
-	private void addTermOrPrefixedTerm(LinkedList<QueryToken> allTokens, String termString) throws ParseException {
+	private void addTermOrPrefixedTerm(List<QueryToken> allTokens, String termString) throws ParseException {
 		if (hasPrefix(termString)) {
 			allTokens.add(new PrefixedTerm(termString, boosts));
 		} else {
@@ -84,7 +94,7 @@ public class TokenFactory {
 		}
 	}
 
-	private void addRegexOrPrefixedRegex(LinkedList<QueryToken> allTokens, String regexString) {
+	private void addRegexOrPrefixedRegex(List<QueryToken> allTokens, String regexString) {
 		if (hasPrefix(regexString)) {
 			allTokens.add(new PrefixedRegex(regexString));
 		} else {

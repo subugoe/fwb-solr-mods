@@ -8,7 +8,7 @@ public class Phrase extends QueryToken {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
 	}
-	
+
 	@Override
 	public String getModifiedQuery() {
 		return String.format("%s +(artikel:%s zitat:%s) ", escapedString, escapedString, escapedString);

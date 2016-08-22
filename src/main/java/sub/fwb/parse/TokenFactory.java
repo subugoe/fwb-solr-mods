@@ -7,17 +7,17 @@ import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
 
-import sub.fwb.parse.tokens.AndOperator;
+import sub.fwb.parse.tokens.OperatorAnd;
 import sub.fwb.parse.tokens.ComplexPhrase;
 import sub.fwb.parse.tokens.OperatorNot;
-import sub.fwb.parse.tokens.OrOperator;
+import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.Phrase;
-import sub.fwb.parse.tokens.PrefixedComplexPhrase;
-import sub.fwb.parse.tokens.PrefixedPhrase;
-import sub.fwb.parse.tokens.PrefixedRegex;
-import sub.fwb.parse.tokens.PrefixedTerm;
+import sub.fwb.parse.tokens.ComplexPhrasePrefixed;
+import sub.fwb.parse.tokens.PhrasePrefixed;
+import sub.fwb.parse.tokens.RegexPrefixed;
+import sub.fwb.parse.tokens.TermPrefixed;
 import sub.fwb.parse.tokens.QueryToken;
 import sub.fwb.parse.tokens.Regex;
 import sub.fwb.parse.tokens.Term;
@@ -47,9 +47,9 @@ public class TokenFactory {
 		String currentPhrase = "";
 		for (String q : qParts) {
 			if ("OR".equals(q)) {
-				allTokens.add(new OrOperator());
+				allTokens.add(new OperatorOr());
 			} else if ("AND".equals(q)) {
-				allTokens.add(new AndOperator());
+				allTokens.add(new OperatorAnd());
 			} else if ("NOT".equals(q)) {
 				allTokens.add(new OperatorNot());
 			} else if ("(".equals(q)) {
@@ -76,9 +76,9 @@ public class TokenFactory {
 
 	private void addPhraseOrPrefixedPhrase(List<QueryToken> allTokens, String phraseString) {
 		if (hasPrefix(phraseString) && isComplex(phraseString)) {
-			allTokens.add(new PrefixedComplexPhrase(phraseString));
+			allTokens.add(new ComplexPhrasePrefixed(phraseString));
 		} else if (hasPrefix(phraseString)) {
-			allTokens.add(new PrefixedPhrase(phraseString));
+			allTokens.add(new PhrasePrefixed(phraseString));
 		} else if (isComplex(phraseString)) {
 			allTokens.add(new ComplexPhrase(phraseString));
 		} else {
@@ -88,7 +88,7 @@ public class TokenFactory {
 
 	private void addTermOrPrefixedTerm(List<QueryToken> allTokens, String termString) throws ParseException {
 		if (hasPrefix(termString)) {
-			allTokens.add(new PrefixedTerm(termString, boosts));
+			allTokens.add(new TermPrefixed(termString, boosts));
 		} else {
 			allTokens.add(new Term(termString));
 		}
@@ -96,7 +96,7 @@ public class TokenFactory {
 
 	private void addRegexOrPrefixedRegex(List<QueryToken> allTokens, String regexString) {
 		if (hasPrefix(regexString)) {
-			allTokens.add(new PrefixedRegex(regexString));
+			allTokens.add(new RegexPrefixed(regexString));
 		} else {
 			allTokens.add(new Regex(regexString));
 		}

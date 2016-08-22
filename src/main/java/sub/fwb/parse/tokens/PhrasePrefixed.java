@@ -2,13 +2,13 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
-public class PrefixedPhrase extends PrefixedQueryToken {
+public class PhrasePrefixed extends QueryTokenPrefixed {
 
-	public PrefixedPhrase(String phraseString) {
+	public PhrasePrefixed(String phraseString) {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
 	}
-	
+
 	@Override
 	public String getModifiedQuery() {
 		return String.format("+%s ", escapedString);

@@ -6,7 +6,7 @@ import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.TokenFactory;
 import sub.fwb.parse.tokens.OperatorNot;
-import sub.fwb.parse.tokens.OrOperator;
+import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.QueryToken;
@@ -44,7 +44,7 @@ public class QueryModifier {
 			if (token instanceof ParenthesisLeft || token instanceof ParenthesisRight) {
 				return false;
 			}
-			if (token instanceof OrOperator || token instanceof OperatorNot) {
+			if (token instanceof OperatorOr || token instanceof OperatorNot) {
 				hasORorNOT = true;
 			}
 		}
@@ -56,7 +56,7 @@ public class QueryModifier {
 		allTokens.add(allTokens.size(), factory.createOneToken(")"));
 		for (int i = allTokens.size() - 1; i > 0; i--) {
 			QueryToken current = allTokens.get(i);
-			if (current instanceof OrOperator) {
+			if (current instanceof OperatorOr) {
 				allTokens.add(i + 1, factory.createOneToken("("));
 				allTokens.add(i, factory.createOneToken(")"));
 			} else if (current instanceof OperatorNot) {

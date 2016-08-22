@@ -4,9 +4,9 @@ import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
-public class PrefixedComplexPhrase extends PrefixedQueryToken {
+public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 
-	public PrefixedComplexPhrase(String phraseString) {
+	public ComplexPhrasePrefixed(String phraseString) {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
 	}

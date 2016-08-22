@@ -4,18 +4,18 @@ import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
 
-public class PrefixedTerm extends PrefixedQueryToken {
-	
+public class TermPrefixed extends QueryTokenPrefixed {
+
 	private Map<String, String> boosts;
 
-	public PrefixedTerm(String termString, Map<String, String> qfWithBoosts) throws ParseException {
+	public TermPrefixed(String termString, Map<String, String> qfWithBoosts) throws ParseException {
 		originalTokenString = termString;
 		escapeSpecialChars();
 		checkForCorrectness();
 		splitIntoPrefixAndPostfix();
 		boosts = qfWithBoosts;
 	}
-	
+
 	private void checkForCorrectness() throws ParseException {
 		int colonCount = escapedString.length() - escapedString.replaceAll(":", "").length();
 		if (colonCount > 1) {

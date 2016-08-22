@@ -2,11 +2,15 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
-public class OrOperator extends QueryToken {
+public class RegexPrefixed extends QueryTokenPrefixed {
+
+	public RegexPrefixed(String regexString) {
+		originalTokenString = regexString;
+	}
 
 	@Override
 	public String getModifiedQuery() throws ParseException {
-		return "OR ";
+		return String.format("+%s ", originalTokenString);
 	}
 
 	@Override

@@ -41,6 +41,13 @@ public class QueryModifierTest {
 	}
 
 	@Test
+	public void shouldAddParensForNot() throws Exception {
+		expanded = modifier.expandQuery("NOT lemma:imbis OR (bla)")[0];
+		assertEquals("NOT (+lemma:(imbis imbis* *imbis*)^1000 ) OR (bla bla* *bla* +(artikel:*bla* zitat:*bla*) )",
+				expanded);
+	}
+
+	@Test
 	public void shouldKeepParens() throws Exception {
 		expanded = modifier.expandQuery("NOT (lemma:imbis)")[0];
 		assertEquals("NOT (+lemma:(imbis imbis* *imbis*)^1000 )", expanded);

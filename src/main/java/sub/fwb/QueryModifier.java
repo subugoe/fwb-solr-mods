@@ -32,6 +32,7 @@ public class QueryModifier {
 			addParenthesesWhereNecessary(allTokens, factory);
 		} else {
 			checkIfParensCorrect(allTokens);
+			setNOTsInParens(allTokens, factory);
 		}
 
 		for (QueryToken token : allTokens) {
@@ -58,7 +59,7 @@ public class QueryModifier {
 	private void addParenthesesWhereNecessary(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
 		allTokens.add(0, factory.createOneToken("("));
 		allTokens.add(allTokens.size(), factory.createOneToken(")"));
-		for (int i = allTokens.size() - 1; i > 0; i--) {
+		for (int i = allTokens.size() - 2; i > 0; i--) {
 			QueryToken current = allTokens.get(i);
 			if (current instanceof OperatorOr) {
 				allTokens.add(i + 1, factory.createOneToken("("));
@@ -86,6 +87,17 @@ public class QueryModifier {
 			}
 		} catch (EmptyStackException e) {
 			throw new ParseException(wrongParensMessage);
+		}
+	}
+
+	private void setNOTsInParens(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
+		for (int i = allTokens.size() - 2; i >= 0; i--) {
+			QueryToken current = allTokens.get(i);
+			QueryToken next = allTokens.get(i + 1);
+			if (current instanceof OperatorNot && !(next instanceof ParenthesisLeft)) {
+				allTokens.add(i + 2, factory.createOneToken(")"));
+				allTokens.add(i + 1, factory.createOneToken("("));
+			}
 		}
 	}
 

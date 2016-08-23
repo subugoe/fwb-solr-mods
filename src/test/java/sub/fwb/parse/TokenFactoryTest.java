@@ -38,6 +38,72 @@ public class TokenFactoryTest {
 		assertEquals("zitat_text:*imbis* ", hlQuery);
 	}
 
+	@Test
+	public void shouldIgnoreDollarWhenTildePrefixed() throws Exception {
+		expanded = expandOneTokenString("lemma:imbis$~2");
+		assertEquals("+lemma:imbis~2^1000 ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptTildeTwoPrefixed() throws Exception {
+		expanded = expandOneTokenString("lemma:imbis~2");
+		assertEquals("+lemma:imbis~2^1000 ", expanded);
+	}
+
+	@Test
+	public void shouldIgnoreCircumflexAndDollarWhenTilde() throws Exception {
+		expanded = expandOneTokenString("^imbis$~2");
+		assertEquals("imbis~2 +(artikel:imbis~2 zitat:imbis~2) ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptTildeTwo() throws Exception {
+		expanded = expandOneTokenString("imbis~2");
+		assertEquals("imbis~2 +(artikel:imbis~2 zitat:imbis~2) ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptTildeOne() throws Exception {
+		expanded = expandOneTokenString("imbis~1");
+		assertEquals("imbis~1 +(artikel:imbis~1 zitat:imbis~1) ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptDollarPrefixed() throws Exception {
+		expanded = expandOneTokenString("lemma:imbis$");
+		assertEquals("+lemma:*imbis^1000 ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptCircumflexPrefixed() throws Exception {
+		expanded = expandOneTokenString("lemma:^imbis");
+		assertEquals("+lemma:(imbis imbis*)^1000 ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptCircumflexAndDollarPrefixed() throws Exception {
+		expanded = expandOneTokenString("lemma:^imbis$");
+		assertEquals("+lemma:imbis^1000 ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptDollar() throws Exception {
+		expanded = expandOneTokenString("imbis$");
+		assertEquals("*imbis +(artikel:*imbis zitat:*imbis) ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptCircumflex() throws Exception {
+		expanded = expandOneTokenString("^imbis");
+		assertEquals("imbis imbis* +(artikel:imbis* zitat:imbis*) ", expanded);
+	}
+
+	@Test
+	public void shouldAcceptCircumflexAndDollar() throws Exception {
+		expanded = expandOneTokenString("^imbis$");
+		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
+	}
+
 	@Test(expected = ParseException.class)
 	public void shouldRejectIncomplete() throws Exception {
 		expanded = expandOneTokenString("zitat:");

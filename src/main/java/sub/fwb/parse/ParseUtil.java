@@ -19,4 +19,14 @@ public class ParseUtil {
 		}
 	}
 
+	public static String freeFromCircumflexAndDollar(String s) {
+		if (s.startsWith("^")) {
+			s = s.substring(1);
+		}
+		if (s.endsWith("$")) {
+			s = s.substring(0, s.length() - 1);
+		}
+		return s;
+	}
+
 }

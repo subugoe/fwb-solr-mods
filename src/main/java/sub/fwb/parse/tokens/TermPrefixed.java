@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.parse.ParseUtil;
+
 public class TermPrefixed extends QueryTokenPrefixed {
 
 	private Map<String, String> boosts;
@@ -30,7 +32,23 @@ public class TermPrefixed extends QueryTokenPrefixed {
 	@Override
 	public String getModifiedQuery() throws ParseException {
 		String boost = getBoost(prefix);
-		return String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
+		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
+			String fuzzy = postfix.substring(postfix.length() - 2);
+			postfix = postfix.substring(0, postfix.length() - 2);
+			postfix = ParseUtil.freeFromCircumflexAndDollar(postfix);
+			return String.format("+%s:%s%s%s ", prefix, postfix, fuzzy, boost);
+		} else if (postfix.startsWith("^") && postfix.endsWith("$")) {
+			postfix = postfix.substring(1, postfix.length() - 1);
+			return String.format("+%s:%s%s ", prefix, postfix, boost);
+		} else if (postfix.startsWith("^")) {
+			postfix = postfix.substring(1, postfix.length());
+			return String.format("+%s:(%s %s*)%s ", prefix, postfix, postfix, boost);
+		} else if (postfix.endsWith("$")) {
+			postfix = postfix.substring(0, postfix.length() - 1);
+			return String.format("+%s:*%s%s ", prefix, postfix, boost);
+		} else {
+			return String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
+		}
 	}
 
 	private String getBoost(String prefix) throws ParseException {

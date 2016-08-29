@@ -7,9 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class TokenFactoryTest {
-	
+
 	private TokenFactory factory;
 	private String expanded = "";
 	private String hlQuery = "";
@@ -33,9 +32,69 @@ public class TokenFactoryTest {
 	}
 
 	@Test
-	public void shouldAddHlQuery() throws Exception {
+	public void shouldHlPrefixedWithFuzzy() throws Exception {
+		hlQuery = hlQueryFrom("lemma:imbis~1");
+		assertEquals("artikel_text:imbis~1 ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPrefixedWithDollar() throws Exception {
+		hlQuery = hlQueryFrom("lemma:imbis$");
+		assertEquals("artikel_text:*imbis ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPrefixedWithCircumflex() throws Exception {
+		hlQuery = hlQueryFrom("lemma:^imbis");
+		assertEquals("artikel_text:imbis* ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPrefixedWithCircumflexAndDollar() throws Exception {
+		hlQuery = hlQueryFrom("lemma:^imbis$");
+		assertEquals("artikel_text:imbis ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPrefixedSearch() throws Exception {
+		hlQuery = hlQueryFrom("lemma:imbis");
+		assertEquals("artikel_text:*imbis* ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlInQuote() throws Exception {
 		hlQuery = hlQueryFrom("zitat:imbis");
 		assertEquals("zitat_text:*imbis* ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlWithFuzzy() throws Exception {
+		hlQuery = hlQueryFrom("imbis~1");
+		assertEquals("artikel_text:imbis~1 zitat_text:imbis~1 ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlWithCircumflex() throws Exception {
+		hlQuery = hlQueryFrom("^imbis");
+		assertEquals("artikel_text:imbis* zitat_text:imbis* ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlWithDollar() throws Exception {
+		hlQuery = hlQueryFrom("imbis$");
+		assertEquals("artikel_text:*imbis zitat_text:*imbis ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlWithCircumflexAndDollar() throws Exception {
+		hlQuery = hlQueryFrom("^imbis$");
+		assertEquals("artikel_text:imbis zitat_text:imbis ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlOneWord() throws Exception {
+		hlQuery = hlQueryFrom("imbis");
+		assertEquals("artikel_text:*imbis* zitat_text:*imbis* ", hlQuery);
 	}
 
 	@Test
@@ -228,7 +287,7 @@ public class TokenFactoryTest {
 		expanded = expandOneTokenString("imbis");
 		assertEquals("imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ", expanded);
 	}
-	
+
 	private String expandOneTokenString(String ts) throws Exception {
 		return factory.createTokens(ts).get(0).getModifiedQuery();
 	}

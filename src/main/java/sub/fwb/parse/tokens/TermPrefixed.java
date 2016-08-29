@@ -34,18 +34,18 @@ public class TermPrefixed extends QueryTokenPrefixed {
 		String boost = getBoost(prefix);
 		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
 			String fuzzy = postfix.substring(postfix.length() - 2);
-			postfix = postfix.substring(0, postfix.length() - 2);
-			postfix = ParseUtil.freeFromCircumflexAndDollar(postfix);
-			return String.format("+%s:%s%s%s ", prefix, postfix, fuzzy, boost);
+			String postfixTemp = postfix.substring(0, postfix.length() - 2);
+			postfixTemp = ParseUtil.freeFromCircumflexAndDollar(postfixTemp);
+			return String.format("+%s:%s%s%s ", prefix, postfixTemp, fuzzy, boost);
 		} else if (postfix.startsWith("^") && postfix.endsWith("$")) {
-			postfix = postfix.substring(1, postfix.length() - 1);
-			return String.format("+%s:%s%s ", prefix, postfix, boost);
+			String postfixTemp = postfix.substring(1, postfix.length() - 1);
+			return String.format("+%s:%s%s ", prefix, postfixTemp, boost);
 		} else if (postfix.startsWith("^")) {
-			postfix = postfix.substring(1, postfix.length());
-			return String.format("+%s:(%s %s*)%s ", prefix, postfix, postfix, boost);
+			String postfixTemp = postfix.substring(1, postfix.length());
+			return String.format("+%s:(%s %s*)%s ", prefix, postfixTemp, postfixTemp, boost);
 		} else if (postfix.endsWith("$")) {
-			postfix = postfix.substring(0, postfix.length() - 1);
-			return String.format("+%s:*%s%s ", prefix, postfix, boost);
+			String postfixTemp = postfix.substring(0, postfix.length() - 1);
+			return String.format("+%s:*%s%s ", prefix, postfixTemp, boost);
 		} else {
 			return String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
 		}
@@ -61,10 +61,28 @@ public class TermPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
+		String prefixForHl = "";
 		if (prefix.equals("zitat")) {
-			return "zitat_text:*" + postfix + "* ";
+			prefixForHl = "zitat_text";
 		} else {
-			return "artikel_text:*" + postfix + "* ";
+			prefixForHl = "artikel_text";
+		}
+		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
+			String fuzzy = postfix.substring(postfix.length() - 2);
+			String postfixTemp = postfix.substring(0, postfix.length() - 2);
+			postfixTemp = ParseUtil.freeFromCircumflexAndDollar(postfixTemp);
+			return String.format("%s:%s%s ", prefixForHl, postfixTemp, fuzzy);
+		} else if (postfix.startsWith("^") && postfix.endsWith("$")) {
+			String postfixTemp = postfix.substring(1, postfix.length() - 1);
+			return String.format("%s:%s ", prefixForHl, postfixTemp);
+		} else if (postfix.startsWith("^")) {
+			String postfixTemp = postfix.substring(1, postfix.length());
+			return String.format("%s:%s* ", prefixForHl, postfixTemp);
+		} else if (postfix.endsWith("$")) {
+			String postfixTemp = postfix.substring(0, postfix.length() - 1);
+			return String.format("%s:*%s ", prefixForHl, postfixTemp);
+		} else {
+			return String.format("%s:*%s* ", prefixForHl, postfix);
 		}
 	}
 

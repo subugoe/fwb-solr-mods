@@ -35,8 +35,23 @@ public class Term extends QueryToken {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
-		return "";
+		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
+			String s = escapedString.substring(0, escapedString.length() - 2);
+			s = ParseUtil.freeFromCircumflexAndDollar(s);
+			String fuzzy = escapedString.substring(escapedString.length() - 2);
+			return String.format("artikel_text:%s%s zitat_text:%s%s ", s, fuzzy, s, fuzzy);
+		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
+			String s = escapedString.substring(1, escapedString.length() - 1);
+			return String.format("artikel_text:%s zitat_text:%s ", s, s);
+		} else if (escapedString.startsWith("^")) {
+			String s = escapedString.substring(1, escapedString.length());
+			return String.format("artikel_text:%s* zitat_text:%s* ", s, s);
+		} else if (escapedString.endsWith("$")) {
+			String s = escapedString.substring(0, escapedString.length() - 1);
+			return String.format("artikel_text:*%s zitat_text:*%s ", s, s);
+		} else {
+			return String.format("artikel_text:*%s* zitat_text:*%s* ", escapedString, escapedString);
+		}
 	}
 
 }

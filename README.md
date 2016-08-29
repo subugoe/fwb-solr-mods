@@ -39,7 +39,7 @@ in schema.xml.
 For more details, you can look at the complete files on Github: 
 https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
 
-## Details
+## Documentation
 
 * UmlautFilterFactory and UmlautFilter
 
@@ -57,7 +57,7 @@ https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
 
   U+0365:
 
-  After the colon, there is nothing there, i. e., an empty string.
+  After the colon, there is nothing there, i. e., an empty string, which means that the little i character will be optional.
   
   Here is an example of a complete file: https://github.com/subugoe/fwb-index-creator/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt.
   

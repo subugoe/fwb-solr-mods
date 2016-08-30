@@ -24,11 +24,52 @@ public class TokenFactoryTest {
 		System.out.println(hlQuery);
 	}
 
-	// TODO
-	// @Test
-	public void shouldAddHlQueryToPhrase() throws Exception {
+	@Test
+	public void shouldHlRegexPrefixed() throws Exception {
+		hlQuery = hlQueryFrom("lemma:/regex/");
+		assertEquals("artikel_text:/regex/ ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlRegex() throws Exception {
+		hlQuery = hlQueryFrom("/regex/");
+		assertEquals("artikel_text:/regex/ zitat_text:/regex/ ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlComplexPhrasePrefixedQuote() throws Exception {
+		hlQuery = hlQueryFrom("zitat:\"imbis wa?d\"");
+		assertEquals("_query_:\"{!complexphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlComplexPhrasePrefixed() throws Exception {
+		hlQuery = hlQueryFrom("lemma:\"imbis wa?d\"");
+		assertEquals("_query_:\"{!complexphrase}artikel_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlComplexPhrase() throws Exception {
+		hlQuery = hlQueryFrom("\"imbis wa?d\"");
+		assertEquals("_query_:\"{!complexphrase}artikel_text:\\\"imbis wa?d\\\"\" _query_:\"{!complexphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPhrasePrefixedQuote() throws Exception {
 		hlQuery = hlQueryFrom("zitat:\"imbis ward\"");
 		assertEquals("zitat_text:\"imbis ward\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPhrasePrefixed() throws Exception {
+		hlQuery = hlQueryFrom("lemma:\"imbis ward\"");
+		assertEquals("artikel_text:\"imbis ward\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHlPhrase() throws Exception {
+		hlQuery = hlQueryFrom("\"imbis ward\"");
+		assertEquals("artikel_text:\"imbis ward\" zitat_text:\"imbis ward\" ", hlQuery);
 	}
 
 	@Test

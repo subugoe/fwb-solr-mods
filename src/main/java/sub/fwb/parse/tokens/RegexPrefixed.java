@@ -6,6 +6,8 @@ public class RegexPrefixed extends QueryTokenPrefixed {
 
 	public RegexPrefixed(String regexString) {
 		originalTokenString = regexString;
+		escapedString = regexString;
+		splitIntoPrefixAndPostfix();
 	}
 
 	@Override
@@ -15,8 +17,11 @@ public class RegexPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
-		return "";
+		if (prefix.equals("zitat")) {
+			return String.format("zitat_text:%s ", postfix);
+		} else {
+			return String.format("artikel_text:%s ", postfix);
+		}
 	}
 
 }

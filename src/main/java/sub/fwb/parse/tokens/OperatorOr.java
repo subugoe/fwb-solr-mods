@@ -11,7 +11,6 @@ public class OperatorOr extends QueryToken {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
 		return "";
 	}
 

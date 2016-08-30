@@ -16,8 +16,7 @@ public class Phrase extends QueryToken {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("artikel_text:%s zitat_text:%s ", escapedString, escapedString, escapedString);
 	}
 
 }

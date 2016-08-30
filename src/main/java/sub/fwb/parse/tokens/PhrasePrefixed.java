@@ -7,6 +7,7 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 	public PhrasePrefixed(String phraseString) {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
+		splitIntoPrefixAndPostfix();
 	}
 
 	@Override
@@ -16,8 +17,11 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
-		return "";
+		if (prefix.equals("zitat")) {
+			return String.format("zitat_text:%s ", postfix);
+		} else {
+			return String.format("artikel_text:%s ", postfix);
+		}
 	}
 
 }

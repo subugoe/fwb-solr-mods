@@ -23,8 +23,9 @@ public class ComplexPhrase extends QueryToken {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		// TODO Auto-generated method stub
-		return "";
+		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
+		return String.format("_query_:\"{!complexphrase}artikel_text:%s\" _query_:\"{!complexphrase}zitat_text:%s\" ",
+				escapedPhrase, escapedPhrase);
 	}
 
 }

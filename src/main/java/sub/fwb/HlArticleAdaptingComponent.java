@@ -22,18 +22,21 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 		SimpleOrderedMap<Object> highlightedFields = (SimpleOrderedMap<Object>) ((SimpleOrderedMap<Object>) response
 				.getValues().get("highlighting")).getVal(0);
 		String article = ((String[]) highlightedFields.get("artikel"))[0];
-		String[] quotes = (String[]) highlightedFields.get("zitat");
-		if (quotes != null) {
-			for (String quote : quotes) {
-				String quoteStart = getStart(quote);
-				String quoteEnd = getEnd(quote);
-				String quoteMiddle = getMiddle(quote);
-				article = article.replaceFirst("(?s)" + quoteStart + ".*?" + quoteEnd, quoteMiddle);
-			}
-			highlightedFields.add("artikel", new String[] { article });
 
-			highlightedFields.remove("zitat");
+		for (int i = highlightedFields.size() - 1; i >= 0; i--) {
+			String fieldName = highlightedFields.getName(i);
+			if (!fieldName.equals("artikel")) {
+				String[] values = (String[]) highlightedFields.get(fieldName);
+				for (String value : values) {
+					String valueStart = getStart(value);
+					String valueEnd = getEnd(value);
+					String valueMiddle = getMiddle(value);
+					article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, valueMiddle);
+				}
+				highlightedFields.remove(fieldName);
+			}
 		}
+		highlightedFields.add("artikel", new String[] { article });
 	}
 
 	private String getStart(String quote) {

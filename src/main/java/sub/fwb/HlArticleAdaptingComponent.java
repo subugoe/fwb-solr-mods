@@ -31,9 +31,9 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 					String valueStart = getStart(value);
 					String valueEnd = getEnd(value);
 					String valueMiddle = getMiddle(value);
-					article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, valueMiddle);
+					article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, Matcher.quoteReplacement(valueMiddle));
 				}
-				highlightedFields.remove(fieldName);
+				//highlightedFields.remove(fieldName);
 			}
 		}
 		highlightedFields.add("artikel", new String[] { article });

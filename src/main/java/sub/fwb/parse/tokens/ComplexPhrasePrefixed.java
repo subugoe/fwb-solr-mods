@@ -22,13 +22,12 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
+		if (prefix.equals("lemma")) {
+			return "";
+		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
-		if (prefix.equals("zitat")) {
-			return String.format("_query_:\"{!complexphrase}zitat_text:%s\" ", postfixTemp);
-		} else {
-			return String.format("_query_:\"{!complexphrase}artikel_text:%s\" ", postfixTemp);
-		}
+		return String.format("_query_:\"{!complexphrase}%s_text:%s\" ", prefix, postfixTemp);
 	}
 
 }

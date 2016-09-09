@@ -22,10 +22,9 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 				SimpleOrderedMap<Object> currentDoc = (SimpleOrderedMap<Object>) highlightedDocs.getVal(i);
 
 				String[] articleHl = (String[]) currentDoc.get("artikel_text");
-				if (isEmpty(articleHl)) {
-					String[] quoteHl = (String[]) currentDoc.get("zitat_text");
-					currentDoc.add("artikel_text", quoteHl);
-					currentDoc.remove("zitat_text");
+				if (isEmpty(articleHl) && currentDoc.size() > 0) {
+					String[] nonArticleHl = (String[]) currentDoc.getVal(0);
+					currentDoc.add("artikel_text", nonArticleHl);
 				}
 			}
 		}

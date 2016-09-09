@@ -26,8 +26,8 @@ public class TokenFactoryTest {
 
 	@Test
 	public void shouldHlRegexPrefixed() throws Exception {
-		hlQuery = hlQueryFrom("lemma:/regex/");
-		assertEquals("artikel_text:/regex/ ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:/regex/");
+		assertEquals("zitat_text:/regex/ ", hlQuery);
 	}
 
 	@Test
@@ -37,15 +37,9 @@ public class TokenFactoryTest {
 	}
 
 	@Test
-	public void shouldHlComplexPhrasePrefixedQuote() throws Exception {
+	public void shouldHlComplexPhrasePrefixed() throws Exception {
 		hlQuery = hlQueryFrom("zitat:\"imbis wa?d\"");
 		assertEquals("_query_:\"{!complexphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
-	}
-
-	@Test
-	public void shouldHlComplexPhrasePrefixed() throws Exception {
-		hlQuery = hlQueryFrom("lemma:\"imbis wa?d\"");
-		assertEquals("_query_:\"{!complexphrase}artikel_text:\\\"imbis wa?d\\\"\" ", hlQuery);
 	}
 
 	@Test
@@ -55,15 +49,9 @@ public class TokenFactoryTest {
 	}
 
 	@Test
-	public void shouldHlPhrasePrefixedQuote() throws Exception {
+	public void shouldHlPhrasePrefixed() throws Exception {
 		hlQuery = hlQueryFrom("zitat:\"imbis ward\"");
 		assertEquals("zitat_text:\"imbis ward\" ", hlQuery);
-	}
-
-	@Test
-	public void shouldHlPhrasePrefixed() throws Exception {
-		hlQuery = hlQueryFrom("lemma:\"imbis ward\"");
-		assertEquals("artikel_text:\"imbis ward\" ", hlQuery);
 	}
 
 	@Test
@@ -74,32 +62,32 @@ public class TokenFactoryTest {
 
 	@Test
 	public void shouldHlPrefixedWithFuzzy() throws Exception {
-		hlQuery = hlQueryFrom("lemma:imbis~1");
-		assertEquals("artikel_text:imbis~1 ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:imbis~1");
+		assertEquals("zitat_text:imbis~1 ", hlQuery);
 	}
 
 	@Test
 	public void shouldHlPrefixedWithDollar() throws Exception {
-		hlQuery = hlQueryFrom("lemma:imbis$");
-		assertEquals("artikel_text:*imbis ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:imbis$");
+		assertEquals("zitat_text:*imbis ", hlQuery);
 	}
 
 	@Test
 	public void shouldHlPrefixedWithCircumflex() throws Exception {
-		hlQuery = hlQueryFrom("lemma:^imbis");
-		assertEquals("artikel_text:imbis* ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:^imbis");
+		assertEquals("zitat_text:imbis* ", hlQuery);
 	}
 
 	@Test
 	public void shouldHlPrefixedWithCircumflexAndDollar() throws Exception {
-		hlQuery = hlQueryFrom("lemma:^imbis$");
-		assertEquals("artikel_text:imbis ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:^imbis$");
+		assertEquals("zitat_text:imbis ", hlQuery);
 	}
 
 	@Test
 	public void shouldHlPrefixedSearch() throws Exception {
-		hlQuery = hlQueryFrom("lemma:imbis");
-		assertEquals("artikel_text:*imbis* ", hlQuery);
+		hlQuery = hlQueryFrom("zitat:imbis");
+		assertEquals("zitat_text:*imbis* ", hlQuery);
 	}
 
 	@Test

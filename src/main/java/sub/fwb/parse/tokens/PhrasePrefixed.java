@@ -17,11 +17,10 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		if (prefix.equals("zitat")) {
-			return String.format("zitat_text:%s ", postfix);
-		} else {
-			return String.format("artikel_text:%s ", postfix);
+		if (prefix.equals("lemma")) {
+			return "";
 		}
+		return String.format("%s_text:%s ", prefix, postfix);
 	}
 
 }

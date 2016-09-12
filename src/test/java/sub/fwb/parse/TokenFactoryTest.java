@@ -15,7 +15,7 @@ public class TokenFactoryTest {
 
 	@Before
 	public void beforeEach() throws Exception {
-		factory = new TokenFactory("lemma^1000 zitat^50");
+		factory = new TokenFactory("lemma^1000 def^70 zitat^50");
 	}
 
 	@After
@@ -36,10 +36,15 @@ public class TokenFactoryTest {
 		assertEquals("artikel_text:/regex/ zitat_text:/regex/ ", hlQuery);
 	}
 
+	@Test(expected=ParseException.class)
+	public void shouldNotAllowComplexInQuote() throws Exception {
+		hlQuery = hlQueryFrom("zitat:\"imbis wa?d\"");
+	}
+
 	@Test
 	public void shouldHlComplexPhrasePrefixed() throws Exception {
-		hlQuery = hlQueryFrom("zitat:\"imbis wa?d\"");
-		assertEquals("_query_:\"{!complexphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+		hlQuery = hlQueryFrom("def:\"imbis wa?d\"");
+		assertEquals("_query_:\"{!complexphrase}def_text:\\\"imbis wa?d\\\"\" ", hlQuery);
 	}
 
 	@Test

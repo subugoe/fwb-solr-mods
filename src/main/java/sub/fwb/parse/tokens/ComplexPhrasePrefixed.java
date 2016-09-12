@@ -25,6 +25,9 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		if (prefix.equals("lemma")) {
 			return "";
 		}
+		if (prefix.equals("zitat")) {
+			throw new ParseException("Komplexe Phrasensuche in Zitaten ist leider nicht möglich.");
+		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
 		return String.format("_query_:\"{!complexphrase}%s_text:%s\" ", prefix, postfixTemp);

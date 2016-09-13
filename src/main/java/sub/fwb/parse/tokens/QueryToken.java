@@ -18,6 +18,7 @@ public abstract class QueryToken {
 		escapedString = escapedString.replaceAll("\\[", "\\\\[");
 		escapedString = escapedString.replaceAll("\\]", "\\\\]");
 		escapedString = escapedString.replaceAll("-", "\\\\-");
+		escapedString = escapedString.replaceAll("[_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹\\.,’·‘']+", "");
 	}
 
 }

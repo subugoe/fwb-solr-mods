@@ -45,7 +45,13 @@ public class UmlautWordMapperTest {
 			if (s.length() > 1) {
 				System.out.println(s);
 				for (int i = 0; i < s.length(); i++) {
-					System.out.println("\\u0" + Integer.toHexString(Character.codePointAt(s, i)));
+					String hexCode = Integer.toHexString(Character.codePointAt(s, i));
+					int fillZeroes = 4 - hexCode.length();
+					String zeroes = "";
+					for (int j = 0; j < fillZeroes; j++) {
+						zeroes += "0";
+					}
+					System.out.println("U+" + zeroes + hexCode.toUpperCase());
 				}
 				System.out.println();
 			}
@@ -57,6 +63,7 @@ public class UmlautWordMapperTest {
 	public void shouldRemoveCombiningLetter() throws Exception {
 		mappings = mapperSut.createMappings("svͤlen");
 
+		assertEquals(2, mappings.size());
 		assertEquals("svͤlen", mappings.get(0));
 		assertEquals("svlen", mappings.get(1));
 	}
@@ -65,6 +72,7 @@ public class UmlautWordMapperTest {
 	public void shouldReplaceDoubleCharAndSingleChar() {
 		mappings = mapperSut.createMappings("fusz");
 
+		assertEquals(6, mappings.size());
 		assertEquals("fusz", mappings.get(0));
 		assertEquals("fus", mappings.get(1));
 		assertEquals("fuß", mappings.get(2));
@@ -77,6 +85,7 @@ public class UmlautWordMapperTest {
 	public void shouldReplaceDoubleChar() {
 		mappings = mapperSut.createMappings("fasz");
 
+		assertEquals(3, mappings.size());
 		assertEquals("fasz", mappings.get(0));
 		assertEquals("fas", mappings.get(1));
 		assertEquals("faß", mappings.get(2));
@@ -95,6 +104,7 @@ public class UmlautWordMapperTest {
 	public void shouldReplaceWithTwoChars() {
 		mappings = mapperSut.createMappings("faß");
 
+		assertEquals(2, mappings.size());
 		assertEquals("faß", mappings.get(0));
 		assertEquals("fass", mappings.get(1));
 	}
@@ -103,15 +113,18 @@ public class UmlautWordMapperTest {
 	public void shouldReplaceWithTwoMappings() {
 		mappings = mapperSut.createMappings("gedöns");
 
+		assertEquals(6, mappings.size());
 		assertEquals("gedöns", mappings.get(0));
 		assertEquals("gedons", mappings.get(1));
 		assertEquals("gedoens", mappings.get(2));
+		assertEquals("getöns", mappings.get(3));
 	}
 
 	@Test
 	public void shouldReplaceTwoDifferentChars() {
 		mappings = mapperSut.createMappings("läß");
 
+		assertEquals(4, mappings.size());
 		assertEquals("läß", mappings.get(0));
 		assertEquals("läss", mappings.get(1));
 		assertEquals("laß", mappings.get(2));

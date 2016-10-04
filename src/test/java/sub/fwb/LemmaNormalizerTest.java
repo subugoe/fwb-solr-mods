@@ -30,6 +30,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemovePipe() {
 		List<String> results = norm.createMappings("bar|tuch");
+		assertEquals(2, results.size());
 		assertEquals("bar|tuch", results.get(0));
 		assertEquals("bartuch", results.get(1));
 	}
@@ -37,6 +38,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemoveAllPipes() {
 		List<String> results = norm.createMappings("bar|tu|c|h");
+		assertEquals(2, results.size());
 		assertEquals("bar|tu|c|h", results.get(0));
 		assertEquals("bartuch", results.get(1));
 	}
@@ -44,6 +46,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendParentheses() {
 		List<String> results = norm.createMappings("amt(s)gericht");
+		assertEquals(3, results.size());
 		assertEquals("amt(s)gericht", results.get(0));
 		assertEquals("amtgericht", results.get(1));
 		assertEquals("amtsgericht", results.get(2));
@@ -52,6 +55,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendTwoParentheses() {
 		List<String> results = norm.createMappings("amt(s)gericht(en)geld");
+		assertEquals(5, results.size());
 		assertEquals("amt(s)gericht(en)geld", results.get(0));
 		assertEquals("amtgerichtgeld", results.get(1));
 		assertEquals("amtsgerichtgeld", results.get(2));
@@ -62,6 +66,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendPrefixedParentheses() {
 		List<String> results = norm.createMappings("(sankt)gericht");
+		assertEquals(3, results.size());
 		assertEquals("(sankt)gericht", results.get(0));
 		assertEquals("gericht", results.get(1));
 		assertEquals("sanktgericht", results.get(2));
@@ -70,6 +75,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendPostfixedParentheses() {
 		List<String> results = norm.createMappings("gericht(geld)");
+		assertEquals(3, results.size());
 		assertEquals("gericht(geld)", results.get(0));
 		assertEquals("gericht", results.get(1));
 		assertEquals("gerichtgeld", results.get(2));
@@ -78,6 +84,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldDealwithBothCases() {
 		List<String> results = norm.createMappings("bar|gericht(geld)");
+		assertEquals(3, results.size());
 		assertEquals("bar|gericht(geld)", results.get(0));
 		assertEquals("bargericht", results.get(1));
 		assertEquals("bargerichtgeld", results.get(2));
@@ -86,6 +93,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendLittleParens() {
 		List<String> results = norm.createMappings("b⁽ä⁾ren");
+		assertEquals(2, results.size());
 		assertEquals("b⁽ä⁾ren", results.get(0));
 		assertEquals("bären", results.get(1));
 	}
@@ -93,6 +101,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldExtendBrackets() {
 		List<String> results = norm.createMappings("geld[los]");
+		assertEquals(3, results.size());
 		assertEquals("geld[los]", results.get(0));
 		assertEquals("geld", results.get(1));
 		assertEquals("geldlos", results.get(2));
@@ -101,6 +110,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemoveOutsideBrackets() {
 		List<String> results = norm.createMappings("[geld]");
+		assertEquals(2, results.size());
 		assertEquals("[geld]", results.get(0));
 		assertEquals("geld", results.get(1));
 	}
@@ -108,6 +118,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemoveOutsideParens() {
 		List<String> results = norm.createMappings("(geld)");
+		assertEquals(2, results.size());
 		assertEquals("(geld)", results.get(0));
 		assertEquals("geld", results.get(1));
 	}
@@ -115,6 +126,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemoveLeftParen() {
 		List<String> results = norm.createMappings("(geld");
+		assertEquals(2, results.size());
 		assertEquals("(geld", results.get(0));
 		assertEquals("geld", results.get(1));
 	}
@@ -122,6 +134,7 @@ public class LemmaNormalizerTest {
 	@Test
 	public void shouldRemoveRightParen() {
 		List<String> results = norm.createMappings("geld)");
+		assertEquals(2, results.size());
 		assertEquals("geld)", results.get(0));
 		assertEquals("geld", results.get(1));
 	}

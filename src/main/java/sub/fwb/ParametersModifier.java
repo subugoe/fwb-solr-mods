@@ -12,18 +12,25 @@ import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.QueryToken;
+import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters; 
 
-public class QueryModifier {
+public class ParametersModifier {
 
 	private String expandedQuery = "";
 	private String hlQuery = "";
 	private String queryFieldsWithBoosts = "";
 
-	public QueryModifier(String qf) {
+	public ParametersModifier(String qf) {
 		queryFieldsWithBoosts = qf;
 	}
 
-	public String[] expandQuery(String origQuery) throws ParseException {
+	public ModifiedParameters changeParamsForQuery(String origQuery) throws ParseException {
+		
+		boolean exactSearch = false;
+		if (origQuery.contains("EXAKT")) {
+			origQuery = origQuery.replace("EXAKT", "");
+			exactSearch = true;
+		}
 
 		TokenFactory factory = new TokenFactory(queryFieldsWithBoosts);
 		List<QueryToken> allTokens = factory.createTokens(origQuery);
@@ -40,7 +47,7 @@ public class QueryModifier {
 			hlQuery += token.getHlQuery();
 		}
 
-		return new String[] { expandedQuery.trim(), hlQuery.trim() };
+		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), "", "");
 	}
 
 	private boolean mustAddParens(List<QueryToken> allTokens) {

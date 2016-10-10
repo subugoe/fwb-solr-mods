@@ -7,15 +7,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class QueryModifierTest {
+public class ParametersModifierTest {
 
-	private QueryModifier modifier;
+	private ParametersModifier modifier;
 	private String expanded = "";
 	private String hlQuery = "";
 
 	@Before
 	public void setUp() throws Exception {
-		modifier = new QueryModifier("lemma^1000 zitat^50");
+		modifier = new ParametersModifier("lemma^1000 zitat^50");
 	}
 
 	@After
@@ -25,55 +25,61 @@ public class QueryModifierTest {
 	}
 
 	@Test
+	public void should() throws Exception {
+		expanded = modifier.changeParamsForQuery("lemma:Imbis EXAKT").q;
+		assertEquals("+lemma:(Imbis Imbis* *Imbis*)^1000", expanded);
+	}
+
+	@Test
 	public void shouldAcceptTwoParensInOneWord() throws Exception {
-		expanded = modifier.expandQuery("imbi(s)")[0];
+		expanded = modifier.changeParamsForQuery("imbi(s)").q;
 		// no exception
 	}
 
 	@Test(expected = ParseException.class)
 	public void shouldRejectRightParenOnly() throws Exception {
-		expanded = modifier.expandQuery("imbi(s))")[0];
+		expanded = modifier.changeParamsForQuery("imbi(s))").q;
 	}
 
 	@Test(expected = ParseException.class)
 	public void shouldRejectLeftParenOnly() throws Exception {
-		expanded = modifier.expandQuery("(imbis")[0];
+		expanded = modifier.changeParamsForQuery("(imbis").q;
 	}
 
 	@Test
 	public void shouldAddParensForNot() throws Exception {
-		expanded = modifier.expandQuery("NOT lemma:imbis OR (bla)")[0];
+		expanded = modifier.changeParamsForQuery("NOT lemma:imbis OR (bla)").q;
 		assertEquals("NOT (+lemma:(imbis imbis* *imbis*)^1000 ) OR (bla bla* *bla* +(artikel:*bla* zitat:*bla*) )",
 				expanded);
 	}
 
 	@Test
 	public void shouldKeepParens() throws Exception {
-		expanded = modifier.expandQuery("NOT (lemma:imbis)")[0];
+		expanded = modifier.changeParamsForQuery("NOT (lemma:imbis)").q;
 		assertEquals("NOT (+lemma:(imbis imbis* *imbis*)^1000 )", expanded);
 	}
 
 	@Test
 	public void shouldExpandNotOperator() throws Exception {
-		expanded = modifier.expandQuery("NOT lemma:imbis")[0];
+		expanded = modifier.changeParamsForQuery("NOT lemma:imbis").q;
 		assertEquals("(NOT (+lemma:(imbis imbis* *imbis*)^1000 ) )", expanded);
 	}
 
 	@Test
 	public void shouldExpandOrOperator() throws Exception {
-		expanded = modifier.expandQuery("lemma:imbis OR lemma:bla")[0];
+		expanded = modifier.changeParamsForQuery("lemma:imbis OR lemma:bla").q;
 		assertEquals("(+lemma:(imbis imbis* *imbis*)^1000 ) OR (+lemma:(bla bla* *bla*)^1000 )", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreSeveralSpaces() throws Exception {
-		expanded = modifier.expandQuery(" a  b ")[0];
+		expanded = modifier.changeParamsForQuery(" a  b ").q;
 		assertEquals("a a* *a* +(artikel:*a* zitat:*a*) b b* *b* +(artikel:*b* zitat:*b*)", expanded);
 	}
 
 	@Test
 	public void shouldExpandWordAndPhrase() throws Exception {
-		expanded = modifier.expandQuery("test \"my imbis\"")[0];
+		expanded = modifier.changeParamsForQuery("test \"my imbis\"").q;
 		assertEquals(
 				"test test* *test* +(artikel:*test* zitat:*test*) \"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\")",
 				expanded);
@@ -81,7 +87,7 @@ public class QueryModifierTest {
 
 	@Test
 	public void shouldExpandTwoSimplePhrases() throws Exception {
-		expanded = modifier.expandQuery("\"my imbis\" \"your imbs\"")[0];
+		expanded = modifier.changeParamsForQuery("\"my imbis\" \"your imbs\"").q;
 		assertEquals(
 				"\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\") \"your imbs\" +(artikel:\"your imbs\" zitat:\"your imbs\")",
 				expanded);
@@ -89,7 +95,7 @@ public class QueryModifierTest {
 
 	@Test
 	public void shouldExpandTwoWords() throws Exception {
-		expanded = modifier.expandQuery("imb is")[0];
+		expanded = modifier.changeParamsForQuery("imb is").q;
 		assertEquals("imb imb* *imb* +(artikel:*imb* zitat:*imb*) is is* *is* +(artikel:*is* zitat:*is*)", expanded);
 	}
 

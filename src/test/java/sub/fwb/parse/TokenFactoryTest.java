@@ -347,10 +347,10 @@ public class TokenFactoryTest {
 	}
 
 	private String expandOneTokenString(String ts) throws Exception {
-		return factory.createTokens(ts).get(0).getModifiedQuery();
+		return factory.createTokens(ts, false).get(0).getModifiedQuery();
 	}
 
 	private String hlQueryFrom(String query) throws Exception {
-		return factory.createTokens(query).get(0).getHlQuery();
+		return factory.createTokens(query, false).get(0).getHlQuery();
 	}
 }

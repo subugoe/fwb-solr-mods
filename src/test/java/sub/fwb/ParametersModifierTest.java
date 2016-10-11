@@ -25,9 +25,15 @@ public class ParametersModifierTest {
 	}
 
 	@Test
-	public void should() throws Exception {
+	public void shouldHighlightInExactCitation() throws Exception {
+		hlQuery = modifier.changeParamsForQuery("zitat:Imbis EXAKT").hlQ;
+		assertEquals("zitat_text_exakt:*Imbis*", hlQuery);
+	}
+
+	@Test
+	public void shouldSearchInExactLemma() throws Exception {
 		expanded = modifier.changeParamsForQuery("lemma:Imbis EXAKT").q;
-		assertEquals("+lemma:(Imbis Imbis* *Imbis*)^1000", expanded);
+		assertEquals("+lemma_exakt:(Imbis Imbis* *Imbis*)^1000", expanded);
 	}
 
 	@Test

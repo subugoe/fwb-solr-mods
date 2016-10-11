@@ -10,11 +10,12 @@ public class TermPrefixed extends QueryTokenPrefixed {
 
 	private Map<String, String> boosts;
 
-	public TermPrefixed(String termString, Map<String, String> qfWithBoosts) throws ParseException {
+	public TermPrefixed(String termString, String prefixEnding, Map<String, String> qfWithBoosts)
+			throws ParseException {
 		originalTokenString = termString;
 		escapeSpecialChars();
 		checkForCorrectness();
-		splitIntoPrefixAndPostfix();
+		splitIntoPrefixAndPostfix(prefixEnding);
 		boosts = qfWithBoosts;
 	}
 
@@ -36,18 +37,18 @@ public class TermPrefixed extends QueryTokenPrefixed {
 			String fuzzy = postfix.substring(postfix.length() - 2);
 			String postfixTemp = postfix.substring(0, postfix.length() - 2);
 			postfixTemp = ParseUtil.freeFromCircumflexAndDollar(postfixTemp);
-			return String.format("+%s:%s%s%s ", prefix, postfixTemp, fuzzy, boost);
+			return String.format("+%s:%s%s%s ", prefixWithEnding, postfixTemp, fuzzy, boost);
 		} else if (postfix.startsWith("^") && postfix.endsWith("$")) {
 			String postfixTemp = postfix.substring(1, postfix.length() - 1);
-			return String.format("+%s:%s%s ", prefix, postfixTemp, boost);
+			return String.format("+%s:%s%s ", prefixWithEnding, postfixTemp, boost);
 		} else if (postfix.startsWith("^")) {
 			String postfixTemp = postfix.substring(1, postfix.length());
-			return String.format("+%s:(%s %s*)%s ", prefix, postfixTemp, postfixTemp, boost);
+			return String.format("+%s:(%s %s*)%s ", prefixWithEnding, postfixTemp, postfixTemp, boost);
 		} else if (postfix.endsWith("$")) {
 			String postfixTemp = postfix.substring(0, postfix.length() - 1);
-			return String.format("+%s:*%s%s ", prefix, postfixTemp, boost);
+			return String.format("+%s:*%s%s ", prefixWithEnding, postfixTemp, boost);
 		} else {
-			return String.format("+%s:(%s %s* *%s*)%s ", prefix, postfix, postfix, postfix, boost);
+			return String.format("+%s:(%s %s* *%s*)%s ", prefixWithEnding, postfix, postfix, postfix, boost);
 		}
 	}
 
@@ -64,7 +65,7 @@ public class TermPrefixed extends QueryTokenPrefixed {
 		if (prefix.equals("lemma")) {
 			return "";
 		}
-		String prefixForHl = prefix + "_text";
+		String prefixForHl = prefix + "_text" + prefixEnding;
 		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
 			String fuzzy = postfix.substring(postfix.length() - 2);
 			String postfixTemp = postfix.substring(0, postfix.length() - 2);

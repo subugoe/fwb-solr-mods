@@ -6,10 +6,10 @@ import sub.fwb.parse.ParseUtil;
 
 public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 
-	public ComplexPhrasePrefixed(String phraseString) {
+	public ComplexPhrasePrefixed(String phraseString, String prefixEnding) {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
-		splitIntoPrefixAndPostfix();
+		splitIntoPrefixAndPostfix(prefixEnding);
 	}
 
 	@Override
@@ -17,7 +17,8 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
 		ParseUtil.checkForLeadingWildcards(escapedPhrase);
-		return String.format("+_query_:\"{!complexphrase}%s\" ", escapedPhrase);
+		return String.format("+_query_:\"{!complexphrase}%s:%s\" ", prefixWithEnding,
+				postfix.replaceAll("\"", "\\\\\""));
 	}
 
 	@Override
@@ -25,12 +26,12 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		if (prefix.equals("lemma")) {
 			return "";
 		}
-		if (prefix.equals("zitat")) {
+		if (prefix.equals("zitat") && prefixEnding.isEmpty()) {
 			throw new ParseException("Komplexe Phrasensuche in Zitaten ist leider nicht möglich.");
 		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
-		return String.format("_query_:\"{!complexphrase}%s_text:%s\" ", prefix, postfixTemp);
+		return String.format("_query_:\"{!complexphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
 	}
 
 }

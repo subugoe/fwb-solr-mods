@@ -4,15 +4,15 @@ import org.apache.solr.parser.ParseException;
 
 public class PhrasePrefixed extends QueryTokenPrefixed {
 
-	public PhrasePrefixed(String phraseString) {
+	public PhrasePrefixed(String phraseString, String prefixEnding) {
 		originalTokenString = phraseString;
 		escapeSpecialChars();
-		splitIntoPrefixAndPostfix();
+		splitIntoPrefixAndPostfix(prefixEnding);
 	}
 
 	@Override
 	public String getModifiedQuery() {
-		return String.format("+%s ", escapedString);
+		return String.format("+%s:%s ", prefixWithEnding, postfix);
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 		if (prefix.equals("lemma")) {
 			return "";
 		}
-		return String.format("%s_text:%s ", prefix, postfix);
+		return String.format("%s_text%s:%s ", prefix, prefixEnding, postfix);
 	}
 
 }

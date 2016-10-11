@@ -26,6 +26,7 @@ public class TokenFactory {
 
 	private Map<String, String> boosts;
 	private List<QueryToken> allTokens = new ArrayList<>();
+	private String solrFieldEnding = "";
 
 	public TokenFactory(String qfWithBoosts) {
 		createMapWithBoosts(qfWithBoosts);
@@ -42,7 +43,12 @@ public class TokenFactory {
 		}
 	}
 
-	public List<QueryToken> createTokens(String queryString) throws ParseException {
+	public List<QueryToken> createTokens(String queryString, boolean exactSearch) throws ParseException {
+		if (exactSearch) {
+			solrFieldEnding = "_exakt";
+		} else {
+			solrFieldEnding = "";
+		}
 		allTokens = new ArrayList<>();
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
@@ -116,9 +122,9 @@ public class TokenFactory {
 
 	private void addPhraseOrPrefixedPhrase(String phraseString) {
 		if (hasPrefix(phraseString) && isComplex(phraseString)) {
-			allTokens.add(new ComplexPhrasePrefixed(phraseString));
+			allTokens.add(new ComplexPhrasePrefixed(phraseString, solrFieldEnding));
 		} else if (hasPrefix(phraseString)) {
-			allTokens.add(new PhrasePrefixed(phraseString));
+			allTokens.add(new PhrasePrefixed(phraseString, solrFieldEnding));
 		} else if (isComplex(phraseString)) {
 			allTokens.add(new ComplexPhrase(phraseString));
 		} else {
@@ -128,7 +134,7 @@ public class TokenFactory {
 
 	private void addTermOrPrefixedTerm(String termString) throws ParseException {
 		if (hasPrefix(termString)) {
-			allTokens.add(new TermPrefixed(termString, boosts));
+			allTokens.add(new TermPrefixed(termString, solrFieldEnding, boosts));
 		} else {
 			allTokens.add(new Term(termString));
 		}
@@ -136,7 +142,7 @@ public class TokenFactory {
 
 	private void addRegexOrPrefixedRegex(String regexString) {
 		if (hasPrefix(regexString)) {
-			allTokens.add(new RegexPrefixed(regexString));
+			allTokens.add(new RegexPrefixed(regexString, solrFieldEnding));
 		} else {
 			allTokens.add(new Regex(regexString));
 		}
@@ -179,8 +185,8 @@ public class TokenFactory {
 		return phrase.contains("*") || phrase.contains("?");
 	}
 
-	public QueryToken createOneToken(String tokenString) throws ParseException {
-		return createTokens(tokenString).get(0);
+	public QueryToken createOneToken(String tokenString, boolean exactSearch) throws ParseException {
+		return createTokens(tokenString, exactSearch).get(0);
 	}
 
 }

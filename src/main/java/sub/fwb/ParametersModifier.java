@@ -33,7 +33,7 @@ public class ParametersModifier {
 		}
 
 		TokenFactory factory = new TokenFactory(queryFieldsWithBoosts);
-		List<QueryToken> allTokens = factory.createTokens(origQuery);
+		List<QueryToken> allTokens = factory.createTokens(origQuery, exactSearch);
 
 		if (mustAddParens(allTokens)) {
 			addParenthesesWhereNecessary(allTokens, factory);
@@ -64,16 +64,16 @@ public class ParametersModifier {
 	}
 
 	private void addParenthesesWhereNecessary(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
-		allTokens.add(0, factory.createOneToken("("));
-		allTokens.add(allTokens.size(), factory.createOneToken(")"));
+		allTokens.add(0, factory.createOneToken("(", false));
+		allTokens.add(allTokens.size(), factory.createOneToken(")", false));
 		for (int i = allTokens.size() - 2; i > 0; i--) {
 			QueryToken current = allTokens.get(i);
 			if (current instanceof OperatorOr) {
-				allTokens.add(i + 1, factory.createOneToken("("));
-				allTokens.add(i, factory.createOneToken(")"));
+				allTokens.add(i + 1, factory.createOneToken("(", false));
+				allTokens.add(i, factory.createOneToken(")", false));
 			} else if (current instanceof OperatorNot) {
-				allTokens.add(i + 2, factory.createOneToken(")"));
-				allTokens.add(i + 1, factory.createOneToken("("));
+				allTokens.add(i + 2, factory.createOneToken(")", false));
+				allTokens.add(i + 1, factory.createOneToken("(", false));
 			}
 		}
 	}
@@ -102,8 +102,8 @@ public class ParametersModifier {
 			QueryToken current = allTokens.get(i);
 			QueryToken next = allTokens.get(i + 1);
 			if (current instanceof OperatorNot && !(next instanceof ParenthesisLeft)) {
-				allTokens.add(i + 2, factory.createOneToken(")"));
-				allTokens.add(i + 1, factory.createOneToken("("));
+				allTokens.add(i + 2, factory.createOneToken(")", false));
+				allTokens.add(i + 1, factory.createOneToken("(", false));
 			}
 		}
 	}

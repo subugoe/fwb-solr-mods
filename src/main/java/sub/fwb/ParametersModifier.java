@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.parse.ParseUtil;
 import sub.fwb.parse.TokenFactory;
 import sub.fwb.parse.tokens.OperatorNot;
 import sub.fwb.parse.tokens.OperatorOr;
@@ -19,9 +20,11 @@ public class ParametersModifier {
 	private String expandedQuery = "";
 	private String hlQuery = "";
 	private String queryFieldsWithBoosts = "";
+	private String hlFields = "";
 
-	public ParametersModifier(String qf) {
+	public ParametersModifier(String qf, String hlFl) {
 		queryFieldsWithBoosts = qf;
+		hlFields = hlFl;
 	}
 
 	public ModifiedParameters changeParamsForQuery(String origQuery) throws ParseException {
@@ -47,7 +50,9 @@ public class ParametersModifier {
 			hlQuery += token.getHlQuery();
 		}
 
-		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), "", "");
+		modifyHlFields(exactSearch);
+
+		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), "", hlFields);
 	}
 
 	private boolean mustAddParens(List<QueryToken> allTokens) {
@@ -108,4 +113,14 @@ public class ParametersModifier {
 		}
 	}
 
+	private void modifyHlFields(boolean exactSearch) {
+		if (exactSearch) {
+			String[] exploded = hlFields.split(",");
+			hlFields = "";
+			for (String field : exploded) {
+				hlFields += field + ParseUtil.EXACT + ",";
+			}
+			hlFields = hlFields.substring(0, hlFields.length() - 1);
+		}
+	}
 }

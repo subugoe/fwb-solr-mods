@@ -45,7 +45,7 @@ public class TokenFactory {
 
 	public List<QueryToken> createTokens(String queryString, boolean exactSearch) throws ParseException {
 		if (exactSearch) {
-			solrFieldEnding = "_exakt";
+			solrFieldEnding = ParseUtil.EXACT;
 		} else {
 			solrFieldEnding = "";
 		}

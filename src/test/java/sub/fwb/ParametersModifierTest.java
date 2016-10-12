@@ -15,7 +15,7 @@ public class ParametersModifierTest {
 
 	@Before
 	public void setUp() throws Exception {
-		modifier = new ParametersModifier("lemma^1000 zitat^50");
+		modifier = new ParametersModifier("lemma^1000 zitat^50", "zitat_text,artikel_text");
 	}
 
 	@After
@@ -25,9 +25,21 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldConstructHlFlForExactSearch() throws Exception {
+		hlQuery = modifier.changeParamsForQuery("zitat:Imbis EXAKT").hlFl;
+		assertEquals("zitat_text_exakt,artikel_text_exakt", hlQuery);
+	}
+
+	@Test
 	public void shouldHighlightInExactCitation() throws Exception {
 		hlQuery = modifier.changeParamsForQuery("zitat:Imbis EXAKT").hlQ;
 		assertEquals("zitat_text_exakt:*Imbis*", hlQuery);
+	}
+
+	@Test
+	public void shouldNotHighlightLemma() throws Exception {
+		hlQuery = modifier.changeParamsForQuery("lemma:Imbis EXAKT").hlQ;
+		assertEquals("", hlQuery);
 	}
 
 	@Test

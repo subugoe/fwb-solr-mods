@@ -4,6 +4,8 @@ import org.apache.solr.parser.ParseException;
 
 public class ParseUtil {
 
+	public static final String EXACT = "_exakt";
+
 	public static void checkIfOneWord(String complexPhrase) throws ParseException {
 		if (complexPhrase.split("[\" ]+").length == 2) {
 			throw new ParseException("Phrasen mit * oder ? müssen mehrere Wörter enthalten: " + complexPhrase);

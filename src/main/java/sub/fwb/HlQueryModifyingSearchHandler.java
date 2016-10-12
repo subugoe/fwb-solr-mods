@@ -15,7 +15,7 @@ public class HlQueryModifyingSearchHandler extends SearchHandler {
 
 		String oldQuery = req.getParams().get(HighlightParams.Q);
 		String queryFieldsWithBoosts = req.getParams().get("qf");
-		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts);
+		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts, "");
 		String newQuery = modifier.changeParamsForQuery(oldQuery).q;
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());

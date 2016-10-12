@@ -17,16 +17,18 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String oldQuery = req.getParams().get(CommonParams.Q);
 		String queryFieldsWithBoosts = req.getParams().get("qf");
 		String hlFields = req.getParams().get(HighlightParams.FIELDS);
-		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts);
+		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts, hlFields);
 		ModifiedParameters modified = modifier.changeParamsForQuery(oldQuery);
 		String newQuery = modified.q;
 		String newHlQuery = modified.hlQ;
+		String newHlFields = modified.hlFl;
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set(CommonParams.Q, newQuery);
 		if (!newHlQuery.isEmpty()) {
 			newParams.set("hl.q", newHlQuery);
 		}
+		newParams.set("hl.fl", newHlFields);
 		req.setParams(newParams);
 
 		NamedList<String> queryInfoList = new SimpleOrderedMap<>();

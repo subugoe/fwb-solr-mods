@@ -28,27 +28,13 @@ public class TokenFactory {
 	private List<QueryToken> allTokens = new ArrayList<>();
 	private String solrFieldEnding = "";
 
-	public TokenFactory(String qfWithBoosts) {
-		createMapWithBoosts(qfWithBoosts);
-	}
-
-	private void createMapWithBoosts(String qf) {
-		boosts = new HashMap<String, String>();
-		boosts.put("artikel", "");
-		String[] fields = qf.trim().split("\\s+");
-		for (String fieldWithBoost : fields) {
-			String fieldName = fieldWithBoost.split("\\^")[0];
-			String boostValue = "^" + fieldWithBoost.split("\\^")[1];
-			boosts.put(fieldName, boostValue);
-		}
-	}
-
-	public List<QueryToken> createTokens(String queryString, boolean exactSearch) throws ParseException {
+	public List<QueryToken> createTokens(String queryString, String qfWithBoosts, boolean exactSearch) throws ParseException {
 		if (exactSearch) {
 			solrFieldEnding = ParseUtil.EXACT;
 		} else {
 			solrFieldEnding = "";
 		}
+		createMapWithBoosts(qfWithBoosts, solrFieldEnding);
 		allTokens = new ArrayList<>();
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
@@ -97,6 +83,17 @@ public class TokenFactory {
 		return allTokens;
 	}
 
+	private void createMapWithBoosts(String qf, String solrFieldEnding) {
+		boosts = new HashMap<String, String>();
+		boosts.put("artikel" + solrFieldEnding, "");
+		String[] fields = qf.trim().split("\\s+");
+		for (String fieldWithBoost : fields) {
+			String fieldName = fieldWithBoost.split("\\^")[0];
+			String boostValue = "^" + fieldWithBoost.split("\\^")[1];
+			boosts.put(fieldName, boostValue);
+		}
+	}
+
 	private boolean startsWithParen(String q) {
 		return q.startsWith("(");
 	}
@@ -136,7 +133,7 @@ public class TokenFactory {
 		if (hasPrefix(termString)) {
 			allTokens.add(new TermPrefixed(termString, solrFieldEnding, boosts));
 		} else {
-			allTokens.add(new Term(termString));
+			allTokens.add(new Term(termString, solrFieldEnding));
 		}
 	}
 
@@ -185,8 +182,8 @@ public class TokenFactory {
 		return phrase.contains("*") || phrase.contains("?");
 	}
 
-	public QueryToken createOneToken(String tokenString, boolean exactSearch) throws ParseException {
-		return createTokens(tokenString, exactSearch).get(0);
+	public QueryToken createOneToken(String tokenString, String queryFieldsWithBoosts, boolean exactSearch) throws ParseException {
+		return createTokens(tokenString, queryFieldsWithBoosts, exactSearch).get(0);
 	}
 
 }

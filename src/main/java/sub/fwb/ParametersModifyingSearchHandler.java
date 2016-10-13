@@ -14,9 +14,9 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 
-		String oldQuery = req.getParams().get(CommonParams.Q);
+		String oldQuery = req.getParams().get("q");
 		String queryFieldsWithBoosts = req.getParams().get("qf");
-		String hlFields = req.getParams().get(HighlightParams.FIELDS);
+		String hlFields = req.getParams().get("hl.fl");
 		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts, hlFields);
 		ModifiedParameters modified = modifier.changeParamsForQuery(oldQuery);
 		String newQuery = modified.q;
@@ -45,12 +45,12 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 	public static class ModifiedParameters {
 		public String q = "";
 		public String hlQ = "";
-		public String fq = "";
+		public String qf = "";
 		public String hlFl = "";
-		public ModifiedParameters(String q, String hlQ, String fq, String hlFl) {
+		public ModifiedParameters(String q, String hlQ, String qf, String hlFl) {
 			this.q = q;
 			this.hlQ = hlQ;
-			this.fq = fq;
+			this.qf = qf;
 			this.hlFl = hlFl;
 		}
 	}

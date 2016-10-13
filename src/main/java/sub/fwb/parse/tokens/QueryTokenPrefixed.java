@@ -4,7 +4,6 @@ public abstract class QueryTokenPrefixed extends QueryToken {
 
 	protected String prefix = "";
 	protected String prefixWithEnding = "";
-	protected String prefixEnding = "";
 	protected String postfix = "";
 
 	protected void splitIntoPrefixAndPostfix(String possibleEnding) {

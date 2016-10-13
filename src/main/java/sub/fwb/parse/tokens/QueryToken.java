@@ -6,6 +6,7 @@ public abstract class QueryToken {
 
 	protected String originalTokenString;
 	protected String escapedString = "";
+	protected String prefixEnding = "";
 
 	abstract public String getModifiedQuery() throws ParseException;
 

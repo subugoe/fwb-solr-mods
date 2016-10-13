@@ -32,7 +32,7 @@ public class TermPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getModifiedQuery() throws ParseException {
-		String boost = getBoost(prefix);
+		String boost = getBoost(prefixWithEnding);
 		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
 			String fuzzy = postfix.substring(postfix.length() - 2);
 			String postfixTemp = postfix.substring(0, postfix.length() - 2);

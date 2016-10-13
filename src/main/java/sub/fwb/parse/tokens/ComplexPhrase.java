@@ -13,19 +13,23 @@ public class ComplexPhrase extends QueryToken {
 
 	@Override
 	public String getModifiedQuery() throws ParseException {
+		String articleField = ParseUtil.article(prefixEnding);
+		String citationField = ParseUtil.citation(prefixEnding);
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
 		ParseUtil.checkForLeadingWildcards(escapedPhrase);
 		return String.format(
-				"_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}artikel:%s\" _query_:\"{!complexphrase}zitat:%s\") ",
-				escapedPhrase, escapedPhrase, escapedPhrase);
+				"_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\") ",
+				escapedPhrase, articleField, escapedPhrase, citationField, escapedPhrase);
 	}
 
 	@Override
 	public String getHlQuery() throws ParseException {
+		String articleTextField = ParseUtil.articleText(prefixEnding);
+		String citationTextField = ParseUtil.citationText(prefixEnding);
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
-		return String.format("_query_:\"{!complexphrase}artikel_text:%s\" _query_:\"{!complexphrase}zitat_text:%s\" ",
-				escapedPhrase, escapedPhrase);
+		return String.format("_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\" ",
+				articleTextField, escapedPhrase, citationTextField, escapedPhrase);
 	}
 
 }

@@ -25,6 +25,12 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldConstructQfForExactSearch() throws Exception {
+		String queryFields = modifier.changeParamsForQuery("zitat:Imbis EXAKT").qf;
+		assertEquals("lemma_exakt^1000 zitat_exakt^50", queryFields);
+	}
+
+	@Test
 	public void shouldConstructHlFlForExactSearch() throws Exception {
 		hlQuery = modifier.changeParamsForQuery("zitat:Imbis EXAKT").hlFl;
 		assertEquals("zitat_text_exakt,artikel_text_exakt", hlQuery);

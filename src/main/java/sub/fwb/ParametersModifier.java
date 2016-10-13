@@ -35,8 +35,9 @@ public class ParametersModifier {
 			exactSearch = true;
 		}
 
-		TokenFactory factory = new TokenFactory(queryFieldsWithBoosts);
-		List<QueryToken> allTokens = factory.createTokens(origQuery, exactSearch);
+		modifyQueryFields(exactSearch);
+		TokenFactory factory = new TokenFactory();
+		List<QueryToken> allTokens = factory.createTokens(origQuery, queryFieldsWithBoosts, exactSearch);
 
 		if (mustAddParens(allTokens)) {
 			addParenthesesWhereNecessary(allTokens, factory);
@@ -52,7 +53,7 @@ public class ParametersModifier {
 
 		modifyHlFields(exactSearch);
 
-		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), "", hlFields);
+		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields);
 	}
 
 	private boolean mustAddParens(List<QueryToken> allTokens) {
@@ -69,16 +70,16 @@ public class ParametersModifier {
 	}
 
 	private void addParenthesesWhereNecessary(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
-		allTokens.add(0, factory.createOneToken("(", false));
-		allTokens.add(allTokens.size(), factory.createOneToken(")", false));
+		allTokens.add(0, factory.createOneToken("(", queryFieldsWithBoosts, false));
+		allTokens.add(allTokens.size(), factory.createOneToken(")", queryFieldsWithBoosts, false));
 		for (int i = allTokens.size() - 2; i > 0; i--) {
 			QueryToken current = allTokens.get(i);
 			if (current instanceof OperatorOr) {
-				allTokens.add(i + 1, factory.createOneToken("(", false));
-				allTokens.add(i, factory.createOneToken(")", false));
+				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
+				allTokens.add(i, factory.createOneToken(")", queryFieldsWithBoosts, false));
 			} else if (current instanceof OperatorNot) {
-				allTokens.add(i + 2, factory.createOneToken(")", false));
-				allTokens.add(i + 1, factory.createOneToken("(", false));
+				allTokens.add(i + 2, factory.createOneToken(")", queryFieldsWithBoosts, false));
+				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
 			}
 		}
 	}
@@ -107,8 +108,8 @@ public class ParametersModifier {
 			QueryToken current = allTokens.get(i);
 			QueryToken next = allTokens.get(i + 1);
 			if (current instanceof OperatorNot && !(next instanceof ParenthesisLeft)) {
-				allTokens.add(i + 2, factory.createOneToken(")", false));
-				allTokens.add(i + 1, factory.createOneToken("(", false));
+				allTokens.add(i + 2, factory.createOneToken(")", queryFieldsWithBoosts, false));
+				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
 			}
 		}
 	}
@@ -121,6 +122,19 @@ public class ParametersModifier {
 				hlFields += field + ParseUtil.EXACT + ",";
 			}
 			hlFields = hlFields.substring(0, hlFields.length() - 1);
+		}
+	}
+
+	private void modifyQueryFields(boolean exactSearch) {
+		if (exactSearch) {
+			String[] fields = queryFieldsWithBoosts.trim().split("\\s+");
+			queryFieldsWithBoosts = "";
+			for (String fieldWithBoost : fields) {
+				String fieldName = fieldWithBoost.split("\\^")[0];
+				String boostValue = "^" + fieldWithBoost.split("\\^")[1];
+				queryFieldsWithBoosts += fieldName + ParseUtil.EXACT + boostValue + " ";
+			}
+			queryFieldsWithBoosts = queryFieldsWithBoosts.trim();
 		}
 	}
 }

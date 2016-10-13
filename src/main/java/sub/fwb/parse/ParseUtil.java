@@ -31,4 +31,16 @@ public class ParseUtil {
 		return s;
 	}
 
+	public static String article(String ending) {
+		return "artikel" + ending;
+	}
+	public static String articleText(String ending) {
+		return "artikel_text" + ending;
+	}
+	public static String citation(String ending) {
+		return "zitat" + ending;
+	}
+	public static String citationText(String ending) {
+		return "zitat_text" + ending;
+	}
 }

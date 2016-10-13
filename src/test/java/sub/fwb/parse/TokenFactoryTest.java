@@ -15,7 +15,7 @@ public class TokenFactoryTest {
 
 	@Before
 	public void beforeEach() throws Exception {
-		factory = new TokenFactory("lemma^1000 def^70 zitat^50");
+		factory = new TokenFactory();
 	}
 
 	@After
@@ -347,10 +347,10 @@ public class TokenFactoryTest {
 	}
 
 	private String expandOneTokenString(String ts) throws Exception {
-		return factory.createTokens(ts, false).get(0).getModifiedQuery();
+		return factory.createTokens(ts, "lemma^1000 def^70 zitat^50", false).get(0).getModifiedQuery();
 	}
 
 	private String hlQueryFrom(String query) throws Exception {
-		return factory.createTokens(query, false).get(0).getHlQuery();
+		return factory.createTokens(query, "lemma^1000 def^70 zitat^50", false).get(0).getHlQuery();
 	}
 }

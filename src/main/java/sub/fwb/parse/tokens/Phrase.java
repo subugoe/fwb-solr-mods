@@ -2,6 +2,8 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.parse.ParseUtil;
+
 public class Phrase extends QueryToken {
 
 	public Phrase(String phraseString) {
@@ -11,12 +13,17 @@ public class Phrase extends QueryToken {
 
 	@Override
 	public String getModifiedQuery() {
-		return String.format("%s +(artikel:%s zitat:%s) ", escapedString, escapedString, escapedString);
+		String articleField = ParseUtil.article(prefixEnding);
+		String citationField = ParseUtil.citation(prefixEnding);
+		return String.format("%s +(%s:%s %s:%s) ", escapedString, articleField, escapedString, citationField,
+				escapedString);
 	}
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		return String.format("artikel_text:%s zitat_text:%s ", escapedString, escapedString, escapedString);
+		String articleTextField = ParseUtil.articleText(prefixEnding);
+		String citationTextField = ParseUtil.citationText(prefixEnding);
+		return String.format("%s:%s %s:%s ", articleTextField, escapedString, citationTextField, escapedString);
 	}
 
 }

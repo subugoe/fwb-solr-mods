@@ -51,8 +51,9 @@ public class ParametersModifier {
 			hlQuery += token.getHlQuery();
 		}
 
-		modifyHlFields(exactSearch);
-
+		if (hlFields != null && !hlFields.isEmpty()) {
+			modifyHlFields(exactSearch);
+		}
 		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields);
 	}
 

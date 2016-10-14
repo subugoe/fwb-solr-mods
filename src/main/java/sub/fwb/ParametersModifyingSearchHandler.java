@@ -22,9 +22,11 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String newQuery = modified.q;
 		String newHlQuery = modified.hlQ;
 		String newHlFields = modified.hlFl;
+		String newQueryFields = modified.qf;
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set(CommonParams.Q, newQuery);
+		newParams.set("qf", newQueryFields);
 		if (!newHlQuery.isEmpty()) {
 			newParams.set("hl.q", newHlQuery);
 		}

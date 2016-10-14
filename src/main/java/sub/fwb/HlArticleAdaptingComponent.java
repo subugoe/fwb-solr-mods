@@ -9,6 +9,8 @@ import org.apache.solr.handler.component.ResponseBuilder;
 import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.response.SolrQueryResponse;
 
+import sub.fwb.parse.ParseUtil;
+
 public class HlArticleAdaptingComponent extends SearchComponent {
 
 	@Override
@@ -21,11 +23,20 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 		@SuppressWarnings("unchecked")
 		SimpleOrderedMap<Object> highlightedFields = (SimpleOrderedMap<Object>) ((SimpleOrderedMap<Object>) response
 				.getValues().get("highlighting")).getVal(0);
-		String article = ((String[]) highlightedFields.get("artikel"))[0];
+		String articleField = "";
+		String ending = ParseUtil.EXACT;
+		if (highlightedFields.get("artikel") != null) {
+			articleField = "artikel";
+		} else if (highlightedFields.get("artikel" + ending) != null) {
+			articleField = "artikel" + ending;
+		} else {
+			throw new RuntimeException("No highlighted field found. Must be either 'artikel' or 'artikel" + ending + "'.");
+		}
+		String article = ((String[]) highlightedFields.get(articleField))[0];
 
 		for (int i = highlightedFields.size() - 1; i >= 0; i--) {
 			String fieldName = highlightedFields.getName(i);
-			if (!fieldName.equals("artikel")) {
+			if (!fieldName.equals(articleField)) {
 				String[] values = (String[]) highlightedFields.get(fieldName);
 				for (String value : values) {
 					String valueStart = getStart(value);

@@ -17,6 +17,7 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 	public void process(ResponseBuilder rb) throws IOException {
 		SolrQueryResponse response = rb.rsp;
 		SimpleOrderedMap<Object> highlightedDocs = (SimpleOrderedMap<Object>) response.getValues().get("highlighting");
+		//SimpleOrderedMap<Object> returnedFields = (SimpleOrderedMap<Object>) response.getValues().get("response");
 		if (highlightedDocs != null) {
 			for (int i = 0; i < highlightedDocs.size(); i++) {
 				SimpleOrderedMap<Object> currentDoc = (SimpleOrderedMap<Object>) highlightedDocs.getVal(i);
@@ -25,9 +26,12 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 				if (isEmpty(articleHl) && currentDoc.size() > 0) {
 					String[] nonArticleHl = (String[]) currentDoc.getVal(0);
 					currentDoc.add("artikel_text", nonArticleHl);
+				} else {
+					currentDoc.add("test_in_else", highlightedDocs.getName(i));
 				}
 			}
 		}
+
 	}
 
 	private boolean isEmpty(String[] array) {

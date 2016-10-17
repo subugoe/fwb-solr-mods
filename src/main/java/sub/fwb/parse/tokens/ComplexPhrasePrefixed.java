@@ -23,14 +23,14 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		if (prefix.equals("lemma")) {
-			return "";
-		}
 		if (prefix.equals("zitat") && prefixEnding.isEmpty()) {
 			throw new ParseException("Komplexe Phrasensuche in Zitaten ist leider nicht möglich.");
 		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
+		if (prefix.equals("lemma")) {
+			return String.format("_query_:\"{!complexphrase}artikel_text%s:%s\" ", prefixEnding, postfixTemp);
+		}
 		return String.format("_query_:\"{!complexphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
 	}
 

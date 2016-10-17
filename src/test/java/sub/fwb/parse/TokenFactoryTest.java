@@ -25,6 +25,18 @@ public class TokenFactoryTest {
 	}
 
 	@Test
+	public void shouldHighlightArticleInsteadOfLemmaPhrase() throws Exception {
+		hlQuery = hlQueryFrom("lemma:\"imbis bla\"");
+		assertEquals("artikel_text:\"imbis bla\" ", hlQuery);
+	}
+
+	@Test
+	public void shouldHighlightArticleInsteadOfLemma() throws Exception {
+		hlQuery = hlQueryFrom("lemma:imbis");
+		assertEquals("artikel_text:*imbis* ", hlQuery);
+	}
+
+	@Test
 	public void shouldIgnoreNonlettersInPrefixedPhrase() throws Exception {
 		expanded = expandOneTokenString("lemma:\"_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
 		assertEquals("+lemma:\"imbis\" ", expanded);

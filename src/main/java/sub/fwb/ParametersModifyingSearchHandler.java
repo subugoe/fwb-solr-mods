@@ -1,7 +1,5 @@
 package sub.fwb;
 
-import org.apache.solr.common.params.CommonParams;
-import org.apache.solr.common.params.HighlightParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.common.util.SimpleOrderedMap;
@@ -49,6 +47,7 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		public String hlQ = "";
 		public String qf = "";
 		public String hlFl = "";
+
 		public ModifiedParameters(String q, String hlQ, String qf, String hlFl) {
 			this.q = q;
 			this.hlQ = hlQ;

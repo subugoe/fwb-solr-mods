@@ -1,6 +1,12 @@
 package sub.fwb.parse;
 
+import java.util.List;
+
 import org.apache.solr.parser.ParseException;
+
+import sub.fwb.parse.tokens.QueryToken;
+import sub.fwb.parse.tokens.QueryTokenPrefixed;
+import sub.fwb.parse.tokens.QueryTokenSymbol;
 
 public class ParseUtil {
 
@@ -43,4 +49,28 @@ public class ParseUtil {
 	public static String citationText(String ending) {
 		return "zitat_text" + ending;
 	}
+
+	public static boolean checkIfOnlyLemmas(List<QueryToken> allTokens) {
+		for (QueryToken token : allTokens) {
+			if (isLemma(token)) {
+				continue;
+			} else if (token instanceof QueryTokenSymbol) {
+				continue;
+			}
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isLemma(QueryToken token) {
+		if (token instanceof QueryTokenPrefixed) {
+			QueryTokenPrefixed prefixed = (QueryTokenPrefixed) token;
+			if ("lemma".equals(prefixed.getPrefix())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 }

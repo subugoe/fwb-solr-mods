@@ -2,7 +2,7 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
-public class OperatorAnd extends QueryToken {
+public class OperatorAnd extends QueryTokenSymbol {
 
 	@Override
 	public String getModifiedQuery() throws ParseException {

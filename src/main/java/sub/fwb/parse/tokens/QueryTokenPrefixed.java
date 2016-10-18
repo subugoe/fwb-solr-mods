@@ -14,4 +14,8 @@ public abstract class QueryTokenPrefixed extends QueryToken {
 		postfix = prePost[1];
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
 }

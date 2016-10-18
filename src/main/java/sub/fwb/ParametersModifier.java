@@ -13,6 +13,8 @@ import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.QueryToken;
+import sub.fwb.parse.tokens.QueryTokenPrefixed;
+import sub.fwb.parse.tokens.QueryTokenSymbol;
 import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters; 
 
 public class ParametersModifier {
@@ -46,9 +48,15 @@ public class ParametersModifier {
 			setNOTsInParens(allTokens, factory);
 		}
 
+		boolean onlyLemmaSearches = ParseUtil.checkIfOnlyLemmas(allTokens);
+
 		for (QueryToken token : allTokens) {
 			expandedQuery += token.getModifiedQuery();
-			hlQuery += token.getHlQuery();
+			if (onlyLemmaSearches) {
+				hlQuery += token.getHlQuery();
+			} else if (!onlyLemmaSearches && !ParseUtil.isLemma(token)) {
+				hlQuery += token.getHlQuery();
+			}
 		}
 
 		if (hlFields != null && !hlFields.isEmpty()) {

@@ -9,6 +9,7 @@ import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.parser.ParseException;
 import org.apache.solr.response.SolrQueryResponse;
 
+import sub.fwb.parse.ParseUtil;
 import sub.fwb.parse.TokenFactory;
 import sub.fwb.parse.tokens.QueryToken;
 
@@ -63,7 +64,7 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 			e.printStackTrace();
 			return false;
 		}
-		if (originalQ.startsWith("lemma:") && tokens.size() == 1) {
+		if (ParseUtil.checkIfOnlyLemmas(tokens)) {
 			return true;
 		} else {
 			return false;

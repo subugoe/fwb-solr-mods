@@ -17,9 +17,6 @@ public class RegexPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		if (prefix.equals("lemma")) {
-			return String.format("artikel_text%s:%s ", prefixEnding, postfix);
-		}
 		return String.format("%s_text%s:%s ", prefix, prefixEnding, postfix);
 	}
 

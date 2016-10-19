@@ -43,9 +43,9 @@ public class ParametersModifierTest {
 	}
 
 	@Test
-	public void shouldNotHighlightLemmaButArticle() throws Exception {
+	public void shouldHighlightLemmaExact() throws Exception {
 		hlQuery = modifier.changeParamsForQuery("lemma:Imbis EXAKT").hlQ;
-		assertEquals("artikel_text_exakt:*Imbis*", hlQuery);
+		assertEquals("lemma_text_exakt:*Imbis*", hlQuery);
 	}
 
 	@Test

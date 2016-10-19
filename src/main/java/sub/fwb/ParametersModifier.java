@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters;
 import sub.fwb.parse.ParseUtil;
 import sub.fwb.parse.TokenFactory;
 import sub.fwb.parse.tokens.OperatorNot;
@@ -13,9 +14,6 @@ import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.QueryToken;
-import sub.fwb.parse.tokens.QueryTokenPrefixed;
-import sub.fwb.parse.tokens.QueryTokenSymbol;
-import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters; 
 
 public class ParametersModifier {
 
@@ -30,7 +28,7 @@ public class ParametersModifier {
 	}
 
 	public ModifiedParameters changeParamsForQuery(String origQuery) throws ParseException {
-		
+
 		boolean exactSearch = false;
 		if (origQuery.contains("EXAKT")) {
 			origQuery = origQuery.replace("EXAKT", "");
@@ -48,15 +46,9 @@ public class ParametersModifier {
 			setNOTsInParens(allTokens, factory);
 		}
 
-		boolean onlyLemmaSearches = ParseUtil.checkIfOnlyLemmas(allTokens);
-
 		for (QueryToken token : allTokens) {
 			expandedQuery += token.getModifiedQuery();
-			if (onlyLemmaSearches) {
-				hlQuery += token.getHlQuery();
-			} else if (!onlyLemmaSearches && !ParseUtil.isLemma(token)) {
-				hlQuery += token.getHlQuery();
-			}
+			hlQuery += token.getHlQuery();
 		}
 
 		if (hlFields != null && !hlFields.isEmpty()) {

@@ -25,15 +25,15 @@ public class TokenFactoryTest {
 	}
 
 	@Test
-	public void shouldHighlightArticleInsteadOfLemmaPhrase() throws Exception {
+	public void shouldHighlightLemmaPhrase() throws Exception {
 		hlQuery = hlQueryFrom("lemma:\"imbis bla\"");
-		assertEquals("artikel_text:\"imbis bla\" ", hlQuery);
+		assertEquals("lemma_text:\"imbis bla\" ", hlQuery);
 	}
 
 	@Test
-	public void shouldHighlightArticleInsteadOfLemma() throws Exception {
+	public void shouldHighlightLemma() throws Exception {
 		hlQuery = hlQueryFrom("lemma:imbis");
-		assertEquals("artikel_text:*imbis* ", hlQuery);
+		assertEquals("lemma_text:*imbis* ", hlQuery);
 	}
 
 	@Test

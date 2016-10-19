@@ -62,12 +62,7 @@ public class TermPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		String prefixForHl = "";
-		if (prefix.equals("lemma")) {
-			prefixForHl = "artikel_text" + prefixEnding;
-		} else {
-			prefixForHl = prefix + "_text" + prefixEnding;
-		}
+		String prefixForHl = prefix + "_text" + prefixEnding;
 		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
 			String fuzzy = postfix.substring(postfix.length() - 2);
 			String postfixTemp = postfix.substring(0, postfix.length() - 2);

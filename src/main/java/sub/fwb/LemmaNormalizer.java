@@ -39,16 +39,10 @@ public class LemmaNormalizer {
 		
 		return mappedWords;
 	}
-	
+
 	private String cleanFromOutsideParens(String term, String leftP, String rightP) {
 		if (term.startsWith(leftP) && term.endsWith(rightP)) {
 			term = term.substring(1, term.length() - 1);
-			mappedWords.add(term);
-		} else if (term.startsWith(leftP) && !term.contains(rightP)) {
-			term = term.substring(1);
-			mappedWords.add(term);
-		} else if (!term.contains(leftP) && term.endsWith(rightP)) {
-			term = term.substring(0, term.length() - 1);
 			mappedWords.add(term);
 		}
 		return term;

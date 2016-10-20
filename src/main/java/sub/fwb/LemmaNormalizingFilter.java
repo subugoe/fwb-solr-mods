@@ -57,6 +57,13 @@ public class LemmaNormalizingFilter extends TokenFilter {
 				String currentTerm = termAttr.toString();
 				startOffset = offsetAttr.startOffset();
 				endOffset = offsetAttr.endOffset();
+				if (hasUnnecessaryLeftParen(currentTerm)) {
+					currentTerm = currentTerm.substring(1);
+					startOffset++;
+				} else if (hasUnnecessaryRightParen(currentTerm)) {
+					currentTerm = currentTerm.substring(0, currentTerm.length() - 1);
+					endOffset--;
+				}
 				posIncr = 1;
 
 				LemmaNormalizer normalizer = new LemmaNormalizer();
@@ -70,6 +77,18 @@ public class LemmaNormalizingFilter extends TokenFilter {
 			}
 		}
 		return false;
+	}
+
+	private boolean hasUnnecessaryLeftParen(String term) {
+		boolean hasRoundParen = term.startsWith("(") && !term.contains(")");
+		boolean hasBracket = term.startsWith("[") && !term.contains("]");
+		return hasRoundParen || hasBracket;
+	}
+
+	private boolean hasUnnecessaryRightParen(String term) {
+		boolean hasRoundParen = !term.contains("(") && term.endsWith(")");
+		boolean hasBracket = !term.contains("[") && term.endsWith("]");
+		return hasRoundParen || hasBracket;
 	}
 
 	@Override

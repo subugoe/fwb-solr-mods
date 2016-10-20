@@ -123,20 +123,4 @@ public class LemmaNormalizerTest {
 		assertEquals("geld", results.get(1));
 	}
 
-	@Test
-	public void shouldRemoveLeftParen() {
-		List<String> results = norm.createMappings("(geld");
-		assertEquals(2, results.size());
-		assertEquals("(geld", results.get(0));
-		assertEquals("geld", results.get(1));
-	}
-
-	@Test
-	public void shouldRemoveRightParen() {
-		List<String> results = norm.createMappings("geld)");
-		assertEquals(2, results.size());
-		assertEquals("geld)", results.get(0));
-		assertEquals("geld", results.get(1));
-	}
-
 }

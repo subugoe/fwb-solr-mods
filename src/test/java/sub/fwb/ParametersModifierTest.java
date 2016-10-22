@@ -5,13 +5,18 @@ import static org.junit.Assert.assertEquals;
 import org.apache.solr.parser.ParseException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class ParametersModifierTest {
 
 	private ParametersModifier modifier;
 	private String expanded = "";
 	private String hlQuery = "";
+
+	@Rule
+	public ExpectedException inTest = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -22,6 +27,34 @@ public class ParametersModifierTest {
 	public void tearDown() throws Exception {
 		System.out.println(expanded);
 		System.out.println(hlQuery);
+	}
+
+	@Test
+	public void shouldNotAllowQuoteAndColonInTerm() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Anführungszeichen dürfen nur für Phrasen");
+	    expanded = modifier.changeParamsForQuery("lemmaimme\":\"ss").q;
+	}
+
+	@Test
+	public void shouldNotAllowQuoteInTermSearch() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Anführungszeichen dürfen nur für Phrasen");
+	    expanded = modifier.changeParamsForQuery("imme\"ss").q;
+	}
+
+	@Test
+	public void shouldNotAllowQuoteInLemmaSearch() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Anführungszeichen dürfen nur für Phrasen");
+	    expanded = modifier.changeParamsForQuery("lemma:imme\"ss").q;
+	}
+
+	@Test
+	public void shouldNotAllowTwoColons() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Doppelpunkt nur einmal erlaubt");
+	    expanded = modifier.changeParamsForQuery("lemma:imme\":\"ss").q;
 	}
 
 	@Test

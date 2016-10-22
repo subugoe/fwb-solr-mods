@@ -145,8 +145,10 @@ public class TokenFactory {
 		}
 	}
 
-	private boolean startingAPhrase(String q) {
-		return q.contains("\"") && !q.endsWith("\"");
+	private boolean startingAPhrase(String q) throws ParseException {
+		boolean startOfPhrase = q.startsWith("\"") && !q.endsWith("\"");
+		boolean startOfPrefixedPhrase = q.matches("[^:\"]+:\"[^:\"]+");
+		return startOfPhrase || startOfPrefixedPhrase;
 	}
 
 	private boolean insideAPhrase(String currentPhrase, String q) {

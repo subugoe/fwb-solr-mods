@@ -1,12 +1,6 @@
 package sub.fwb.parse;
 
-import java.util.List;
-
 import org.apache.solr.parser.ParseException;
-
-import sub.fwb.parse.tokens.QueryToken;
-import sub.fwb.parse.tokens.QueryTokenPrefixed;
-import sub.fwb.parse.tokens.QueryTokenSymbol;
 
 public class ParseUtil {
 
@@ -48,6 +42,12 @@ public class ParseUtil {
 	}
 	public static String citationText(String ending) {
 		return "zitat_text" + ending;
+	}
+
+	public static void checkForProhibitedCharsInTerm(String term) throws ParseException {
+		if (term.contains("\"")) {
+			throw new ParseException("Anführungszeichen dürfen nur für Phrasen verwendet werden, z. B. \"der imbis\"");
+		}
 	}
 
 }

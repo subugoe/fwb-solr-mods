@@ -16,6 +16,7 @@ public class TermPrefixed extends QueryTokenPrefixed {
 		escapeSpecialChars();
 		checkForCorrectness();
 		splitIntoPrefixAndPostfix(prefixEnding);
+		ParseUtil.checkForProhibitedCharsInTerm(postfix);
 		boosts = qfWithBoosts;
 	}
 

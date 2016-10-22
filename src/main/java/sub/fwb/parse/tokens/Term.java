@@ -6,10 +6,11 @@ import sub.fwb.parse.ParseUtil;
 
 public class Term extends QueryToken {
 
-	public Term(String tokenString, String prefixEnding) {
+	public Term(String tokenString, String prefixEnding) throws ParseException {
 		this.prefixEnding = prefixEnding;
 		originalTokenString = tokenString;
 		escapeSpecialChars();
+		ParseUtil.checkForProhibitedCharsInTerm(escapedString);
 	}
 
 	@Override

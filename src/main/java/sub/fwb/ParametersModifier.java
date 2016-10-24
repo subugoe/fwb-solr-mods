@@ -51,6 +51,10 @@ public class ParametersModifier {
 			hlQuery += token.getHlQuery();
 		}
 
+		if (expandedQuery.isEmpty()) {
+			throw new ParseException("Die Suchanfrage ist ungültig");
+		}
+
 		if (hlFields != null && !hlFields.isEmpty()) {
 			modifyHlFields(exactSearch);
 		}

@@ -39,6 +39,9 @@ public class TokenFactory {
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
 		for (String q : qParts) {
+			if (ParseUtil.removeSpecialChars(q).equals("")) {
+				continue;
+			}
 
 			String qOrig = q;
 			if (!q.equals("(") && startsWithParen(q)) {

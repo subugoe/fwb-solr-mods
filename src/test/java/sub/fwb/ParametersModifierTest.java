@@ -30,6 +30,13 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldNotAllowOnlySpecialChars() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Suchanfrage ist ungültig");
+		expanded = modifier.changeParamsForQuery("‒&<>′`″” ∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½ §…℔₰¶⸗˺˹„“+–!;›‹.,’·‘#'%").q;
+	}
+
+	@Test
 	public void shouldNotAllowQuoteAndColonInTerm() throws Exception {
 	    inTest.expect(ParseException.class);
 	    inTest.expectMessage("Anführungszeichen dürfen nur für Phrasen");

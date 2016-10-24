@@ -2,6 +2,8 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.parse.ParseUtil;
+
 public abstract class QueryToken {
 
 	protected String originalTokenString;
@@ -19,7 +21,7 @@ public abstract class QueryToken {
 		escapedString = escapedString.replaceAll("\\[", "\\\\[");
 		escapedString = escapedString.replaceAll("\\]", "\\\\]");
 		escapedString = escapedString.replaceAll("-", "\\\\-");
-		escapedString = escapedString.replaceAll("[‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹\\.,’·‘']+", "");
+		escapedString = ParseUtil.removeSpecialChars(escapedString);
 	}
 
 }

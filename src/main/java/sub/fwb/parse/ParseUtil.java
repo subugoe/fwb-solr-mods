@@ -50,4 +50,8 @@ public class ParseUtil {
 		}
 	}
 
+	public static String removeSpecialChars(String str) {
+		return str.replaceAll("[‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹\\.,’·‘'%]+", "");
+	}
+
 }

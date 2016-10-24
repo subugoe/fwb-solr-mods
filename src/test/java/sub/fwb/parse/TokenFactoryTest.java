@@ -38,25 +38,25 @@ public class TokenFactoryTest {
 
 	@Test
 	public void shouldIgnoreNonlettersInPrefixedPhrase() throws Exception {
-		expanded = expandOneTokenString("lemma:\"_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
+		expanded = expandOneTokenString("lemma:\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
 		assertEquals("+lemma:\"imbis\" ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonlettersInPhrase() throws Exception {
-		expanded = expandOneTokenString("\"_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
+		expanded = expandOneTokenString("\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
 		assertEquals("\"imbis\" +(artikel:\"imbis\" zitat:\"imbis\") ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonlettersInPrefixed() throws Exception {
-		expanded = expandOneTokenString("lemma:_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
+		expanded = expandOneTokenString("lemma:‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
 		assertEquals("+lemma:(imbis imbis* *imbis*)^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonletters() throws Exception {
-		expanded = expandOneTokenString("_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is_‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
+		expanded = expandOneTokenString("‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
 		assertEquals("imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ", expanded);
 	}
 

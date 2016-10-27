@@ -6,7 +6,8 @@ import sub.fwb.parse.ParseUtil;
 
 public class Regex extends QueryToken {
 
-	public Regex(String regexString) {
+	public Regex(String regexString, String prefixEnding) {
+		this.prefixEnding = prefixEnding;
 		originalTokenString = regexString;
 	}
 

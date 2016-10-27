@@ -6,7 +6,8 @@ import sub.fwb.parse.ParseUtil;
 
 public class ComplexPhrase extends QueryToken {
 
-	public ComplexPhrase(String phraseString) {
+	public ComplexPhrase(String phraseString, String prefixEnding) {
+		this.prefixEnding = prefixEnding;
 		originalTokenString = phraseString;
 		escapeSpecialChars();
 	}

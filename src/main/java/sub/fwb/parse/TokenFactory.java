@@ -126,9 +126,9 @@ public class TokenFactory {
 		} else if (hasPrefix(phraseString)) {
 			allTokens.add(new PhrasePrefixed(phraseString, solrFieldEnding));
 		} else if (isComplex(phraseString)) {
-			allTokens.add(new ComplexPhrase(phraseString));
+			allTokens.add(new ComplexPhrase(phraseString, solrFieldEnding));
 		} else {
-			allTokens.add(new Phrase(phraseString));
+			allTokens.add(new Phrase(phraseString, solrFieldEnding));
 		}
 	}
 
@@ -144,7 +144,7 @@ public class TokenFactory {
 		if (hasPrefix(regexString)) {
 			allTokens.add(new RegexPrefixed(regexString, solrFieldEnding));
 		} else {
-			allTokens.add(new Regex(regexString));
+			allTokens.add(new Regex(regexString, solrFieldEnding));
 		}
 	}
 

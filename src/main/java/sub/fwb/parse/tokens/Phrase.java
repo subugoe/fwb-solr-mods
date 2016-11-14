@@ -8,7 +8,7 @@ public class Phrase extends QueryToken {
 
 	public Phrase(String phraseString, String prefixEnding) {
 		this.prefixEnding = prefixEnding;
-		originalTokenString = phraseString;
+		originalTokenString = ParseUtil.removeParensAndPipe(phraseString);
 		escapeSpecialChars();
 	}
 

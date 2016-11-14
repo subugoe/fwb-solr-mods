@@ -54,4 +54,12 @@ public class ParseUtil {
 		return str.replaceAll("[‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹\\.,’·‘'%]+", "");
 	}
 
+	public static String removeParensAndPipe(String str) {
+		String removed = str.replace("(", " ");
+		removed = removed.replace(")", " ");
+		removed = removed.replace("[", " ");
+		removed = removed.replace("]", " ");
+		removed = removed.replace("|", " ");
+		return removed;
+	}
 }

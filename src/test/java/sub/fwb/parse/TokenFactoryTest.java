@@ -30,6 +30,12 @@ public class TokenFactoryTest {
 	}
 
 	@Test
+	public void shouldRemoveParenthesesFromPhrase() throws Exception {
+		expanded = expandOneTokenString("\"104)\"");
+		assertEquals("\"104 \" +(artikel:\"104 \" zitat:\"104 \") ", expanded);
+	}
+
+	@Test
 	public void shouldNotAcceptTooLongString() throws Exception {
 	    inTest.expect(ParseException.class);
 	    inTest.expectMessage("Suchanfrage zu lang");

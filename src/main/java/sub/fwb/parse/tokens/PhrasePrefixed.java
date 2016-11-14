@@ -2,10 +2,12 @@ package sub.fwb.parse.tokens;
 
 import org.apache.solr.parser.ParseException;
 
+import sub.fwb.parse.ParseUtil;
+
 public class PhrasePrefixed extends QueryTokenPrefixed {
 
 	public PhrasePrefixed(String phraseString, String prefixEnding) {
-		originalTokenString = phraseString;
+		originalTokenString = ParseUtil.removeParensAndPipe(phraseString);
 		escapeSpecialChars();
 		splitIntoPrefixAndPostfix(prefixEnding);
 	}

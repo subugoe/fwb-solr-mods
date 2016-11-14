@@ -39,8 +39,11 @@ public class TokenFactory {
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
 		for (String q : qParts) {
-			if (ParseUtil.removeSpecialChars(q).equals("")) {
+			String qWithoutSpecials = ParseUtil.removeSpecialChars(q);
+			if (qWithoutSpecials.equals("")) {
 				continue;
+			} else if (qWithoutSpecials.length() > 50) {
+				throw new ParseException("Suchanfrage zu lang: " + q.substring(0, 15) + "...");
 			}
 
 			String qOrig = q;

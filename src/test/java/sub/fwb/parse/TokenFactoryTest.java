@@ -5,13 +5,18 @@ import static org.junit.Assert.assertEquals;
 import org.apache.solr.parser.ParseException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class TokenFactoryTest {
 
 	private TokenFactory factory;
 	private String expanded = "";
 	private String hlQuery = "";
+
+	@Rule
+	public ExpectedException inTest = ExpectedException.none();
 
 	@Before
 	public void beforeEach() throws Exception {
@@ -22,6 +27,13 @@ public class TokenFactoryTest {
 	public void afterEach() throws Exception {
 		System.out.println(expanded);
 		System.out.println(hlQuery);
+	}
+
+	@Test
+	public void shouldNotAcceptTooLongString() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Suchanfrage zu lang");
+		expanded = expandOneTokenString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	}
 
 	@Test

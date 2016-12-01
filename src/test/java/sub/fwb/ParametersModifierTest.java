@@ -1,6 +1,8 @@
 package sub.fwb;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
+import java.util.Set;
 
 import org.apache.solr.parser.ParseException;
 import org.junit.After;
@@ -14,6 +16,7 @@ public class ParametersModifierTest {
 	private ParametersModifier modifier;
 	private String expanded = "";
 	private String hlQuery = "";
+	private Set<String> facetQueries;
 
 	@Rule
 	public ExpectedException inTest = ExpectedException.none();
@@ -27,6 +30,16 @@ public class ParametersModifierTest {
 	public void tearDown() throws Exception {
 		System.out.println(expanded);
 		System.out.println(hlQuery);
+		if (facetQueries != null) {
+			System.out.println(facetQueries);
+		}
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForTwoTerms() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("imbis gast").facetQueries;
+		assertTrue(facetQueries.contains("lemma:*imbis* lemma:*gast*"));
+		assertTrue(facetQueries.contains("zitat:*imbis* zitat:*gast*"));
 	}
 
 	@Test

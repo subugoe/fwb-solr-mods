@@ -69,7 +69,7 @@ public class Term extends QueryToken {
 		for (String searchField : mapForFacetQueries.keySet()) {
 			mapForFacetQueries.put(searchField, searchField + ":*" + escapedString + "*");
 		}
-		return super.getFacetQueries();
+		return mapForFacetQueries;
 	}
 
 }

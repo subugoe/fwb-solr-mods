@@ -2,6 +2,8 @@ package sub.fwb.parse;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Map;
+
 import org.apache.solr.parser.ParseException;
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +16,7 @@ public class TokenFactoryTest {
 	private TokenFactory factory;
 	private String expanded = "";
 	private String hlQuery = "";
+	private Map<String, String> facetQueries;
 
 	@Rule
 	public ExpectedException inTest = ExpectedException.none();
@@ -27,6 +30,18 @@ public class TokenFactoryTest {
 	public void afterEach() throws Exception {
 		System.out.println(expanded);
 		System.out.println(hlQuery);
+		if (facetQueries != null) {
+			System.out.println(facetQueries);
+		}
+	}
+
+	@Test
+	public void shouldCreateFacetQueries() throws Exception {
+		facetQueries = facetQueriesFor("imbis");
+		String lemmaFacet = facetQueries.get("lemma");
+		assertEquals("lemma:*imbis*", lemmaFacet);
+		String defFacet = facetQueries.get("def");
+		assertEquals("def:*imbis*", defFacet);
 	}
 
 	@Test
@@ -382,5 +397,9 @@ public class TokenFactoryTest {
 
 	private String hlQueryFrom(String query) throws Exception {
 		return factory.createTokens(query, "lemma^1000 def^70 zitat^50", false).get(0).getHlQuery();
+	}
+
+	private Map<String, String> facetQueriesFor(String query) throws Exception {
+		return factory.createTokens(query, "lemma^1000 def^70 zitat^50", false).get(0).getFacetQueries();
 	}
 }

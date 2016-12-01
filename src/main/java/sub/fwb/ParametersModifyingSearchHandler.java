@@ -1,6 +1,6 @@
 package sub.fwb;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
@@ -23,7 +23,7 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String newHlQuery = modified.hlQ;
 		String newHlFields = modified.hlFl;
 		String newQueryFields = modified.qf;
-		List<String> facetQueries = modified.facetQueries;
+		Set<String> facetQueries = modified.facetQueries;
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set("q", newQuery);
@@ -53,9 +53,9 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		public String hlQ = "";
 		public String qf = "";
 		public String hlFl = "";
-		public List<String> facetQueries;
+		public Set<String> facetQueries;
 
-		public ModifiedParameters(String q, String hlQ, String qf, String hlFl, List<String> facetQueries) {
+		public ModifiedParameters(String q, String hlQ, String qf, String hlFl, Set<String> facetQueries) {
 			this.q = q;
 			this.hlQ = hlQ;
 			this.qf = qf;

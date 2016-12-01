@@ -1,10 +1,11 @@
 package sub.fwb;
 
-import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.solr.parser.ParseException;
@@ -64,7 +65,7 @@ public class ParametersModifier {
 			modifyHlFields(exactSearch);
 		}
 
-		List<String> facetQueries = new ArrayList<String>(allFacetQueries.values());
+		Set<String> facetQueries = new HashSet<String>(allFacetQueries.values());
 		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
 	}
 

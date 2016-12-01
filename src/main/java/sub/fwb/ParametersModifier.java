@@ -1,7 +1,10 @@
 package sub.fwb;
 
+import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.solr.parser.ParseException;
@@ -21,6 +24,7 @@ public class ParametersModifier {
 	private String hlQuery = "";
 	private String queryFieldsWithBoosts = "";
 	private String hlFields = "";
+	private Map<String, String> allFacetQueries = new HashMap<>();
 
 	public ParametersModifier(String qf, String hlFl) {
 		queryFieldsWithBoosts = qf;
@@ -49,6 +53,7 @@ public class ParametersModifier {
 		for (QueryToken token : allTokens) {
 			expandedQuery += token.getModifiedQuery();
 			hlQuery += token.getHlQuery();
+			addToFacetQueries(token.getFacetQueries());
 		}
 
 		if (expandedQuery.isEmpty()) {
@@ -58,7 +63,9 @@ public class ParametersModifier {
 		if (hlFields != null && !hlFields.isEmpty()) {
 			modifyHlFields(exactSearch);
 		}
-		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields);
+
+		List<String> facetQueries = new ArrayList<String>(allFacetQueries.values());
+		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
 	}
 
 	private boolean mustAddParens(List<QueryToken> allTokens) {
@@ -115,6 +122,19 @@ public class ParametersModifier {
 			if (current instanceof OperatorNot && !(next instanceof ParenthesisLeft)) {
 				allTokens.add(i + 2, factory.createOneToken(")", queryFieldsWithBoosts, false));
 				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
+			}
+		}
+	}
+
+	private void addToFacetQueries(Map<String, String> tokenFacets) {
+		for (Map.Entry<String, String> entry : tokenFacets.entrySet()) {
+			String lemmaEtc = entry.getKey();
+			String currentValue = entry.getValue();
+			if (allFacetQueries.containsKey(lemmaEtc)) {
+				String previousValue = allFacetQueries.get(lemmaEtc);
+				allFacetQueries.put(lemmaEtc, previousValue + " " + currentValue);
+			} else {
+				allFacetQueries.put(lemmaEtc, currentValue);
 			}
 		}
 	}

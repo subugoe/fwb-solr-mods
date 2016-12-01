@@ -1,5 +1,7 @@
 package sub.fwb;
 
+import java.util.List;
+
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.common.util.SimpleOrderedMap;
@@ -21,6 +23,7 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String newHlQuery = modified.hlQ;
 		String newHlFields = modified.hlFl;
 		String newQueryFields = modified.qf;
+		List<String> facetQueries = modified.facetQueries;
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set("q", newQuery);
@@ -29,6 +32,9 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 			newParams.set("hl.q", newHlQuery);
 		}
 		newParams.set("hl.fl", newHlFields);
+		for (String facetQ : facetQueries) {
+			newParams.add("facet.query", facetQ);
+		}
 		req.setParams(newParams);
 
 		NamedList<String> queryInfoList = new SimpleOrderedMap<>();
@@ -47,12 +53,14 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		public String hlQ = "";
 		public String qf = "";
 		public String hlFl = "";
+		public List<String> facetQueries;
 
-		public ModifiedParameters(String q, String hlQ, String qf, String hlFl) {
+		public ModifiedParameters(String q, String hlQ, String qf, String hlFl, List<String> facetQueries) {
 			this.q = q;
 			this.hlQ = hlQ;
 			this.qf = qf;
 			this.hlFl = hlFl;
+			this.facetQueries = facetQueries;
 		}
 	}
 

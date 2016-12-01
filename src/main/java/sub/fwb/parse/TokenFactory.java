@@ -25,6 +25,7 @@ import sub.fwb.parse.tokens.Term;
 public class TokenFactory {
 
 	private Map<String, String> boosts;
+	private Map<String, String> mapForFacetQueries;
 	private List<QueryToken> allTokens = new ArrayList<>();
 	private String solrFieldEnding = "";
 
@@ -35,6 +36,7 @@ public class TokenFactory {
 			solrFieldEnding = "";
 		}
 		createMapWithBoosts(qfWithBoosts, solrFieldEnding);
+		createMapForFacetQueries(qfWithBoosts, solrFieldEnding);
 		allTokens = new ArrayList<>();
 		String[] qParts = queryString.trim().split("\\s+");
 		String currentPhrase = "";
@@ -100,6 +102,15 @@ public class TokenFactory {
 		}
 	}
 
+	private void createMapForFacetQueries(String qf, String solrFieldEnding) {
+		mapForFacetQueries = new HashMap<String, String>();
+		String[] fields = qf.trim().split("\\s+");
+		for (String fieldWithBoost : fields) {
+			String fieldName = fieldWithBoost.split("\\^")[0];
+			mapForFacetQueries.put(fieldName, "");
+		}
+	}
+
 	private boolean startsWithParen(String q) {
 		return q.startsWith("(");
 	}
@@ -139,7 +150,7 @@ public class TokenFactory {
 		if (hasPrefix(termString)) {
 			allTokens.add(new TermPrefixed(termString, solrFieldEnding, boosts));
 		} else {
-			allTokens.add(new Term(termString, solrFieldEnding));
+			allTokens.add(new Term(termString, solrFieldEnding, mapForFacetQueries));
 		}
 	}
 

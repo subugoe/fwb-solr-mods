@@ -1,14 +1,18 @@
 package sub.fwb.parse.tokens;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
 public class Term extends QueryToken {
 
-	public Term(String tokenString, String prefixEnding) throws ParseException {
+	public Term(String tokenString, String prefixEnding, Map<String, String> mapForFacetQueries) throws ParseException {
 		this.prefixEnding = prefixEnding;
 		originalTokenString = tokenString;
+		this.mapForFacetQueries = new HashMap<>(mapForFacetQueries);
 		escapeSpecialChars();
 		ParseUtil.checkForProhibitedCharsInTerm(escapedString);
 	}
@@ -58,6 +62,14 @@ public class Term extends QueryToken {
 		} else {
 			return String.format("%s:*%s* %s:*%s* ", articleTextField, escapedString, citationTextField, escapedString);
 		}
+	}
+
+	@Override
+	public Map<String, String> getFacetQueries() {
+		for (String searchField : mapForFacetQueries.keySet()) {
+			mapForFacetQueries.put(searchField, searchField + ":*" + escapedString + "*");
+		}
+		return super.getFacetQueries();
 	}
 
 }

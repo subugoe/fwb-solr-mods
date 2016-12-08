@@ -26,6 +26,7 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 				if (onlyLemmaHighlightings(currentDoc)) {
 					String[] firstLemmaSnippet = (String[]) currentDoc.getVal(0);
 					firstLemmaSnippet = removeHighlightingTags(firstLemmaSnippet, rb);
+					firstLemmaSnippet = removeFirstWord(firstLemmaSnippet);
 					currentDoc.add("artikel_text", firstLemmaSnippet);
 				} else if (isEmpty(hlArticleSnippet)) {
 					String[] otherSnippet = chooseOtherSnippet(currentDoc);
@@ -59,6 +60,16 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 		hlSnippet = hlSnippet.replace(hlPre, "");
 		hlSnippet = hlSnippet.replace(hlPost, "");
 
+		return new String[] { hlSnippet };
+	}
+
+	private String[] removeFirstWord(String[] snippetArray) {
+		String hlSnippet = snippetArray[0];
+		int firstSpace = hlSnippet.indexOf(" ");
+		boolean thereAreCharsAfterSpace = hlSnippet.length() > firstSpace + 1;
+		if (firstSpace > 0 && thereAreCharsAfterSpace) {
+			hlSnippet = hlSnippet.substring(firstSpace + 1);
+		}
 		return new String[] { hlSnippet };
 	}
 

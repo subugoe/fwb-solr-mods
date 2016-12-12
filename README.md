@@ -28,7 +28,7 @@ After reloading the core or restarting Solr, you can use the custom class names 
 and in the schema.xml files by just replacing Solr's standard class names in the class="..." attributes. 
 For example:
 
-``` <requestHandler name="/search" class="sub.fwb.QueryModifyingSearchHandler">  ```
+``` <requestHandler name="/search" class="sub.fwb.ParametersModifyingSearchHandler">  ```
 
 in solrconfig.xml, or:
 
@@ -48,22 +48,23 @@ https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
 
   ä:a,ae
 
-  on each line. In this example, you will have the terms bär, bar, and baer
-  in your index, if the original text contains the word bär. The three terms will have the same offsets, so that
+  on each line. In this example, you will end up with having the terms bär, bar, and baer
+  in your Solr index, if the original text contains the word bär. The three terms will have the same offsets, so that
   the highlighter will highlight the original bär, no matter which of the three terms you search.
   
   The Filter can also deal with so-called combining letters, like for example a little i over u: uͥ. If you want to 
-  also find uͥ with a normal u, you can add the following to the mapping file:
+  also find uͥ when typing a normal u, you can add the following to the mapping file:
 
   U+0365:
 
+  This is the Unicode number for the little i over another letter, followed by a colon. 
   After the colon, there is nothing there, i. e., an empty string, which means that the little i character will be optional.
   
   Here is an example of a complete file: https://github.com/subugoe/fwb-index-creator/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt.
   
 * LemmaNormalizingFilterFactory and LemmaNormalizingFilter
 
-  Normally, all punctuation characters are removed in the index.
+  Normally, all punctuation characters are removed in the Solr index.
   Some lemmas in the FWB project contain non-letter characters that nonetheless must be found when typed in by the user. Examples are 
   parentheses, brackets, or the pipe symbol. This Filter "normalizes" such lemmas by creating alternative spellings
   in the index. The lemma "acht|ek" will get two search terms on the same position: "acht|ek" and "achtek", hence 
@@ -82,9 +83,13 @@ https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
   With the help of this Similarity, Solr ignores some factors while computing relevance scores of found documents. 
   For example, idf (inverse document frequency) and field lengths are always considered to be 1.0.
   
-* QueryModifyingSearchHandler
+* ParametersModifyingSearchHandler
 
-  As the name suggests, this Handler modifies the actual user query by, for example, expanding a simple search word
+  As the name suggests, this Handler modifies the parameters of the incoming user query. It acts as a preprocessor
+  for the user query before it is given to the search mechanisms of Solr.
+  
+  
+  by, for example, expanding a simple search word
   into a more complex query containing wildcards. This way, index terms that only have that word as a substring
   can also be found.
   ...

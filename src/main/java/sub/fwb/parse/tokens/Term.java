@@ -66,8 +66,14 @@ public class Term extends QueryToken {
 
 	@Override
 	public Map<String, String> getFacetQueries() {
-		for (String searchField : mapForFacetQueries.keySet()) {
-			mapForFacetQueries.put(searchField, searchField + ":*" + escapedString + "*");
+		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
+		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
+		} else if (escapedString.startsWith("^")) {
+		} else if (escapedString.endsWith("$")) {
+		} else {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":*" + escapedString + "*");
+			}
 		}
 		return mapForFacetQueries;
 	}

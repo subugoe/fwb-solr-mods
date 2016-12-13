@@ -1,5 +1,8 @@
 package sub.fwb.parse;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.solr.parser.ParseException;
 
 public class ParseUtil {
@@ -61,5 +64,39 @@ public class ParseUtil {
 		removed = removed.replace("]", " ");
 		removed = removed.replace("|", " ");
 		return removed;
+	}
+
+	public static String trimSpecialChars(String snippet) {
+		String[] front = { ",", ")", "/", "‹", ".", "]", "-", " ", ";", ":" };
+		String[] back = { "(", ",", "/", "[", "-", " ", ";", ":" };
+		frontwhile:
+		while (true) {
+			for (String f : front) {
+				if (snippet.startsWith(f)) {
+					snippet = snippet.substring(1);
+				}
+			}
+			for (String f : front) {
+				if (snippet.startsWith(f)) {
+					continue frontwhile;
+				}
+			}
+			break;
+		}
+		backwhile:
+		while (true) {
+			for (String b : back) {
+				if (snippet.endsWith(b)) {
+					snippet = snippet.substring(0, snippet.length() - 1);
+				}
+			}
+			for (String b : back) {
+				if (snippet.endsWith(b)) {
+					continue backwhile;
+				}
+			}
+			break;
+		}
+		return snippet;
 	}
 }

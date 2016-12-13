@@ -7,6 +7,8 @@ import org.apache.solr.handler.component.ResponseBuilder;
 import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.response.SolrQueryResponse;
 
+import sub.fwb.parse.ParseUtil;
+
 public class HlSnippetAdaptingComponent extends SearchComponent {
 
 	@Override
@@ -22,16 +24,19 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 			for (int i = 0; i < highlightedDocs.size(); i++) {
 				@SuppressWarnings("unchecked")
 				SimpleOrderedMap<Object> currentDoc = (SimpleOrderedMap<Object>) highlightedDocs.getVal(i);
-				String[] hlArticleSnippet = (String[]) currentDoc.get("artikel_text");
+				String[] originalSnippet = (String[]) currentDoc.get("artikel_text");
+				String[] newSnippet = null;
 				if (onlyLemmaHighlightings(currentDoc)) {
 					String[] firstLemmaSnippet = (String[]) currentDoc.getVal(0);
 					firstLemmaSnippet = removeHighlightingTags(firstLemmaSnippet, rb);
 					firstLemmaSnippet = removeFirstWord(firstLemmaSnippet);
-					currentDoc.add("artikel_text", firstLemmaSnippet);
-				} else if (isEmpty(hlArticleSnippet)) {
-					String[] otherSnippet = chooseOtherSnippet(currentDoc);
-					currentDoc.add("artikel_text", otherSnippet);
+					newSnippet = firstLemmaSnippet;
+				} else if (isEmpty(originalSnippet)) {
+					newSnippet = chooseOtherSnippet(currentDoc);
+				} else {
+					newSnippet = originalSnippet;
 				}
+				currentDoc.add("artikel_text", formatSnippet(newSnippet));
 			}
 		}
 	}
@@ -85,6 +90,15 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 			}
 		}
 		return new String[] { "" };
+	}
+
+	private String[] formatSnippet(String[] snippetArray) {
+		String hlSnippet = "";
+		if (!isEmpty(snippetArray)) {
+			hlSnippet = snippetArray[0];
+			hlSnippet = ParseUtil.trimSpecialChars(hlSnippet);
+		}
+		return new String[] { hlSnippet };
 	}
 
 	@Override

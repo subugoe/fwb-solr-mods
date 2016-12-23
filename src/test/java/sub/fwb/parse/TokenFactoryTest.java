@@ -36,7 +36,16 @@ public class TokenFactoryTest {
 	}
 
 	@Test
-	public void shouldCreateFacetQueries() throws Exception {
+	public void shouldCreateFacetQueriesForFuzzyTerm() throws Exception {
+		facetQueries = facetQueriesFor("imbis~1");
+		String lemmaFacet = facetQueries.get("lemma");
+		assertEquals("lemma:imbis~1", lemmaFacet);
+		String defFacet = facetQueries.get("def");
+		assertEquals("def:imbis~1", defFacet);
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForTerm() throws Exception {
 		facetQueries = facetQueriesFor("imbis");
 		String lemmaFacet = facetQueries.get("lemma");
 		assertEquals("lemma:*imbis*", lemmaFacet);

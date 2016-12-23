@@ -14,6 +14,7 @@ public class Term extends QueryToken {
 	private String articleTextField;
 	private String citationTextField;
 	private String searchString;
+	private Map<String, String> mapForFacetQueries;
 
 	public Term(String tokenString, String prefixEnding, Map<String, String> mapForFacetQueries) throws ParseException {
 		this.prefixEnding = prefixEnding;
@@ -27,20 +28,22 @@ public class Term extends QueryToken {
 		citationTextField = ParseUtil.citationText(prefixEnding);
 	}
 
-	private Term() {
-	}
-
 	@Override
 	public String getModifiedQuery() {
-		return createSpecialTerm().getModifiedQuery();
+		return createSubTerm().getModifiedQuery();
 	}
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		return createSpecialTerm().getHlQuery();
+		return createSubTerm().getHlQuery();
 	}
 
-	private Term createSpecialTerm() {
+	@Override
+	public Map<String, String> getFacetQueries() {
+		return createSubTerm().getFacetQueries();
+	}
+
+	private SubTerm createSubTerm() {
 		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
 			searchString = escapedString.substring(0, escapedString.length() - 2);
 			searchString = ParseUtil.freeFromCircumflexAndDollar(searchString);
@@ -61,21 +64,13 @@ public class Term extends QueryToken {
 		}
 	}
 
-	@Override
-	public Map<String, String> getFacetQueries() {
-		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
-		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
-		} else if (escapedString.startsWith("^")) {
-		} else if (escapedString.endsWith("$")) {
-		} else {
-			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":*" + escapedString + "*");
-			}
-		}
-		return mapForFacetQueries;
+	private interface SubTerm {
+		public String getModifiedQuery();
+		public String getHlQuery();
+		public Map<String, String> getFacetQueries();
 	}
 
-	private class WithFuzzy extends Term {
+	private class WithFuzzy implements SubTerm {
 		private String fuzzy;
 
 		public WithFuzzy(String fuzzyEnding) {
@@ -89,13 +84,21 @@ public class Term extends QueryToken {
 		}
 
 		@Override
-		public String getHlQuery() throws ParseException {
+		public String getHlQuery() {
 			return String.format("%s:%s%s %s:%s%s ", articleTextField, searchString, fuzzy, citationTextField,
 					searchString, fuzzy);
 		}
+
+		@Override
+		public Map<String, String> getFacetQueries() {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":" + searchString + fuzzy);
+			}
+			return mapForFacetQueries;
+		}
 	}
 
-	private class PreciseWord extends Term {
+	private class PreciseWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
 			return String.format("%s +(%s:%s %s:%s) ", searchString, articleField, searchString, citationField,
@@ -103,12 +106,20 @@ public class Term extends QueryToken {
 		}
 
 		@Override
-		public String getHlQuery() throws ParseException {
+		public String getHlQuery() {
 			return String.format("%s:%s %s:%s ", articleTextField, searchString, citationTextField, searchString);
+		}
+
+		@Override
+		public Map<String, String> getFacetQueries() {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":" + searchString);
+			}
+			return mapForFacetQueries;
 		}
 	}
 
-	private class WordBegin extends Term {
+	private class WordBegin implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
 			return String.format("%s %s* +(%s:%s* %s:%s*) ", searchString, searchString, articleField, searchString,
@@ -116,12 +127,20 @@ public class Term extends QueryToken {
 		}
 
 		@Override
-		public String getHlQuery() throws ParseException {
+		public String getHlQuery() {
 			return String.format("%s:%s* %s:%s* ", articleTextField, searchString, citationTextField, searchString);
+		}
+
+		@Override
+		public Map<String, String> getFacetQueries() {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":" + searchString + "*");
+			}
+			return mapForFacetQueries;
 		}
 	}
 
-	private class WordEnd extends Term {
+	private class WordEnd implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
 			return String.format("*%s +(%s:*%s %s:*%s) ", searchString, articleField, searchString, citationField,
@@ -129,12 +148,20 @@ public class Term extends QueryToken {
 		}
 
 		@Override
-		public String getHlQuery() throws ParseException {
+		public String getHlQuery() {
 			return String.format("%s:*%s %s:*%s ", articleTextField, searchString, citationTextField, searchString);
+		}
+
+		@Override
+		public Map<String, String> getFacetQueries() {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":*" + searchString);
+			}
+			return mapForFacetQueries;
 		}
 	}
 
-	private class PartOfWord extends Term {
+	private class PartOfWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
 			return String.format("%s %s* *%s* +(%s:*%s* %s:*%s*) ", searchString, searchString, searchString,
@@ -142,8 +169,16 @@ public class Term extends QueryToken {
 		}
 
 		@Override
-		public String getHlQuery() throws ParseException {
+		public String getHlQuery() {
 			return String.format("%s:*%s* %s:*%s* ", articleTextField, searchString, citationTextField, searchString);
+		}
+
+		@Override
+		public Map<String, String> getFacetQueries() {
+			for (String searchField : mapForFacetQueries.keySet()) {
+				mapForFacetQueries.put(searchField, searchField + ":*" + searchString + "*");
+			}
+			return mapForFacetQueries;
 		}
 	}
 

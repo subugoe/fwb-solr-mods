@@ -13,7 +13,7 @@ public class Term extends QueryToken {
 	private String citationField;
 	private String articleTextField;
 	private String citationTextField;
-	protected String searchWord;
+	private String searchString;
 
 	public Term(String tokenString, String prefixEnding, Map<String, String> mapForFacetQueries) throws ParseException {
 		this.prefixEnding = prefixEnding;
@@ -26,92 +26,38 @@ public class Term extends QueryToken {
 		articleTextField = ParseUtil.articleText(prefixEnding);
 		citationTextField = ParseUtil.citationText(prefixEnding);
 	}
-	
-	private Term() {		
-	}
-	
-	private class Fuzzy extends Term {
 
-		private String fuzzy;
-
-		public Fuzzy(String fuzzyEnding) {
-			this.fuzzy = fuzzyEnding;
-		}
-
-		@Override
-		public String getModifiedQuery() {
-			return String.format("%s%s +(%s:%s%s %s:%s%s) bla", searchWord, fuzzy, articleField, searchWord, fuzzy, citationField, searchWord, fuzzy);			
-		}
-
-		@Override
-		public String getHlQuery() throws ParseException {
-			return String.format("%s:%s%s %s:%s%s ", articleTextField, searchWord, fuzzy, citationTextField, searchWord, fuzzy);
-		}
-
-	}
-	
-	private Term createSpecialTerm() {
-		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
-			searchWord = escapedString.substring(0, escapedString.length() - 2);
-			searchWord = ParseUtil.freeFromCircumflexAndDollar(searchWord);
-			String fuzzyEnding = escapedString.substring(escapedString.length() - 2);
-			return new Fuzzy(fuzzyEnding);
-		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
-			return new Term();
-		} else if (escapedString.startsWith("^")) {
-			return new Term();
-		} else if (escapedString.endsWith("$")) {
-			return new Term();
-		} else {
-			return new Term();
-		}
+	private Term() {
 	}
 
 	@Override
 	public String getModifiedQuery() {
-//		return createSpecialTerm().getModifiedQuery();
-		String articleField = ParseUtil.article(prefixEnding);
-		String citationField = ParseUtil.citation(prefixEnding);
-		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
-			String s = escapedString.substring(0, escapedString.length() - 2);
-			s = ParseUtil.freeFromCircumflexAndDollar(s);
-			String fuzzy = escapedString.substring(escapedString.length() - 2);
-			return String.format("%s%s +(%s:%s%s %s:%s%s) ", s, fuzzy, articleField, s, fuzzy, citationField, s, fuzzy);
-		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
-			String s = escapedString.substring(1, escapedString.length() - 1);
-			return String.format("%s +(%s:%s %s:%s) ", s, articleField, s, citationField, s);
-		} else if (escapedString.startsWith("^")) {
-			String s = escapedString.substring(1, escapedString.length());
-			return String.format("%s %s* +(%s:%s* %s:%s*) ", s, s, articleField, s, citationField, s);
-		} else if (escapedString.endsWith("$")) {
-			String s = escapedString.substring(0, escapedString.length() - 1);
-			return String.format("*%s +(%s:*%s %s:*%s) ", s, articleField, s, citationField, s);
-		} else {
-			return String.format("%s %s* *%s* +(%s:*%s* %s:*%s*) ", escapedString, escapedString, escapedString,
-					articleField, escapedString, citationField, escapedString);
-		}
+		return createSpecialTerm().getModifiedQuery();
 	}
 
 	@Override
 	public String getHlQuery() throws ParseException {
-		String articleTextField = ParseUtil.articleText(prefixEnding);
-		String citationTextField = ParseUtil.citationText(prefixEnding);
+		return createSpecialTerm().getHlQuery();
+	}
+
+	private Term createSpecialTerm() {
 		if (escapedString.endsWith("~1") || escapedString.endsWith("~2")) {
-			String s = escapedString.substring(0, escapedString.length() - 2);
-			s = ParseUtil.freeFromCircumflexAndDollar(s);
-			String fuzzy = escapedString.substring(escapedString.length() - 2);
-			return String.format("%s:%s%s %s:%s%s ", articleTextField, s, fuzzy, citationTextField, s, fuzzy);
+			searchString = escapedString.substring(0, escapedString.length() - 2);
+			searchString = ParseUtil.freeFromCircumflexAndDollar(searchString);
+			String fuzzyEnding = escapedString.substring(escapedString.length() - 2);
+			return new WithFuzzy(fuzzyEnding);
 		} else if (escapedString.startsWith("^") && escapedString.endsWith("$")) {
-			String s = escapedString.substring(1, escapedString.length() - 1);
-			return String.format("%s:%s %s:%s ", articleTextField, s, citationTextField, s);
+			searchString = escapedString.substring(1, escapedString.length() - 1);
+			return new PreciseWord();
 		} else if (escapedString.startsWith("^")) {
-			String s = escapedString.substring(1, escapedString.length());
-			return String.format("%s:%s* %s:%s* ", articleTextField, s, citationTextField, s);
+			searchString = escapedString.substring(1, escapedString.length());
+			return new WordBegin();
 		} else if (escapedString.endsWith("$")) {
-			String s = escapedString.substring(0, escapedString.length() - 1);
-			return String.format("%s:*%s %s:*%s ", articleTextField, s, citationTextField, s);
+			searchString = escapedString.substring(0, escapedString.length() - 1);
+			return new WordEnd();
 		} else {
-			return String.format("%s:*%s* %s:*%s* ", articleTextField, escapedString, citationTextField, escapedString);
+			searchString = escapedString;
+			return new PartOfWord();
 		}
 	}
 
@@ -127,6 +73,78 @@ public class Term extends QueryToken {
 			}
 		}
 		return mapForFacetQueries;
+	}
+
+	private class WithFuzzy extends Term {
+		private String fuzzy;
+
+		public WithFuzzy(String fuzzyEnding) {
+			this.fuzzy = fuzzyEnding;
+		}
+
+		@Override
+		public String getModifiedQuery() {
+			return String.format("%s%s +(%s:%s%s %s:%s%s) ", searchString, fuzzy, articleField, searchString, fuzzy,
+					citationField, searchString, fuzzy);
+		}
+
+		@Override
+		public String getHlQuery() throws ParseException {
+			return String.format("%s:%s%s %s:%s%s ", articleTextField, searchString, fuzzy, citationTextField,
+					searchString, fuzzy);
+		}
+	}
+
+	private class PreciseWord extends Term {
+		@Override
+		public String getModifiedQuery() {
+			return String.format("%s +(%s:%s %s:%s) ", searchString, articleField, searchString, citationField,
+					searchString);
+		}
+
+		@Override
+		public String getHlQuery() throws ParseException {
+			return String.format("%s:%s %s:%s ", articleTextField, searchString, citationTextField, searchString);
+		}
+	}
+
+	private class WordBegin extends Term {
+		@Override
+		public String getModifiedQuery() {
+			return String.format("%s %s* +(%s:%s* %s:%s*) ", searchString, searchString, articleField, searchString,
+					citationField, searchString);
+		}
+
+		@Override
+		public String getHlQuery() throws ParseException {
+			return String.format("%s:%s* %s:%s* ", articleTextField, searchString, citationTextField, searchString);
+		}
+	}
+
+	private class WordEnd extends Term {
+		@Override
+		public String getModifiedQuery() {
+			return String.format("*%s +(%s:*%s %s:*%s) ", searchString, articleField, searchString, citationField,
+					searchString);
+		}
+
+		@Override
+		public String getHlQuery() throws ParseException {
+			return String.format("%s:*%s %s:*%s ", articleTextField, searchString, citationTextField, searchString);
+		}
+	}
+
+	private class PartOfWord extends Term {
+		@Override
+		public String getModifiedQuery() {
+			return String.format("%s %s* *%s* +(%s:*%s* %s:*%s*) ", searchString, searchString, searchString,
+					articleField, searchString, citationField, searchString);
+		}
+
+		@Override
+		public String getHlQuery() throws ParseException {
+			return String.format("%s:*%s* %s:*%s* ", articleTextField, searchString, citationTextField, searchString);
+		}
 	}
 
 }

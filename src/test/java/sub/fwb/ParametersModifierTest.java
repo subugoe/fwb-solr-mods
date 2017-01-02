@@ -36,6 +36,14 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldCreateFacetQueriesForTwoPrefixedTerms() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("lemma:imbis zitat:gast").facetQueries;
+		assertEquals(2, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma:*imbis*"));
+		assertTrue(facetQueries.contains("zitat:*gast*"));
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesForTwoTerms() throws Exception {
 		facetQueries = modifier.changeParamsForQuery("imbis gast").facetQueries;
 		assertTrue(facetQueries.contains("lemma:*imbis* lemma:*gast*"));

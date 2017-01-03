@@ -36,6 +36,23 @@ public class TokenFactoryTest {
 	}
 
 	@Test
+	public void shouldCreateFacetQueriesForPrefixedPhrase() throws Exception {
+		facetQueries = facetQueriesFor("zitat:\"imbis ward\"");
+		assertEquals(1, facetQueries.size());
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("zitat:\"imbis ward\"", zitatFacet);
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForPhrase() throws Exception {
+		facetQueries = facetQueriesFor("\"imbis ward\"");
+		String lemmaFacet = facetQueries.get("lemma");
+		assertEquals("lemma:\"imbis ward\"", lemmaFacet);
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("zitat:\"imbis ward\"", zitatFacet);
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesPrefixedTerm() throws Exception {
 		facetQueries = facetQueriesFor("lemma:imbis");
 		assertEquals(1, facetQueries.size());

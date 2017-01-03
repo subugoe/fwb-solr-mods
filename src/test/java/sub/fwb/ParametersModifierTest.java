@@ -36,11 +36,48 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldCreateFacetQueriesFor2ExactPrefixed() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("lemma:\"imbis bla\" lemma:imbis EXAKT").facetQueries;
+		assertEquals(1, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma_exakt:\"imbis bla\" lemma_exakt:*imbis*"));
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForExactPrefixedPhrase() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("lemma:\"imbis bla\" EXAKT").facetQueries;
+		assertEquals(1, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma_exakt:\"imbis bla\""));
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForExactPhrase() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("\"imbis bla\" EXAKT").facetQueries;
+		assertEquals(2, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma_exakt:\"imbis bla\""));
+		assertTrue(facetQueries.contains("zitat_exakt:\"imbis bla\""));
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForExactPrefixedTerm() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("lemma:imbis EXAKT").facetQueries;
+		assertEquals(1, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma_exakt:*imbis*"));
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesForTwoPrefixedTerms() throws Exception {
 		facetQueries = modifier.changeParamsForQuery("lemma:imbis zitat:gast").facetQueries;
 		assertEquals(2, facetQueries.size());
 		assertTrue(facetQueries.contains("lemma:*imbis*"));
 		assertTrue(facetQueries.contains("zitat:*gast*"));
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForExactTerm() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("imbis EXAKT").facetQueries;
+		assertEquals(2, facetQueries.size());
+		assertTrue(facetQueries.contains("lemma_exakt:*imbis*"));
+		assertTrue(facetQueries.contains("zitat_exakt:*imbis*"));
 	}
 
 	@Test

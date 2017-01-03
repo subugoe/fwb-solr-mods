@@ -14,7 +14,7 @@ public class Term extends QueryToken {
 	private String articleTextField;
 	private String citationTextField;
 	private String searchString;
-	private Map<String, String> mapForFacetQueries;
+	//private Map<String, String> mapForFacetQueries;
 
 	public Term(String tokenString, String prefixEnding, Map<String, String> mapForFacetQueries) throws ParseException {
 		this.prefixEnding = prefixEnding;

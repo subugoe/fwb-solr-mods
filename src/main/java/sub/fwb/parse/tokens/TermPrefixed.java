@@ -1,6 +1,5 @@
 package sub.fwb.parse.tokens;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.solr.parser.ParseException;
@@ -86,23 +85,22 @@ public class TermPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public Map<String, String> getFacetQueries() {
-		Map<String, String> mapForFacetQueries = new HashMap<>();
 		if (postfix.endsWith("~1") || postfix.endsWith("~2")) {
 			String fuzzy = postfix.substring(postfix.length() - 2);
 			String postfixTemp = postfix.substring(0, postfix.length() - 2);
 			postfixTemp = ParseUtil.freeFromCircumflexAndDollar(postfixTemp);
-			mapForFacetQueries.put(prefix, String.format("%s:%s%s", prefixWithEnding, postfixTemp, fuzzy));
+			mapForFacetQueries.put(prefixWithEnding, String.format("%s:%s%s", prefixWithEnding, postfixTemp, fuzzy));
 		} else if (postfix.startsWith("^") && postfix.endsWith("$")) {
 			String postfixTemp = postfix.substring(1, postfix.length() - 1);
-			mapForFacetQueries.put(prefix, String.format("%s:%s", prefixWithEnding, postfixTemp));
+			mapForFacetQueries.put(prefixWithEnding, String.format("%s:%s", prefixWithEnding, postfixTemp));
 		} else if (postfix.startsWith("^")) {
 			String postfixTemp = postfix.substring(1, postfix.length());
-			mapForFacetQueries.put(prefix, String.format("%s:%s*", prefixWithEnding, postfixTemp));
+			mapForFacetQueries.put(prefixWithEnding, String.format("%s:%s*", prefixWithEnding, postfixTemp));
 		} else if (postfix.endsWith("$")) {
 			String postfixTemp = postfix.substring(0, postfix.length() - 1);
-			mapForFacetQueries.put(prefix, String.format("%s:*%s", prefixWithEnding, postfixTemp));
+			mapForFacetQueries.put(prefixWithEnding, String.format("%s:*%s", prefixWithEnding, postfixTemp));
 		} else {
-			mapForFacetQueries.put(prefix, String.format("%s:*%s*", prefixWithEnding, postfix));
+			mapForFacetQueries.put(prefixWithEnding, String.format("%s:*%s*", prefixWithEnding, postfix));
 		}
 		return mapForFacetQueries;
 	}

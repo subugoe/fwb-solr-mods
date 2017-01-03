@@ -12,7 +12,7 @@ public abstract class QueryToken {
 	protected String originalTokenString;
 	protected String escapedString = "";
 	protected String prefixEnding = "";
-	protected Map<String, String> mapForFacetQueries;
+	protected Map<String, String> mapForFacetQueries = new HashMap<>();
 
 	abstract public String getModifiedQuery() throws ParseException;
 

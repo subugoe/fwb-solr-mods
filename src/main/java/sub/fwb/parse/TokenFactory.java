@@ -142,7 +142,7 @@ public class TokenFactory {
 		} else if (isComplex(phraseString)) {
 			allTokens.add(new ComplexPhrase(phraseString, solrFieldEnding));
 		} else {
-			allTokens.add(new Phrase(phraseString, solrFieldEnding));
+			allTokens.add(new Phrase(phraseString, solrFieldEnding, mapForFacetQueries));
 		}
 	}
 

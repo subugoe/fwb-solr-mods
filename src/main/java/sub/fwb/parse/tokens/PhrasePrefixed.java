@@ -1,5 +1,7 @@
 package sub.fwb.parse.tokens;
 
+import java.util.Map;
+
 import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
@@ -20,6 +22,12 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 	@Override
 	public String getHlQuery() throws ParseException {
 		return String.format("%s_text%s:%s ", prefix, prefixEnding, postfix);
+	}
+
+	@Override
+	public Map<String, String> getFacetQueries() {
+		mapForFacetQueries.put(prefixWithEnding, prefixWithEnding + ":" + postfix);
+		return mapForFacetQueries;
 	}
 
 }

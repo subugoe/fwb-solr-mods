@@ -1,12 +1,16 @@
 package sub.fwb.parse.tokens;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
 public class ComplexPhrase extends QueryToken {
 
-	public ComplexPhrase(String phraseString, String prefixEnding) {
+	public ComplexPhrase(String phraseString, String prefixEnding, Map<String, String> mapForFacetQueries) {
+		this.mapForFacetQueries = new HashMap<>(mapForFacetQueries);
 		this.prefixEnding = prefixEnding;
 		originalTokenString = phraseString;
 		escapeSpecialChars();
@@ -31,6 +35,16 @@ public class ComplexPhrase extends QueryToken {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		return String.format("_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\" ",
 				articleTextField, escapedPhrase, citationTextField, escapedPhrase);
+	}
+
+	@Override
+	public Map<String, String> getFacetQueries() {
+		for (String searchField : mapForFacetQueries.keySet()) {
+			String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
+			String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", searchField, escapedPhrase);
+			mapForFacetQueries.put(searchField, newQuery);
+		}
+		return mapForFacetQueries;
 	}
 
 }

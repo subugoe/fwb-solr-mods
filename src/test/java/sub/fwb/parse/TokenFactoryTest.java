@@ -36,6 +36,40 @@ public class TokenFactoryTest {
 	}
 
 	@Test
+	public void shouldCreateFacetQueriesForPrefixedRegex() throws Exception {
+		facetQueries = facetQueriesFor("zitat:/regex/");
+		assertEquals(1, facetQueries.size());
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("zitat:/regex/", zitatFacet);
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForRegex() throws Exception {
+		facetQueries = facetQueriesFor("/regex/");
+		String lemmaFacet = facetQueries.get("lemma");
+		assertEquals("lemma:/regex/", lemmaFacet);
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("zitat:/regex/", zitatFacet);
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForPrefixedComplexPhrase() throws Exception {
+		facetQueries = facetQueriesFor("zitat:\"imbi? ward\"");
+		assertEquals(1, facetQueries.size());
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("_query_:\"{!complexphrase}zitat:\\\"imbi? ward\\\"\"", zitatFacet);
+	}
+
+	@Test
+	public void shouldCreateFacetQueriesForComplexPhrase() throws Exception {
+		facetQueries = facetQueriesFor("\"imbi? ward\"");
+		String lemmaFacet = facetQueries.get("lemma");
+		assertEquals("_query_:\"{!complexphrase}lemma:\\\"imbi? ward\\\"\"", lemmaFacet);
+		String zitatFacet = facetQueries.get("zitat");
+		assertEquals("_query_:\"{!complexphrase}zitat:\\\"imbi? ward\\\"\"", zitatFacet);
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesForPrefixedPhrase() throws Exception {
 		facetQueries = facetQueriesFor("zitat:\"imbis ward\"");
 		assertEquals(1, facetQueries.size());

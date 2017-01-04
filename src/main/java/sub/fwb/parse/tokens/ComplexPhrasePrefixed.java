@@ -1,5 +1,7 @@
 package sub.fwb.parse.tokens;
 
+import java.util.Map;
+
 import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
@@ -29,6 +31,14 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
 		return String.format("_query_:\"{!complexphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
+	}
+
+	@Override
+	public Map<String, String> getFacetQueries() {
+		String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", prefixWithEnding,
+				postfix.replaceAll("\"", "\\\\\""));
+		mapForFacetQueries.put(prefixWithEnding, newQuery);
+		return mapForFacetQueries;
 	}
 
 }

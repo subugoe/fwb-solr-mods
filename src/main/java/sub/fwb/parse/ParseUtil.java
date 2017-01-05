@@ -1,14 +1,13 @@
 package sub.fwb.parse;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.solr.parser.ParseException;
 
 public class ParseUtil {
 
 	public static final String EXACT = "_exakt";
 
+	// This is not supposed to happen anymore
+	@Deprecated
 	public static void checkIfOneWord(String complexPhrase) throws ParseException {
 		if (complexPhrase.split("[\" ]+").length == 2) {
 			throw new ParseException("Phrasen mit * oder ? müssen mehrere Wörter enthalten: " + complexPhrase);

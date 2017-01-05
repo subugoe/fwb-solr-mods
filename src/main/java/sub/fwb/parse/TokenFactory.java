@@ -72,7 +72,7 @@ public class TokenFactory {
 			} else if (isRegex(q)) {
 				addRegexOrPrefixedRegex(q);
 			} else if (isOneWordPhrase(q)) {
-				addPhraseOrPrefixedPhrase(q);
+				addTermInsteadOfPhrase(q);
 			} else if (startingAPhrase(q) || insideAPhrase(currentPhrase, q)) {
 				currentPhrase += q + " ";
 			} else if (finishingAPhrase(currentPhrase, q)) {
@@ -132,6 +132,16 @@ public class TokenFactory {
 
 	private boolean parensMatch(String s) {
 		return s.contains("(") && s.contains(")") || !s.contains("(") && !s.contains(")");
+	}
+
+	private void addTermInsteadOfPhrase(String oneWordPhrase) throws ParseException {
+		String withReplaced = oneWordPhrase.replaceFirst("\"", "^");
+		withReplaced = withReplaced.substring(0, withReplaced.length() - 1) + "$";
+		if (hasPrefix(oneWordPhrase)) {
+			allTokens.add(new TermPrefixed(withReplaced, solrFieldEnding, boosts));
+		} else {
+			allTokens.add(new Term(withReplaced, solrFieldEnding, mapForFacetQueries));
+		}
 	}
 
 	private void addPhraseOrPrefixedPhrase(String phraseString) {

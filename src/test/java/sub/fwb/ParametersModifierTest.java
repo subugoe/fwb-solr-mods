@@ -154,8 +154,8 @@ public class ParametersModifierTest {
 
 	@Test
 	public void shouldSearchForExactPhrase() throws Exception {
-		expanded = modifier.changeParamsForQuery("\"ImBis\" EXAKT").q;
-		assertEquals("\"ImBis\" +(artikel_exakt:\"ImBis\" zitat_exakt:\"ImBis\")", expanded);
+		expanded = modifier.changeParamsForQuery("\"ImBis bla\" EXAKT").q;
+		assertEquals("\"ImBis bla\" +(artikel_exakt:\"ImBis bla\" zitat_exakt:\"ImBis bla\")", expanded);
 	}
 
 	@Test

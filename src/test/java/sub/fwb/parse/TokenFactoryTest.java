@@ -114,8 +114,8 @@ public class TokenFactoryTest {
 
 	@Test
 	public void shouldRemoveParenthesesFromPhrase() throws Exception {
-		expanded = expandOneTokenString("\"104)\"");
-		assertEquals("\"104 \" +(artikel:\"104 \" zitat:\"104 \") ", expanded);
+		expanded = expandOneTokenString("\"104 a)\"");
+		assertEquals("\"104 a \" +(artikel:\"104 a \" zitat:\"104 a \") ", expanded);
 	}
 
 	@Test
@@ -139,14 +139,14 @@ public class TokenFactoryTest {
 
 	@Test
 	public void shouldIgnoreNonlettersInPrefixedPhrase() throws Exception {
-		expanded = expandOneTokenString("lemma:\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
-		assertEquals("+lemma:\"imbis\" ", expanded);
+		expanded = expandOneTokenString("lemma:\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒ bla&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
+		assertEquals("+lemma:\"imbis bla\" ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonlettersInPhrase() throws Exception {
 		expanded = expandOneTokenString("\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
-		assertEquals("\"imbis\" +(artikel:\"imbis\" zitat:\"imbis\") ", expanded);
+		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
 	}
 
 	@Test
@@ -349,9 +349,10 @@ public class TokenFactoryTest {
 		expanded = expandOneTokenString("lemma:imbis:bla");
 	}
 
-	@Test(expected = ParseException.class)
-	public void shouldRejectOneWordInComplexPhraseWithPrefix() throws Exception {
+	@Test
+	public void shouldAcceptOneWordInComplexPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("zitat:\"imb?s\"");
+		assertEquals("+zitat:imb?s^50 ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -359,9 +360,10 @@ public class TokenFactoryTest {
 		expanded = expandOneTokenString("\"imbis ?ard\"");
 	}
 
-	@Test(expected = ParseException.class)
-	public void shouldRejectOneWordInComplexPhrase() throws Exception {
+	@Test
+	public void shouldNotRejectOneWordInComplexPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imb?s\"");
+		assertEquals("imb?s +(artikel:imb?s zitat:imb?s) ", expanded);
 	}
 
 	@Test
@@ -410,13 +412,13 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandOneWordPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("lemma:\"imbis\"");
-		assertEquals("+lemma:\"imbis\" ", expanded);
+		assertEquals("+lemma:imbis^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldExpandOneWordPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imbis\"");
-		assertEquals("\"imbis\" +(artikel:\"imbis\" zitat:\"imbis\") ", expanded);
+		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
 	}
 
 	@Test

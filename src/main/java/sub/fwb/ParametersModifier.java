@@ -65,7 +65,7 @@ public class ParametersModifier {
 			modifyHlFields(exactSearch);
 		}
 
-		Set<String> facetQueries = new HashSet<String>(allFacetQueries.values());
+		Set<String> facetQueries = facetQueryMapToSet(allTokens.size());
 		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
 	}
 
@@ -162,5 +162,19 @@ public class ParametersModifier {
 			}
 			queryFieldsWithBoosts = queryFieldsWithBoosts.trim();
 		}
+	}
+
+	private Set<String> facetQueryMapToSet(int numberOfTokens) {
+		Set<String> setOfFacetQueries = new HashSet<>();
+		for (Map.Entry<String, String> entry : allFacetQueries.entrySet()) {
+			String lemmaEtc = entry.getKey();
+			String currentValue = entry.getValue();
+			if (numberOfTokens == 1) {
+				setOfFacetQueries.add(lemmaEtc + ":" + currentValue);
+			} else {
+				setOfFacetQueries.add(lemmaEtc + ":(" + currentValue + ")");
+			}
+		}
+		return setOfFacetQueries;
 	}
 }

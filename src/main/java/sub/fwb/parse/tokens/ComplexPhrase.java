@@ -37,14 +37,14 @@ public class ComplexPhrase extends QueryToken {
 				articleTextField, escapedPhrase, citationTextField, escapedPhrase);
 	}
 
-	@Override
-	public Map<String, String> getFacetQueries() {
-		for (String searchField : mapForFacetQueries.keySet()) {
-			String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
-			String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", searchField, escapedPhrase);
-			mapForFacetQueries.put(searchField, newQuery);
-		}
-		return mapForFacetQueries;
-	}
+//	@Override
+//	public Map<String, String> getFacetQueries() {
+//		for (String searchField : mapForFacetQueries.keySet()) {
+//			String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
+//			String newQuery = String.format("_query_:\"{!complexphrase}%s\"", escapedPhrase);
+//			mapForFacetQueries.put(searchField, newQuery);
+//		}
+//		return mapForFacetQueries;
+//	}
 
 }

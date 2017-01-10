@@ -33,7 +33,7 @@ public class Regex extends QueryToken {
 	@Override
 	public Map<String, String> getFacetQueries() {
 		for (String searchField : mapForFacetQueries.keySet()) {
-			mapForFacetQueries.put(searchField, searchField + ":" + originalTokenString);
+			mapForFacetQueries.put(searchField, originalTokenString);
 		}
 		return mapForFacetQueries;
 	}

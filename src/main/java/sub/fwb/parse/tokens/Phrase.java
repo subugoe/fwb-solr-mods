@@ -34,7 +34,7 @@ public class Phrase extends QueryToken {
 	@Override
 	public Map<String, String> getFacetQueries() {
 		for (String searchField : mapForFacetQueries.keySet()) {
-			mapForFacetQueries.put(searchField, searchField + ":" + escapedString);
+			mapForFacetQueries.put(searchField, escapedString);
 		}
 		return mapForFacetQueries;
 	}

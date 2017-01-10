@@ -24,7 +24,7 @@ public class RegexPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public Map<String, String> getFacetQueries() {
-		mapForFacetQueries.put(prefixWithEnding, prefixWithEnding + ":" + postfix);
+		mapForFacetQueries.put(prefixWithEnding, postfix);
 		return mapForFacetQueries;
 	}
 

@@ -33,12 +33,12 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		return String.format("_query_:\"{!complexphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
 	}
 
-	@Override
-	public Map<String, String> getFacetQueries() {
-		String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", prefixWithEnding,
-				postfix.replaceAll("\"", "\\\\\""));
-		mapForFacetQueries.put(prefixWithEnding, newQuery);
-		return mapForFacetQueries;
-	}
+//	@Override
+//	public Map<String, String> getFacetQueries() {
+//		String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", prefixWithEnding,
+//				postfix.replaceAll("\"", "\\\\\""));
+//		mapForFacetQueries.put(prefixWithEnding, newQuery);
+//		return mapForFacetQueries;
+//	}
 
 }

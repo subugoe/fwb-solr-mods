@@ -14,7 +14,6 @@ public class Term extends QueryToken {
 	private String articleTextField;
 	private String citationTextField;
 	private String searchString;
-	//private Map<String, String> mapForFacetQueries;
 
 	public Term(String tokenString, String prefixEnding, Map<String, String> mapForFacetQueries) throws ParseException {
 		this.prefixEnding = prefixEnding;
@@ -92,7 +91,7 @@ public class Term extends QueryToken {
 		@Override
 		public Map<String, String> getFacetQueries() {
 			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":" + searchString + fuzzy);
+				mapForFacetQueries.put(searchField, searchString + fuzzy);
 			}
 			return mapForFacetQueries;
 		}
@@ -113,7 +112,7 @@ public class Term extends QueryToken {
 		@Override
 		public Map<String, String> getFacetQueries() {
 			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":" + searchString);
+				mapForFacetQueries.put(searchField, searchString);
 			}
 			return mapForFacetQueries;
 		}
@@ -134,7 +133,7 @@ public class Term extends QueryToken {
 		@Override
 		public Map<String, String> getFacetQueries() {
 			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":" + searchString + "*");
+				mapForFacetQueries.put(searchField, searchString + "*");
 			}
 			return mapForFacetQueries;
 		}
@@ -155,7 +154,7 @@ public class Term extends QueryToken {
 		@Override
 		public Map<String, String> getFacetQueries() {
 			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":*" + searchString);
+				mapForFacetQueries.put(searchField, "*" + searchString);
 			}
 			return mapForFacetQueries;
 		}
@@ -176,7 +175,7 @@ public class Term extends QueryToken {
 		@Override
 		public Map<String, String> getFacetQueries() {
 			for (String searchField : mapForFacetQueries.keySet()) {
-				mapForFacetQueries.put(searchField, searchField + ":*" + searchString + "*");
+				mapForFacetQueries.put(searchField, "*" + searchString + "*");
 			}
 			return mapForFacetQueries;
 		}

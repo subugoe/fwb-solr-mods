@@ -24,6 +24,11 @@ public class HlQueryModifyingSearchHandler extends SearchHandler {
 		String newHlFields = modified.hlFl;
 		String newQueryFields = modified.qf;
 
+		String[] filterQueries = req.getParams().getParams("fq");
+		if (filterQueries != null && filterQueries.length > 0) {
+			newHlQuery = rewriteHlQuery(filterQueries);
+		}
+
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set("hl.q", newHlQuery);
 		newParams.set("qf", newQueryFields);
@@ -38,5 +43,14 @@ public class HlQueryModifyingSearchHandler extends SearchHandler {
 		super.handleRequestBody(req, rsp);
 	}
 
+	private String rewriteHlQuery(String[] filterQueries) {
+		String rewritten = "";
+		for (String fq : filterQueries) {
+			if (!fq.startsWith("wortart")) {
+				rewritten += fq + " ";
+			}
+		}
+		return rewritten.trim();
+	}
 
 }

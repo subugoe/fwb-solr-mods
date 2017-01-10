@@ -25,6 +25,11 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String newQueryFields = modified.qf;
 		Set<String> facetQueries = modified.facetQueries;
 
+		String[] filterQueries = req.getParams().getParams("fq");
+		if (filterQueries != null && filterQueries.length > 0 && !filterQueries[filterQueries.length - 1].startsWith("wortart")) {
+			newHlQuery = rewriteHlQuery(filterQueries);
+		}
+
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
 		newParams.set("q", newQuery);
 		newParams.set("qf", newQueryFields);
@@ -46,6 +51,17 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		rsp.add("parametersModifier", queryInfoList);
 
 		super.handleRequestBody(req, rsp);
+	}
+
+	private String rewriteHlQuery(String[] filterQueries) {
+		String lastFq = filterQueries[filterQueries.length - 1];
+		String rewritten = "";
+		if (lastFq.contains("_exakt:")) {
+			rewritten = lastFq.replace("_exakt:", "_text_exakt:");
+		} else {
+			rewritten = lastFq.replace(":", "_text:");
+		}
+		return rewritten;
 	}
 
 	public static class ModifiedParameters {

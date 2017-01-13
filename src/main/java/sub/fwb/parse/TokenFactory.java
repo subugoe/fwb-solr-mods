@@ -49,14 +49,16 @@ public class TokenFactory {
 			}
 
 			String qOrig = q;
-			if (!q.equals("(") && startsWithParen(q)) {
+			while (!q.equals("(") && startsWithParen(q)) {
 				allTokens.add(new ParenthesisLeft());
 				q = q.substring(1);
 			}
-			boolean addRightParen = false;
+			int addRightParens = 0;
 			if (!qOrig.equals(")") && endsWithParen(qOrig)) {
-				q = q.substring(0, q.length() - 1);
-				addRightParen = true;
+				while (!parensMatch(q)) {
+					q = q.substring(0, q.length() - 1);
+					addRightParens++;
+				}
 			}
 
 			if ("OR".equals(q)) {
@@ -82,7 +84,7 @@ public class TokenFactory {
 				addTermOrPrefixedTerm(q);
 			}
 
-			if (addRightParen) {
+			for (int i = 0; i < addRightParens; i++) {
 				allTokens.add(new ParenthesisRight());
 			}
 		}
@@ -131,7 +133,7 @@ public class TokenFactory {
 	}
 
 	private boolean parensMatch(String s) {
-		return s.contains("(") && s.contains(")") || !s.contains("(") && !s.contains(")");
+		return s.replace("(", "").length() == s.replace(")", "").length();
 	}
 
 	private void addTermInsteadOfPhrase(String oneWordPhrase) throws ParseException {

@@ -36,6 +36,18 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldAcceptDoubleParentheses() throws Exception {
+		expanded = modifier.changeParamsForQuery("((imbis))").q;
+		assertEquals("((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ) )", expanded);
+	}
+
+	@Test
+	public void shouldAcceptParentheses() throws Exception {
+		expanded = modifier.changeParamsForQuery("(imbis)").q;
+		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) )", expanded);
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesFor2ExactPrefixed() throws Exception {
 		facetQueries = modifier.changeParamsForQuery("lemma:\"imbis bla\" lemma:imbis EXAKT").facetQueries;
 		assertEquals(1, facetQueries.size());

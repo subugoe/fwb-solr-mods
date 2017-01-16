@@ -118,18 +118,29 @@ public class TokenFactory {
 	}
 
 	private boolean endsWithParen(String q) {
-		if (q.startsWith("(") && q.endsWith(")") && parensMatch(q.substring(1, q.length() - 1))) {
-			// (imbis)
-			// (legatar(ius))
-			return true;
-		} else if (q.endsWith(")") && parensMatch(q.substring(0, q.length() - 1))) {
-			// imbis)
-			// legatar(ius))
-			return true;
+		// legatar(ius) -> legatarius
+		// legatar(ius)) -> legatarius)
+		// ((legatar(ius) -> ((legatarius
+		String qLocal = removeInnerParens(q);
+		return qLocal.endsWith(")");
+	}
+
+	private String removeInnerParens(String s) {
+		if (s == null || s.isEmpty() || s.replace("(", "").trim().isEmpty()) {
+			return s;
 		}
-		// legatar(ius)
-		// (legatar(ius)
-		return false;
+		int parensInFront = 0;
+		while (s.charAt(parensInFront) == '(') {
+			parensInFront++;
+		}
+		int indexInnerOpeningParen = s.indexOf("(", parensInFront);
+		if (indexInnerOpeningParen > 0) {
+			String prefix = s.substring(0, indexInnerOpeningParen);
+			String postfix = s.substring(indexInnerOpeningParen + 1);
+			s = prefix + postfix;
+			s = s.replaceFirst("\\)", "");
+		}
+		return s;
 	}
 
 	private boolean parensMatch(String s) {

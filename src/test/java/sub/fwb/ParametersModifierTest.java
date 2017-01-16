@@ -36,6 +36,14 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldHandleComplexParentheses() throws Exception {
+		expanded = modifier.changeParamsForQuery("((imbis) (bla))").q;
+		assertEquals(
+				"((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ) (bla bla* *bla* +(artikel:*bla* zitat:*bla*) ) )",
+				expanded);
+	}
+
+	@Test
 	public void shouldAcceptDoubleParentheses() throws Exception {
 		expanded = modifier.changeParamsForQuery("((imbis))").q;
 		assertEquals("((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ) )", expanded);

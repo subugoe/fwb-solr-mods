@@ -7,7 +7,7 @@ import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
-public class ComplexPhrase extends QueryToken {
+public class ComplexPhrase extends QueryTokenSearchString {
 
 	public ComplexPhrase(String phraseString, String prefixEnding, Map<String, String> mapForFacetQueries) {
 		this.mapForFacetQueries = new HashMap<>(mapForFacetQueries);
@@ -24,7 +24,7 @@ public class ComplexPhrase extends QueryToken {
 		ParseUtil.checkIfOneWord(escapedPhrase);
 		ParseUtil.checkForLeadingWildcards(escapedPhrase);
 		return String.format(
-				"_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\") ",
+				"(_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\")) ",
 				escapedPhrase, articleField, escapedPhrase, citationField, escapedPhrase);
 	}
 

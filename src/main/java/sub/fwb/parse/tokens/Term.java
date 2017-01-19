@@ -7,7 +7,7 @@ import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
-public class Term extends QueryToken {
+public class Term extends QueryTokenSearchString {
 
 	private String articleField;
 	private String citationField;
@@ -78,7 +78,7 @@ public class Term extends QueryToken {
 
 		@Override
 		public String getModifiedQuery() {
-			return String.format("%s%s +(%s:%s%s %s:%s%s) ", searchString, fuzzy, articleField, searchString, fuzzy,
+			return String.format("(%s%s +(%s:%s%s %s:%s%s)) ", searchString, fuzzy, articleField, searchString, fuzzy,
 					citationField, searchString, fuzzy);
 		}
 
@@ -100,7 +100,7 @@ public class Term extends QueryToken {
 	private class PreciseWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("%s +(%s:%s %s:%s) ", searchString, articleField, searchString, citationField,
+			return String.format("(%s +(%s:%s %s:%s)) ", searchString, articleField, searchString, citationField,
 					searchString);
 		}
 
@@ -121,7 +121,7 @@ public class Term extends QueryToken {
 	private class WordBegin implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("%s %s* +(%s:%s* %s:%s*) ", searchString, searchString, articleField, searchString,
+			return String.format("(%s %s* +(%s:%s* %s:%s*)) ", searchString, searchString, articleField, searchString,
 					citationField, searchString);
 		}
 
@@ -142,7 +142,7 @@ public class Term extends QueryToken {
 	private class WordEnd implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("*%s +(%s:*%s %s:*%s) ", searchString, articleField, searchString, citationField,
+			return String.format("(*%s +(%s:*%s %s:*%s)) ", searchString, articleField, searchString, citationField,
 					searchString);
 		}
 
@@ -163,7 +163,7 @@ public class Term extends QueryToken {
 	private class PartOfWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("%s %s* *%s* +(%s:*%s* %s:*%s*) ", searchString, searchString, searchString,
+			return String.format("(%s %s* *%s* +(%s:*%s* %s:*%s*)) ", searchString, searchString, searchString,
 					articleField, searchString, citationField, searchString);
 		}
 

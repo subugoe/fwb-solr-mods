@@ -13,11 +13,13 @@ import org.apache.solr.parser.ParseException;
 import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters;
 import sub.fwb.parse.ParseUtil;
 import sub.fwb.parse.TokenFactory;
+import sub.fwb.parse.tokens.OperatorAnd;
 import sub.fwb.parse.tokens.OperatorNot;
 import sub.fwb.parse.tokens.OperatorOr;
 import sub.fwb.parse.tokens.ParenthesisLeft;
 import sub.fwb.parse.tokens.ParenthesisRight;
 import sub.fwb.parse.tokens.QueryToken;
+import sub.fwb.parse.tokens.QueryTokenSearchString;
 
 public class ParametersModifier {
 
@@ -44,11 +46,11 @@ public class ParametersModifier {
 		TokenFactory factory = new TokenFactory();
 		List<QueryToken> allTokens = factory.createTokens(origQuery, queryFieldsWithBoosts, exactSearch);
 
-		if (mustAddParens(allTokens)) {
-			addParenthesesWhereNecessary(allTokens, factory);
-		} else {
-			checkIfParensCorrect(allTokens);
-			setNOTsInParens(allTokens, factory);
+		checkIfParensCorrect(allTokens);
+		addANDs(allTokens, factory);
+		setNOTsInParens(allTokens, factory);
+		if (thereAreORs(allTokens)) {
+			setANDsInParens(allTokens, factory);
 		}
 
 		for (QueryToken token : allTokens) {
@@ -69,30 +71,32 @@ public class ParametersModifier {
 		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
 	}
 
-	private boolean mustAddParens(List<QueryToken> allTokens) {
-		boolean hasORorNOT = false;
+	private boolean thereAreORs(List<QueryToken> allTokens) {
 		for (QueryToken token : allTokens) {
-			if (token instanceof ParenthesisLeft || token instanceof ParenthesisRight) {
-				return false;
-			}
-			if (token instanceof OperatorOr || token instanceof OperatorNot) {
-				hasORorNOT = true;
+			if (token instanceof OperatorOr) {
+				return true;
 			}
 		}
-		return hasORorNOT;
+		return false;
 	}
 
-	private void addParenthesesWhereNecessary(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
-		allTokens.add(0, factory.createOneToken("(", queryFieldsWithBoosts, false));
-		allTokens.add(allTokens.size(), factory.createOneToken(")", queryFieldsWithBoosts, false));
-		for (int i = allTokens.size() - 2; i > 0; i--) {
+	private void addANDs(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
+		for (int i = allTokens.size() - 2; i >= 0; i--) {
 			QueryToken current = allTokens.get(i);
-			if (current instanceof OperatorOr) {
-				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
-				allTokens.add(i, factory.createOneToken(")", queryFieldsWithBoosts, false));
-			} else if (current instanceof OperatorNot) {
-				allTokens.add(i + 2, factory.createOneToken(")", queryFieldsWithBoosts, false));
-				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
+			QueryToken following = allTokens.get(i + 1);
+			boolean termAndTerm = current instanceof QueryTokenSearchString
+					&& following instanceof QueryTokenSearchString;
+			boolean parenRightAndTerm = current instanceof ParenthesisRight
+					&& following instanceof QueryTokenSearchString;
+			boolean termAndParenLeft = current instanceof QueryTokenSearchString
+					&& following instanceof ParenthesisLeft;
+			boolean parenRightAndParenLeft = current instanceof ParenthesisRight
+					&& following instanceof ParenthesisLeft;
+			boolean termAndNOT = current instanceof QueryTokenSearchString && following instanceof OperatorNot;
+			boolean parenRightAndNOT = current instanceof ParenthesisRight && following instanceof OperatorNot;
+			if (termAndTerm || parenRightAndTerm || termAndParenLeft || parenRightAndParenLeft || termAndNOT
+					|| parenRightAndNOT) {
+				allTokens.add(i + 1, factory.createOneToken("AND", queryFieldsWithBoosts, false));
 			}
 		}
 	}
@@ -119,10 +123,79 @@ public class ParametersModifier {
 	private void setNOTsInParens(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
 		for (int i = allTokens.size() - 2; i >= 0; i--) {
 			QueryToken current = allTokens.get(i);
-			QueryToken next = allTokens.get(i + 1);
-			if (current instanceof OperatorNot && !(next instanceof ParenthesisLeft)) {
-				allTokens.add(i + 2, factory.createOneToken(")", queryFieldsWithBoosts, false));
-				allTokens.add(i + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
+			if (!(current instanceof OperatorNot)) {
+				continue;
+			}
+			int depthToTheRight = 0;
+			for (int j = i + 1; j < allTokens.size(); j++) {
+				boolean isLastToken = (j == allTokens.size() - 1);
+				if (isLastToken) {
+					allTokens.add(factory.createOneToken(")", queryFieldsWithBoosts, false));
+					break;
+				}
+				QueryToken currentToTheRight = allTokens.get(j);
+				boolean isCorrectRightParen = currentToTheRight instanceof ParenthesisRight && depthToTheRight == 0;
+				boolean isCorrectOR = currentToTheRight instanceof OperatorOr && depthToTheRight == 0;
+				boolean isCorrectAND = currentToTheRight instanceof OperatorAnd && depthToTheRight == 0;
+				if (isCorrectRightParen || isCorrectOR || isCorrectAND) {
+					allTokens.add(j, factory.createOneToken(")", queryFieldsWithBoosts, false));
+					break;
+				}
+				if (currentToTheRight instanceof ParenthesisLeft) {
+					depthToTheRight++;
+				} else if (currentToTheRight instanceof ParenthesisRight) {
+					depthToTheRight--;
+				}
+			}
+			allTokens.add(i, factory.createOneToken("(", queryFieldsWithBoosts, false));
+		}
+	}
+
+	private void setANDsInParens(List<QueryToken> allTokens, TokenFactory factory) throws ParseException {
+		for (int i = allTokens.size() - 2; i >= 0; i--) {
+			QueryToken current = allTokens.get(i);
+			if (!(current instanceof OperatorAnd)) {
+				continue;
+			}
+			int depthToTheRight = 0;
+			for (int j = i; j < allTokens.size(); j++) {
+				boolean isLastToken = (j == allTokens.size() - 1);
+				if (isLastToken) {
+					allTokens.add(factory.createOneToken(")", queryFieldsWithBoosts, false));
+					break;
+				}
+				QueryToken currentToTheRight = allTokens.get(j);
+				boolean isCorrectRightParen = currentToTheRight instanceof ParenthesisRight && depthToTheRight == 0;
+				boolean isCorrectOR = currentToTheRight instanceof OperatorOr && depthToTheRight == 0;
+				if (isCorrectRightParen || isCorrectOR) {
+					allTokens.add(j, factory.createOneToken(")", queryFieldsWithBoosts, false));
+					break;
+				}
+				if (currentToTheRight instanceof ParenthesisLeft) {
+					depthToTheRight++;
+				} else if (currentToTheRight instanceof ParenthesisRight) {
+					depthToTheRight--;
+				}
+			}
+			int depthToTheLeft = 0;
+			for (int j = i; j >= 0; j--) {
+				boolean isFirstToken = j == 0;
+				if (isFirstToken) {
+					allTokens.add(0, factory.createOneToken("(", queryFieldsWithBoosts, false));
+					break;
+				}
+				QueryToken currentToTheLeft = allTokens.get(j);
+				boolean isCorrectLeftParen = currentToTheLeft instanceof ParenthesisLeft && depthToTheLeft == 0;
+				boolean isCorrectOR = currentToTheLeft instanceof OperatorOr && depthToTheLeft == 0;
+				if (isCorrectLeftParen || isCorrectOR) {
+					allTokens.add(j + 1, factory.createOneToken("(", queryFieldsWithBoosts, false));
+					break;
+				}
+				if (currentToTheLeft instanceof ParenthesisRight) {
+					depthToTheLeft++;
+				} else if (currentToTheLeft instanceof ParenthesisLeft) {
+					depthToTheLeft--;
+				}
 			}
 		}
 	}

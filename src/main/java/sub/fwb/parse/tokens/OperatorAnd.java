@@ -6,7 +6,7 @@ public class OperatorAnd extends QueryTokenSymbol {
 
 	@Override
 	public String getModifiedQuery() throws ParseException {
-		return "";
+		return "AND ";
 	}
 
 	@Override

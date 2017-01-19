@@ -1,6 +1,6 @@
 package sub.fwb.parse.tokens;
 
-public abstract class QueryTokenPrefixed extends QueryToken {
+public abstract class QueryTokenPrefixed extends QueryTokenSearchString {
 
 	protected String prefix = "";
 	protected String prefixWithEnding = "";

@@ -7,7 +7,7 @@ import org.apache.solr.parser.ParseException;
 
 import sub.fwb.parse.ParseUtil;
 
-public class Phrase extends QueryToken {
+public class Phrase extends QueryTokenSearchString {
 
 	public Phrase(String phraseString, String prefixEnding, Map<String, String> mapForFacetQueries) {
 		this.mapForFacetQueries = new HashMap<>(mapForFacetQueries);
@@ -20,7 +20,7 @@ public class Phrase extends QueryToken {
 	public String getModifiedQuery() {
 		String articleField = ParseUtil.article(prefixEnding);
 		String citationField = ParseUtil.citation(prefixEnding);
-		return String.format("%s +(%s:%s %s:%s) ", escapedString, articleField, escapedString, citationField,
+		return String.format("(%s +(%s:%s %s:%s)) ", escapedString, articleField, escapedString, citationField,
 				escapedString);
 	}
 

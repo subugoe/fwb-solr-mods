@@ -16,7 +16,7 @@ public class PhrasePrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getModifiedQuery() {
-		return String.format("+%s:%s ", prefixWithEnding, postfix);
+		return String.format("(+%s:%s) ", prefixWithEnding, postfix);
 	}
 
 	@Override

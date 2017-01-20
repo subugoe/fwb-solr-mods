@@ -14,7 +14,7 @@ public class RegexPrefixed extends QueryTokenPrefixed {
 
 	@Override
 	public String getModifiedQuery() throws ParseException {
-		return String.format("(+%s:%s) ", prefixWithEnding, postfix);
+		return String.format("%s:%s ", prefixWithEnding, postfix);
 	}
 
 	@Override

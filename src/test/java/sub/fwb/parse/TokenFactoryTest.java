@@ -115,7 +115,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldRemoveParenthesesFromPhrase() throws Exception {
 		expanded = expandOneTokenString("\"104 a)\"");
-		assertEquals("\"104 a \" +(artikel:\"104 a \" zitat:\"104 a \") ", expanded);
+		assertEquals("(\"104 a \" +(artikel:\"104 a \" zitat:\"104 a \")) ", expanded);
 	}
 
 	@Test
@@ -140,25 +140,25 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldIgnoreNonlettersInPrefixedPhrase() throws Exception {
 		expanded = expandOneTokenString("lemma:\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒ bla&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
-		assertEquals("+lemma:\"imbis bla\" ", expanded);
+		assertEquals("lemma:\"imbis bla\" ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonlettersInPhrase() throws Exception {
 		expanded = expandOneTokenString("\"‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'\"");
-		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
+		assertEquals("(imbis +(artikel:imbis zitat:imbis)) ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonlettersInPrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
-		assertEquals("+lemma:(imbis imbis* *imbis*)^1000 ", expanded);
+		assertEquals("lemma:(imbis imbis* *imbis*)^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreNonletters() throws Exception {
 		expanded = expandOneTokenString("‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
-		assertEquals("imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ", expanded);
+		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ", expanded);
 	}
 
 	@Test
@@ -271,67 +271,67 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldIgnoreDollarWhenTildePrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:imbis$~2");
-		assertEquals("+lemma:imbis~2^1000 ", expanded);
+		assertEquals("lemma:imbis~2^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptTildeTwoPrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:imbis~2");
-		assertEquals("+lemma:imbis~2^1000 ", expanded);
+		assertEquals("lemma:imbis~2^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldIgnoreCircumflexAndDollarWhenTilde() throws Exception {
 		expanded = expandOneTokenString("^imbis$~2");
-		assertEquals("imbis~2 +(artikel:imbis~2 zitat:imbis~2) ", expanded);
+		assertEquals("(imbis~2 +(artikel:imbis~2 zitat:imbis~2)) ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptTildeTwo() throws Exception {
 		expanded = expandOneTokenString("imbis~2");
-		assertEquals("imbis~2 +(artikel:imbis~2 zitat:imbis~2) ", expanded);
+		assertEquals("(imbis~2 +(artikel:imbis~2 zitat:imbis~2)) ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptTildeOne() throws Exception {
 		expanded = expandOneTokenString("imbis~1");
-		assertEquals("imbis~1 +(artikel:imbis~1 zitat:imbis~1) ", expanded);
+		assertEquals("(imbis~1 +(artikel:imbis~1 zitat:imbis~1)) ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptDollarPrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:imbis$");
-		assertEquals("+lemma:*imbis^1000 ", expanded);
+		assertEquals("lemma:*imbis^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptCircumflexPrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:^imbis");
-		assertEquals("+lemma:(imbis imbis*)^1000 ", expanded);
+		assertEquals("lemma:(imbis imbis*)^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptCircumflexAndDollarPrefixed() throws Exception {
 		expanded = expandOneTokenString("lemma:^imbis$");
-		assertEquals("+lemma:imbis^1000 ", expanded);
+		assertEquals("lemma:imbis^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptDollar() throws Exception {
 		expanded = expandOneTokenString("imbis$");
-		assertEquals("*imbis +(artikel:*imbis zitat:*imbis) ", expanded);
+		assertEquals("(*imbis +(artikel:*imbis zitat:*imbis)) ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptCircumflex() throws Exception {
 		expanded = expandOneTokenString("^imbis");
-		assertEquals("imbis imbis* +(artikel:imbis* zitat:imbis*) ", expanded);
+		assertEquals("(imbis imbis* +(artikel:imbis* zitat:imbis*)) ", expanded);
 	}
 
 	@Test
 	public void shouldAcceptCircumflexAndDollar() throws Exception {
 		expanded = expandOneTokenString("^imbis$");
-		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
+		assertEquals("(imbis +(artikel:imbis zitat:imbis)) ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -352,7 +352,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldAcceptOneWordInComplexPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("zitat:\"imb?s\"");
-		assertEquals("+zitat:imb?s^50 ", expanded);
+		assertEquals("zitat:imb?s^50 ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -363,39 +363,39 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldNotRejectOneWordInComplexPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imb?s\"");
-		assertEquals("imb?s +(artikel:imb?s zitat:imb?s) ", expanded);
+		assertEquals("(imb?s +(artikel:imb?s zitat:imb?s)) ", expanded);
 	}
 
 	@Test
 	public void shouldExpandComplexPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("zitat:\"imb*s ward\"");
-		assertEquals("+_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\" ", expanded);
+		assertEquals("_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\" ", expanded);
 	}
 
 	@Test
 	public void shouldExpandComplexPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imb*s ward\"");
 		assertEquals(
-				"_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\") ",
+				"(_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\")) ",
 				expanded);
 	}
 
 	@Test
 	public void shouldExpandRegexWithPrefix() throws Exception {
 		expanded = expandOneTokenString("lemma:/imbis/");
-		assertEquals("+lemma:/imbis/ ", expanded);
+		assertEquals("lemma:/imbis/ ", expanded);
 	}
 
 	@Test
 	public void shouldExpandRegex() throws Exception {
 		expanded = expandOneTokenString("/imbis/");
-		assertEquals("+(artikel:/imbis/ zitat:/imbis/) ", expanded);
+		assertEquals("(artikel:/imbis/ zitat:/imbis/) ", expanded);
 	}
 
 	@Test
 	public void shouldExpandWithDash() throws Exception {
 		expanded = expandOneTokenString("-lach");
-		assertEquals("\\-lach \\-lach* *\\-lach* +(artikel:*\\-lach* zitat:*\\-lach*) ", expanded);
+		assertEquals("(\\-lach \\-lach* *\\-lach* +(artikel:*\\-lach* zitat:*\\-lach*)) ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -406,37 +406,37 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandPrefixedSearch() throws Exception {
 		expanded = expandOneTokenString("lemma:imbis");
-		assertEquals("+lemma:(imbis imbis* *imbis*)^1000 ", expanded);
+		assertEquals("lemma:(imbis imbis* *imbis*)^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldExpandOneWordPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("lemma:\"imbis\"");
-		assertEquals("+lemma:imbis^1000 ", expanded);
+		assertEquals("lemma:imbis^1000 ", expanded);
 	}
 
 	@Test
 	public void shouldExpandOneWordPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imbis\"");
-		assertEquals("imbis +(artikel:imbis zitat:imbis) ", expanded);
+		assertEquals("(imbis +(artikel:imbis zitat:imbis)) ", expanded);
 	}
 
 	@Test
 	public void shouldEscapeBrackets() throws Exception {
 		expanded = expandOneTokenString("imb[i]s");
-		assertEquals("imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s*) ", expanded);
+		assertEquals("(imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s*)) ", expanded);
 	}
 
 	@Test
 	public void shouldEscapeParentheses() throws Exception {
 		expanded = expandOneTokenString("imb(i)s");
-		assertEquals("imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s*) ", expanded);
+		assertEquals("(imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s*)) ", expanded);
 	}
 
 	@Test
 	public void shouldEscapePipe() throws Exception {
 		expanded = expandOneTokenString("bar|tuch");
-		assertEquals("bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch*) ", expanded);
+		assertEquals("(bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch*)) ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -452,13 +452,13 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandSimplePhrase() throws Exception {
 		expanded = expandOneTokenString("\"my imbis\"");
-		assertEquals("\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\") ", expanded);
+		assertEquals("(\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\")) ", expanded);
 	}
 
 	@Test
 	public void shouldExpandOneWord() throws Exception {
 		expanded = expandOneTokenString("imbis");
-		assertEquals("imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*) ", expanded);
+		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ", expanded);
 	}
 
 	private String expandOneTokenString(String ts) throws Exception {

@@ -19,7 +19,7 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
 		ParseUtil.checkForLeadingWildcards(escapedPhrase);
-		return String.format("(+_query_:\"{!complexphrase}%s:%s\") ", prefixWithEnding,
+		return String.format("_query_:\"{!complexphrase}%s:%s\" ", prefixWithEnding,
 				postfix.replaceAll("\"", "\\\\\""));
 	}
 

@@ -19,7 +19,7 @@ public class Regex extends QueryTokenSearchString {
 	public String getModifiedQuery() {
 		String articleField = ParseUtil.article(prefixEnding);
 		String citationField = ParseUtil.citation(prefixEnding);
-		return String.format("(+(%s:%s %s:%s)) ", articleField, originalTokenString, citationField, originalTokenString);
+		return String.format("(%s:%s %s:%s) ", articleField, originalTokenString, citationField, originalTokenString);
 	}
 
 	@Override

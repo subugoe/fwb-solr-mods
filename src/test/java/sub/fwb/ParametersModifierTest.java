@@ -36,6 +36,40 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldAcceptANDandNOT() throws Exception {
+		expanded = modifier.changeParamsForQuery("imbis AND NOT gast").q;
+		// no exception
+	}
+
+	@Test
+	public void shouldRejectParenthesizedNOT() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Operatoren");
+		expanded = modifier.changeParamsForQuery("imbis (NOT) gast").q;
+	}
+
+	@Test
+	public void shouldRejectANDafterOR() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Operatoren");
+		expanded = modifier.changeParamsForQuery("imbis OR AND gast").q;
+	}
+
+	@Test
+	public void shouldRejectFirstOR() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Operatoren");
+		expanded = modifier.changeParamsForQuery("OR imbis").q;
+	}
+
+	@Test
+	public void shouldRejectLastAND() throws Exception {
+	    inTest.expect(ParseException.class);
+	    inTest.expectMessage("Operatoren");
+		expanded = modifier.changeParamsForQuery("imbis AND").q;
+	}
+
+	@Test
 	public void shouldParenthesizeNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT lemma:^a$ OR lemma:^b$").q;
 		assertEquals("(NOT lemma:a^1000 ) OR lemma:b^1000", expanded);

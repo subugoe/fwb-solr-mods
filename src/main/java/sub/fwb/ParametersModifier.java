@@ -47,6 +47,7 @@ public class ParametersModifier {
 		List<QueryToken> allTokens = factory.createTokens(origQuery, queryFieldsWithBoosts, exactSearch);
 
 		checkIfParensCorrect(allTokens);
+		checkIfOperatorsCorrect(allTokens);
 		addANDs(allTokens, factory);
 		setNOTsInParens(allTokens, factory);
 		if (thereAreORs(allTokens)) {
@@ -117,6 +118,35 @@ public class ParametersModifier {
 			}
 		} catch (EmptyStackException e) {
 			throw new ParseException(wrongParensMessage);
+		}
+	}
+
+	private void checkIfOperatorsCorrect(List<QueryToken> allTokens) throws ParseException {
+		String incorrectOperatorsMessage = "Operatoren sind nicht richtig gesetzt";
+		for (int i = 0; i < allTokens.size(); i++) {
+			QueryToken current = allTokens.get(i);
+			boolean isFirst = (i == 0);
+			boolean isLast = (i == allTokens.size() - 1);
+			boolean isANDorOR = current instanceof OperatorAnd || current instanceof OperatorOr;
+			boolean startsWithANDorOR = isFirst && isANDorOR;
+			boolean isANDorORorNOT = isANDorOR || current instanceof OperatorNot;
+			boolean endsWithOperator = isLast && isANDorORorNOT;
+			if (startsWithANDorOR || endsWithOperator) {
+				throw new ParseException(incorrectOperatorsMessage);
+			}
+			if (!isFirst && !isLast) {
+				QueryToken next = allTokens.get(i + 1);
+				QueryToken previous = allTokens.get(i - 1);
+				boolean expectedPrevious = previous instanceof QueryTokenSearchString
+						|| previous instanceof ParenthesisRight;
+				boolean isWrongPrevious = isANDorOR && !expectedPrevious;
+				boolean expectedNext = next instanceof QueryTokenSearchString || next instanceof ParenthesisLeft
+						|| next instanceof OperatorNot;
+				boolean isWrongNext = isANDorORorNOT && !expectedNext;
+				if (isWrongPrevious || isWrongNext) {
+					throw new ParseException(incorrectOperatorsMessage);
+				}
+			}
 		}
 	}
 

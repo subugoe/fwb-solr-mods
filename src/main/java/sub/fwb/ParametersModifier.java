@@ -34,17 +34,20 @@ public class ParametersModifier {
 		hlFields = hlFl;
 	}
 
-	public ModifiedParameters changeParamsForQuery(String origQuery) throws ParseException {
+	public ModifiedParameters changeParamsForQuery(final String origQuery) throws ParseException {
 
+		String modifiedQuery = origQuery;
 		boolean exactSearch = false;
 		if (origQuery.contains("EXAKT")) {
-			origQuery = origQuery.replace("EXAKT", "");
+			modifiedQuery = modifiedQuery.replace("EXAKT", "");
 			exactSearch = true;
 		}
 
+		modifiedQuery = addSpaces(modifiedQuery);
+
 		modifyQueryFields(exactSearch);
 		TokenFactory factory = new TokenFactory();
-		List<QueryToken> allTokens = factory.createTokens(origQuery, queryFieldsWithBoosts, exactSearch);
+		List<QueryToken> allTokens = factory.createTokens(modifiedQuery, queryFieldsWithBoosts, exactSearch);
 
 		checkIfParensCorrect(allTokens);
 		checkIfOperatorsCorrect(allTokens);
@@ -70,6 +73,17 @@ public class ParametersModifier {
 
 		Set<String> facetQueries = facetQueryMapToSet(allTokens.size());
 		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
+	}
+
+	private String addSpaces(String query) {
+		query = query.replace(")(", ") (");
+		query = query.replace("NOT(", "NOT (");
+		query = query.replace("AND(", "AND (");
+		query = query.replace("OR(", "OR (");
+		query = query.replace(")NOT", ") NOT");
+		query = query.replace(")AND", ") AND");
+		query = query.replace(")OR", ") OR");
+		return query;
 	}
 
 	private boolean thereAreORs(List<QueryToken> allTokens) {

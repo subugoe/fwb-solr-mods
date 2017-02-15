@@ -36,6 +36,18 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldAcceptWithMissingSpaces() throws Exception {
+		expanded = modifier.changeParamsForQuery("NOT(lemma:^a$)OR(lemma:^b$)").q;
+		assertEquals("(NOT (lemma:a^1000 ) ) OR (lemma:b^1000 )", expanded);
+	}
+
+	@Test
+	public void shouldAcceptWithMissingSpacesBetweenParens() throws Exception {
+		expanded = modifier.changeParamsForQuery("(lemma:^a$)(lemma:^b$)").q;
+		assertEquals("(lemma:a^1000 ) AND (lemma:b^1000 )", expanded);
+	}
+
+	@Test
 	public void shouldAcceptANDandNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("imbis AND NOT gast").q;
 		// no exception

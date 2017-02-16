@@ -20,6 +20,7 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 	@Override
 	public void process(ResponseBuilder rb) throws IOException {
 		SolrQueryResponse response = rb.rsp;
+		String highlightMarker = rb.req.getParams().get("hl.simple.pre");
 		@SuppressWarnings("unchecked")
 		SimpleOrderedMap<Object> highlightedFields = (SimpleOrderedMap<Object>) ((SimpleOrderedMap<Object>) response
 				.getValues().get("highlighting")).getVal(0);
@@ -39,14 +40,17 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 			if (!fieldName.startsWith("artikel")) {
 				String[] values = (String[]) highlightedFields.get(fieldName);
 				for (String value : values) {
-					String valueStart = getStart(value);
-					String valueEnd = getEnd(value);
-					String valueMiddle = getMiddle(value);
-					article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, Matcher.quoteReplacement(valueMiddle));
+					if (value.contains(highlightMarker)) {
+						String valueStart = getStart(value);
+						String valueEnd = getEnd(value);
+						String valueMiddle = getMiddle(value);
+						article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, Matcher.quoteReplacement(valueMiddle));
+					}
 				}
 				highlightedFields.remove(fieldName);
 			}
 		}
+		highlightedFields.remove("artikel");
 		highlightedFields.remove("artikel" + ending);
 		highlightedFields.add("artikel", new String[] { article });
 	}

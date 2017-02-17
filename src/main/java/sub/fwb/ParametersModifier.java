@@ -23,8 +23,6 @@ import sub.fwb.parse.tokens.QueryTokenSearchString;
 
 public class ParametersModifier {
 
-	private String expandedQuery = "";
-	private String hlQuery = "";
 	private String queryFieldsWithBoosts = "";
 	private String hlFields = "";
 	private Map<String, String> allFacetQueries = new HashMap<>();
@@ -35,6 +33,8 @@ public class ParametersModifier {
 	}
 
 	public ModifiedParameters changeParamsForQuery(final String origQuery) throws ParseException {
+		String expandedQuery = "";
+		String hlQuery = "";
 
 		String modifiedQuery = origQuery;
 		boolean exactSearch = false;
@@ -62,6 +62,8 @@ public class ParametersModifier {
 			hlQuery += token.getHlQuery();
 			addToFacetQueries(token.getFacetQueries());
 		}
+
+		expandedQuery = addFieldTypeIfNecessary(expandedQuery);
 
 		if (expandedQuery.isEmpty()) {
 			throw new ParseException("Die Suchanfrage ist ungültig");
@@ -255,6 +257,13 @@ public class ParametersModifier {
 				allFacetQueries.put(lemmaEtc, currentValue);
 			}
 		}
+	}
+
+	private String addFieldTypeIfNecessary(String query) {
+		if (query.contains("NOT")) {
+			return query.trim() + " -type:quelle";
+		}
+		return query;
 	}
 
 	private void modifyHlFields(boolean exactSearch) {

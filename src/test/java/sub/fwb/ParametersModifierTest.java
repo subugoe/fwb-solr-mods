@@ -38,7 +38,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldAcceptWithMissingSpaces() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT(lemma:^a$)OR(lemma:^b$)").q;
-		assertEquals("(NOT (lemma:a^1000 ) ) OR (lemma:b^1000 )", expanded);
+		assertEquals("(NOT (lemma:a^1000 ) ) OR (lemma:b^1000 ) -type:quelle", expanded);
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldParenthesizeNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT lemma:^a$ OR lemma:^b$").q;
-		assertEquals("(NOT lemma:a^1000 ) OR lemma:b^1000", expanded);
+		assertEquals("(NOT lemma:a^1000 ) OR lemma:b^1000 -type:quelle", expanded);
 	}
 
 	@Test
@@ -114,31 +114,31 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldNotSetNOTinDoubleParens() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT (b)").q;
-		assertEquals("(NOT ((b b* *b* +(artikel:*b* zitat:*b*)) ) )", expanded);
+		assertEquals("(NOT ((b b* *b* +(artikel:*b* zitat:*b*)) ) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldSetNOTinParens() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT b").q;
-		assertEquals("(NOT (b b* *b* +(artikel:*b* zitat:*b*)) )", expanded);
+		assertEquals("(NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldNotAddANDBetweenOpenParenAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("a (NOT b)").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND ((NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) )", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND ((NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenClosingParenAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("(a) NOT b").q;
-		assertEquals("((a a* *a* +(artikel:*a* zitat:*a*)) ) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) )", expanded);
+		assertEquals("((a a* *a* +(artikel:*a* zitat:*a*)) ) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenTermAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("a NOT b").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) )", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
@@ -333,20 +333,20 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldAddParensForNot() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT lemma:imbis OR (bla)").q;
-		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 ) OR ((bla bla* *bla* +(artikel:*bla* zitat:*bla*)) )",
+		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 ) OR ((bla bla* *bla* +(artikel:*bla* zitat:*bla*)) ) -type:quelle",
 				expanded);
 	}
 
 	@Test
 	public void shouldKeepParens() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT (lemma:imbis)").q;
-		assertEquals("(NOT (lemma:(imbis imbis* *imbis*)^1000 ) )", expanded);
+		assertEquals("(NOT (lemma:(imbis imbis* *imbis*)^1000 ) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldExpandNotOperator() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT lemma:imbis").q;
-		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 )", expanded);
+		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 ) -type:quelle", expanded);
 	}
 
 	@Test

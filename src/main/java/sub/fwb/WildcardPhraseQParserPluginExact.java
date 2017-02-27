@@ -35,18 +35,20 @@ import org.apache.solr.search.SyntaxError;
  * This is an almost exact copy of Solr's ComplexPhraseQParserPlugin
  * 
  * Differences:
- * 1. The name of the parser is 'wildcardphrase'
+ * 1. The name of the parser is 'wildcardphrase_exakt'
  * 2. The parser accepts wildcards at the beginning of a word: 
  *   lparser.setAllowLeadingWildcard(true);
+ * 3. The parser does not lowercase wildcarded words:
+ *   lparser.setLowercaseExpandedTerms(false);
  * 
  * 
  * Parse Solr's variant on the Lucene {@link org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser} syntax.
  * <p>
  * Modified from {@link org.apache.solr.search.LuceneQParserPlugin} and {@link org.apache.solr.search.SurroundQParserPlugin}
  */
-public class WildcardPhraseQParserPlugin extends QParserPlugin {
+public class WildcardPhraseQParserPluginExact extends QParserPlugin {
 
-  public static final String NAME = "wildcardphrase";
+  public static final String NAME = "wildcardphrase_exakt";
 
   private boolean inOrder = true;
 
@@ -108,6 +110,7 @@ public class WildcardPhraseQParserPlugin extends QParserPlugin {
 
       // modified stuff begin
       lparser.setAllowLeadingWildcard(true);
+      lparser.setLowercaseExpandedTerms(false);
       // modified stuff end
 
       QueryParser.Operator defaultOperator = QueryParsing.getQueryParserDefaultOperator(getReq().getSchema(), getParam(QueryParsing.OP));

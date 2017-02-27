@@ -18,7 +18,8 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 	public String getModifiedQuery() throws ParseException {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
-		return String.format("_query_:\"{!wildcardphrase}%s:%s\" ", prefixWithEnding,
+		String parser = "wildcardphrase" + prefixEnding;
+		return String.format("_query_:\"{!%s}%s:%s\" ", parser, prefixWithEnding,
 				postfix.replaceAll("\"", "\\\\\""));
 	}
 
@@ -29,7 +30,8 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
-		return String.format("_query_:\"{!wildcardphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
+		String parser = "wildcardphrase" + prefixEnding;
+		return String.format("_query_:\"{!%s}%s_text%s:%s\" ", parser, prefix, prefixEnding, postfixTemp);
 	}
 
 //	@Override

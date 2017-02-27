@@ -36,6 +36,12 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldMakeExactWildcardPhrase() throws Exception {
+		expanded = modifier.changeParamsForQuery("lemma:\"imbis War*\" EXAKT").q;
+		assertEquals("_query_:\"{!wildcardphrase_exakt}lemma_exakt:\\\"imbis War*\\\"\"", expanded);
+	}
+
+	@Test
 	public void shouldAcceptWithMissingSpaces() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT(lemma:^a$)OR(lemma:^b$)").q;
 		assertEquals("(NOT (lemma:a^1000 ) ) OR (lemma:b^1000 ) -type:quelle", expanded);

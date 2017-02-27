@@ -22,9 +22,8 @@ public class ComplexPhrase extends QueryTokenSearchString {
 		String citationField = ParseUtil.citation(prefixEnding);
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
-		ParseUtil.checkForLeadingWildcards(escapedPhrase);
 		return String.format(
-				"(_query_:\"{!complexphrase}%s\" +(_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\")) ",
+				"(_query_:\"{!wildcardphrase}%s\" +(_query_:\"{!wildcardphrase}%s:%s\" _query_:\"{!wildcardphrase}%s:%s\")) ",
 				escapedPhrase, articleField, escapedPhrase, citationField, escapedPhrase);
 	}
 
@@ -33,7 +32,7 @@ public class ComplexPhrase extends QueryTokenSearchString {
 		String articleTextField = ParseUtil.articleText(prefixEnding);
 		String citationTextField = ParseUtil.citationText(prefixEnding);
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
-		return String.format("_query_:\"{!complexphrase}%s:%s\" _query_:\"{!complexphrase}%s:%s\" ",
+		return String.format("_query_:\"{!wildcardphrase}%s:%s\" _query_:\"{!wildcardphrase}%s:%s\" ",
 				articleTextField, escapedPhrase, citationTextField, escapedPhrase);
 	}
 
@@ -41,7 +40,7 @@ public class ComplexPhrase extends QueryTokenSearchString {
 //	public Map<String, String> getFacetQueries() {
 //		for (String searchField : mapForFacetQueries.keySet()) {
 //			String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
-//			String newQuery = String.format("_query_:\"{!complexphrase}%s\"", escapedPhrase);
+//			String newQuery = String.format("_query_:\"{!wildcardphrase}%s\"", escapedPhrase);
 //			mapForFacetQueries.put(searchField, newQuery);
 //		}
 //		return mapForFacetQueries;

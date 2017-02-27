@@ -14,15 +14,6 @@ public class ParseUtil {
 		}
 	}
 
-	public static void checkForLeadingWildcards(String complexPhrase) throws ParseException {
-		String[] parts = complexPhrase.split("[\" ]");
-		for (String part : parts) {
-			if (part.startsWith("*") || part.startsWith("?")) {
-				throw new ParseException("Bei Phrasen sind * und ? am Wortanfang nicht erlaubt: " + part);
-			}
-		}
-	}
-
 	public static String freeFromCircumflexAndDollar(String s) {
 		if (s.startsWith("^")) {
 			s = s.substring(1);

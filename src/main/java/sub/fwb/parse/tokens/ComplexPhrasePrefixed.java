@@ -18,8 +18,7 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 	public String getModifiedQuery() throws ParseException {
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		ParseUtil.checkIfOneWord(escapedPhrase);
-		ParseUtil.checkForLeadingWildcards(escapedPhrase);
-		return String.format("_query_:\"{!complexphrase}%s:%s\" ", prefixWithEnding,
+		return String.format("_query_:\"{!wildcardphrase}%s:%s\" ", prefixWithEnding,
 				postfix.replaceAll("\"", "\\\\\""));
 	}
 
@@ -30,12 +29,12 @@ public class ComplexPhrasePrefixed extends QueryTokenPrefixed {
 		}
 		String escapedPhrase = escapedString.replaceAll("\"", "\\\\\"");
 		String postfixTemp = escapedPhrase.split(":")[1];
-		return String.format("_query_:\"{!complexphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
+		return String.format("_query_:\"{!wildcardphrase}%s_text%s:%s\" ", prefix, prefixEnding, postfixTemp);
 	}
 
 //	@Override
 //	public Map<String, String> getFacetQueries() {
-//		String newQuery = String.format("_query_:\"{!complexphrase}%s:%s\"", prefixWithEnding,
+//		String newQuery = String.format("_query_:\"{!wildcardphrase}%s:%s\"", prefixWithEnding,
 //				postfix.replaceAll("\"", "\\\\\""));
 //		mapForFacetQueries.put(prefixWithEnding, newQuery);
 //		return mapForFacetQueries;

@@ -41,9 +41,10 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 				String[] values = (String[]) highlightedFields.get(fieldName);
 				for (String value : values) {
 					if (value.contains(highlightMarker)) {
-						String valueStart = getStart(value);
-						String valueEnd = getEnd(value);
-						String valueMiddle = getMiddle(value);
+						String commentName = extract("<!--start (.*?)-->", value);
+						String valueStart = getStart(value, commentName);
+						String valueEnd = getEnd(value, commentName);
+						String valueMiddle = getMiddle(value, commentName);
 						article = article.replaceFirst("(?s)" + valueStart + ".*?" + valueEnd, Matcher.quoteReplacement(valueMiddle));
 					}
 				}
@@ -55,16 +56,16 @@ public class HlArticleAdaptingComponent extends SearchComponent {
 		highlightedFields.add("artikel", new String[] { article });
 	}
 
-	private String getStart(String quote) {
-		return extract("(<!--start .*?-->)", quote);
+	private String getStart(String quote, String commentName) {
+		return extract("(<!--start " + commentName + "-->)", quote);
 	}
 
-	private String getEnd(String quote) {
-		return extract("(<!--end .*?-->)", quote);
+	private String getEnd(String quote, String commentName) {
+		return extract("(<!--end " + commentName + "-->)", quote);
 	}
 
-	private String getMiddle(String quote) {
-		return extract("<!--start .*?-->(.*)<!--end .*?-->", quote);
+	private String getMiddle(String quote, String commentName) {
+		return extract("<!--start " + commentName + "-->(.*)<!--end " + commentName + "-->", quote);
 	}
 
 	private String extract(String regex, String s) {

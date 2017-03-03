@@ -36,6 +36,13 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldRejectComplexPhraseInCitation() throws Exception {
+		inTest.expect(ParseException.class);
+		inTest.expectMessage("Phrasensuche mit *");
+		expanded = modifier.changeParamsForQuery("zitat:\"imbis gas*\"").q;
+	}
+
+	@Test
 	public void shouldMakeExactWildcardPhrase() throws Exception {
 		expanded = modifier.changeParamsForQuery("lemma:\"imbis War*\" EXAKT").q;
 		assertEquals("_query_:\"{!wildcardphrase_exakt}lemma_exakt:\\\"imbis War*\\\"\"", expanded);

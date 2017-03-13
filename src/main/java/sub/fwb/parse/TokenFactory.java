@@ -217,7 +217,7 @@ public class TokenFactory {
 	}
 
 	private boolean hasPrefix(String tokenString) {
-		return tokenString.matches("[a-z0-9_]+:.*");
+		return tokenString.matches("[a-zA-Z0-9_]+:.*");
 	}
 
 	private boolean isComplex(String phrase) {

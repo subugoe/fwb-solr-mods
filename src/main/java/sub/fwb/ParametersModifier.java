@@ -294,6 +294,10 @@ public class ParametersModifier {
 		Set<String> setOfFacetQueries = new HashSet<>();
 		for (Map.Entry<String, String> entry : allFacetQueries.entrySet()) {
 			String lemmaEtc = entry.getKey();
+			if (lemmaEtc.startsWith("sufo")) {
+				// the sufo and sufo_exakt fields must be hidden from the user
+				continue;
+			}
 			String currentValue = entry.getValue();
 			if (numberOfTokens == 1) {
 				setOfFacetQueries.add(lemmaEtc + ":" + currentValue);

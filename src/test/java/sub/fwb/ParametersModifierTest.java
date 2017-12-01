@@ -23,7 +23,7 @@ public class ParametersModifierTest {
 
 	@Before
 	public void setUp() throws Exception {
-		modifier = new ParametersModifier("lemma^1000 zitat^50", "zitat_text,artikel_text");
+		modifier = new ParametersModifier("lemma^1000 zitat^50 sufo^1", "zitat_text,artikel_text");
 	}
 
 	@After
@@ -199,6 +199,12 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldIgnoreSufo() throws Exception {
+		facetQueries = modifier.changeParamsForQuery("sufo:bla").facetQueries;
+		assertEquals(0, facetQueries.size());
+	}
+
+	@Test
 	public void shouldCreateFacetQueriesFor2ExactPrefixed() throws Exception {
 		facetQueries = modifier.changeParamsForQuery("lemma:\"imbis bla\" lemma:imbis EXAKT").facetQueries;
 		assertEquals(1, facetQueries.size());
@@ -288,7 +294,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldConstructQfForExactSearch() throws Exception {
 		String queryFields = modifier.changeParamsForQuery("zitat:Imbis EXAKT").qf;
-		assertEquals("lemma_exakt^1000 zitat_exakt^50", queryFields);
+		assertEquals("lemma_exakt^1000 zitat_exakt^50 sufo_exakt^1", queryFields);
 	}
 
 	@Test

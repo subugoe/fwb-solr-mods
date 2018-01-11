@@ -11,7 +11,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 
-public class LemmaNormalizingFilter extends TokenFilter {
+public final class LemmaNormalizingFilter extends TokenFilter {
 
 	private final CharTermAttribute termAttr = addAttribute(CharTermAttribute.class);
 	private final PositionIncrementAttribute posIncrAttr = addAttribute(PositionIncrementAttribute.class);

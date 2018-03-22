@@ -5,6 +5,8 @@
 The classes contained in this project extend standard Solr classes. There are for example custom Filter Factories,
 Filters, and Search Handlers that change the functionality of those classes or add something new to the standard functionality.
 
+This project serves as a component for another project, which can be found at https://github.com/subugoe/fwb-importer.
+
 ## Compilation
 
 You need Java JDK 7 or higher and Maven 3 or higher.

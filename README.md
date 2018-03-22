@@ -37,7 +37,7 @@ in solrconfig.xml, or:
 in schema.xml.
   
 For more details, you can look at the complete files on Github: 
-https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
+https://github.com/subugoe/fwb-importer/tree/master/solr/fwb/conf
 
 ## Documentation
 
@@ -60,7 +60,7 @@ https://github.com/subugoe/fwb-index-creator/tree/master/solr/fwb/conf
   This is the Unicode number for the little i over another letter, followed by a colon. 
   After the colon, there is nothing there, i. e., an empty string, which means that the little i character will be optional.
   
-  Here is an example of a complete file: https://github.com/subugoe/fwb-index-creator/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt.
+  Here is an example of a complete file: https://github.com/subugoe/fwb-importer/blob/master/solr/fwb/conf/umlaut_mappings_for_quotes.txt.
   
 * LemmaNormalizingFilterFactory and LemmaNormalizingFilter
 

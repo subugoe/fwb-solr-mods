@@ -45,7 +45,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldMakeExactWildcardPhrase() throws Exception {
 		expanded = modifier.changeParamsForQuery("lemma:\"imbis War*\" EXAKT").q;
-		assertEquals("_query_:\"{!wildcardphrase_exakt}lemma_exakt:\\\"imbis War*\\\"\"", expanded);
+		assertEquals("_query_:\"{!complexphrase}lemma_exakt:\\\"imbis War*\\\"\"", expanded);
 	}
 
 	@Test

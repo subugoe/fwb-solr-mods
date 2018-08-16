@@ -181,13 +181,13 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldHlComplexPhrasePrefixed() throws Exception {
 		hlQuery = hlQueryFrom("def:\"imbis wa?d\"");
-		assertEquals("_query_:\"{!wildcardphrase}def_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+		assertEquals("_query_:\"{!complexphrase}def_text:\\\"imbis wa?d\\\"\" ", hlQuery);
 	}
 
 	@Test
 	public void shouldHlComplexPhrase() throws Exception {
 		hlQuery = hlQueryFrom("\"imbis wa?d\"");
-		assertEquals("_query_:\"{!wildcardphrase}artikel_text:\\\"imbis wa?d\\\"\" _query_:\"{!wildcardphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
+		assertEquals("_query_:\"{!complexphrase}artikel_text:\\\"imbis wa?d\\\"\" _query_:\"{!complexphrase}zitat_text:\\\"imbis wa?d\\\"\" ", hlQuery);
 	}
 
 	@Test
@@ -370,14 +370,14 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandComplexPhraseWithPrefix() throws Exception {
 		expanded = expandOneTokenString("zitat:\"imb*s ward\"");
-		assertEquals("_query_:\"{!wildcardphrase}zitat:\\\"imb*s ward\\\"\" ", expanded);
+		assertEquals("_query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\" ", expanded);
 	}
 
 	@Test
 	public void shouldExpandComplexPhrase() throws Exception {
 		expanded = expandOneTokenString("\"imb*s ward\"");
 		assertEquals(
-				"(_query_:\"{!wildcardphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!wildcardphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!wildcardphrase}zitat:\\\"imb*s ward\\\"\")) ",
+				"(_query_:\"{!complexphrase}\\\"imb*s ward\\\"\" +(_query_:\"{!complexphrase}artikel:\\\"imb*s ward\\\"\" _query_:\"{!complexphrase}zitat:\\\"imb*s ward\\\"\")) ",
 				expanded);
 	}
 

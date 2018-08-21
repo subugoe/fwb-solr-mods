@@ -13,6 +13,8 @@ import org.apache.solr.parser.ParseException;
 import sub.fwb.ParametersModifyingSearchHandler.ModifiedParameters;
 import sub.fwb.parse.ParseUtil;
 import sub.fwb.parse.TokenFactory;
+import sub.fwb.parse.tokens.ComplexPhrase;
+import sub.fwb.parse.tokens.ComplexPhrasePrefixed;
 import sub.fwb.parse.tokens.OperatorAnd;
 import sub.fwb.parse.tokens.OperatorNot;
 import sub.fwb.parse.tokens.OperatorOr;
@@ -35,6 +37,7 @@ public class ParametersModifier {
 	public ModifiedParameters changeParamsForQuery(final String origQuery) throws ParseException {
 		String expandedQuery = "";
 		String hlQuery = "";
+		String defType = "";
 
 		String modifiedQuery = origQuery;
 		boolean exactSearch = false;
@@ -74,7 +77,19 @@ public class ParametersModifier {
 		}
 
 		Set<String> facetQueries = facetQueryMapToSet(allTokens.size());
-		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, facetQueries);
+		if (hasComplexPhrase(allTokens)) {
+			// the complex phrase parser only seems to work when this is set
+			defType = "lucene";
+		}
+		return new ModifiedParameters(expandedQuery.trim(), hlQuery.trim(), queryFieldsWithBoosts, hlFields, defType, facetQueries);
+	}
+
+	private boolean hasComplexPhrase(List<QueryToken> allTokens) {
+		for (QueryToken qt : allTokens) {
+			if (qt instanceof ComplexPhrase || qt instanceof ComplexPhrasePrefixed)
+				return true;
+		}
+		return false;
 	}
 
 	private String addSpaces(String query) {

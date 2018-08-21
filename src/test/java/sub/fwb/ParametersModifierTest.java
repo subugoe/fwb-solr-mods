@@ -36,6 +36,12 @@ public class ParametersModifierTest {
 	}
 
 	@Test
+	public void shouldChooseLuceneParserForComplexPhraseSearch() throws Exception {
+		expanded = modifier.changeParamsForQuery("\"imbis gas*\"").defType;
+		assertEquals("lucene", expanded);
+	}
+
+	@Test
 	public void shouldRejectComplexPhraseInCitation() throws Exception {
 		inTest.expect(ParseException.class);
 		inTest.expectMessage("Phrasensuche mit *");

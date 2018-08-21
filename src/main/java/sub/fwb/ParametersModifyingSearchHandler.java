@@ -23,6 +23,7 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		String newHlQuery = modified.hlQ;
 		String newHlFields = modified.hlFl;
 		String newQueryFields = modified.qf;
+		String defType = modified.defType;
 		Set<String> facetQueries = modified.facetQueries;
 
 		String[] filterQueries = req.getParams().getParams("fq");
@@ -31,6 +32,9 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		}
 
 		ModifiableSolrParams newParams = new ModifiableSolrParams(req.getParams());
+		if (!"".equals(defType)) {
+			newParams.set("defType", defType);
+		}
 		newParams.set("q", newQuery);
 		newParams.set("qf", newQueryFields);
 		if (!newHlQuery.isEmpty()) {
@@ -69,13 +73,15 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 		public String hlQ = "";
 		public String qf = "";
 		public String hlFl = "";
+		public String defType = "";
 		public Set<String> facetQueries;
 
-		public ModifiedParameters(String q, String hlQ, String qf, String hlFl, Set<String> facetQueries) {
+		public ModifiedParameters(String q, String hlQ, String qf, String hlFl, String defType, Set<String> facetQueries) {
 			this.q = q;
 			this.hlQ = hlQ;
 			this.qf = qf;
 			this.hlFl = hlFl;
+			this.defType = defType;
 			this.facetQueries = facetQueries;
 		}
 	}

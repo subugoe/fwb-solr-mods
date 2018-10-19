@@ -163,8 +163,8 @@ public class Term extends QueryTokenSearchString {
 	private class PartOfWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("(%s %s* *%s* +(%s:*%s* %s:*%s* %s:%s)) ", searchString, searchString, searchString,
-					articleField, searchString, citationField, searchString, "sufo", searchString);
+			return String.format("(%s %s* *%s* +(%s:*%s* %s:*%s*)) ", searchString, searchString, searchString,
+					articleField, searchString, citationField, searchString);
 		}
 
 		@Override

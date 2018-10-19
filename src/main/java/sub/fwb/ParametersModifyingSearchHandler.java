@@ -14,13 +14,14 @@ public class ParametersModifyingSearchHandler extends SearchHandler {
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 
-		String oldQuery = req.getParams().get("q");
-		String queryFieldsWithBoosts = req.getParams().get("qf");
-		String hlFields = req.getParams().get("hl.fl");
+		String oldQuery = req.getParams().get("q"); // lemma:imbis
+		String queryFieldsWithBoosts = req.getParams().get("qf"); // lemma^10000 neblem^1000 ...
+		String hlFields = req.getParams().get("hl.fl"); // lemma_text,neblem_text,...
 		ParametersModifier modifier = new ParametersModifier(queryFieldsWithBoosts, hlFields);
 		ModifiedParameters modified = modifier.changeParamsForQuery(oldQuery);
-		String newQuery = modified.q;
-		String newHlQuery = modified.hlQ;
+		
+		String newQuery = modified.q; // lemma:(imbis imbis* *imbis*)^10000
+		String newHlQuery = modified.hlQ; // lemma_text:*imbis*
 		String newHlFields = modified.hlFl;
 		String newQueryFields = modified.qf;
 		String defType = modified.defType;

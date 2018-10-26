@@ -36,6 +36,12 @@ public class ParseUtil {
 	public static String citationText(String ending) {
 		return "zitat_text" + ending;
 	}
+	public static String sufo(String ending) {
+		return "sufo" + ending;
+	}
+	public static String sufoText(String ending) {
+		return "sufo_text" + ending;
+	}
 
 	public static void checkForProhibitedCharsInTerm(String term) throws ParseException {
 		if (term.contains("\"")) {

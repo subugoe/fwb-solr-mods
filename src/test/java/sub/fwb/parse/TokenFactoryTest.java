@@ -158,7 +158,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldIgnoreNonletters() throws Exception {
 		expanded = expandOneTokenString("‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘imb#is‒&<>′`″”∣%«»‛⅓⅙⅔·⅕#˄˚{}¼¾©@‚°=½§…℔₰¶⸗˺˹„“+–!;›‹.,’·‘'");
-		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ", expanded);
+		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis* sufo:*imbis*)) ", expanded);
 	}
 
 	@Test
@@ -265,7 +265,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldHlOneWord() throws Exception {
 		hlQuery = hlQueryFrom("imbis");
-		assertEquals("artikel_text:*imbis* zitat_text:*imbis* ", hlQuery);
+		assertEquals("artikel_text:*imbis* zitat_text:*imbis* sufo_text:*imbis* ", hlQuery);
 	}
 
 	@Test
@@ -396,7 +396,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandWithDash() throws Exception {
 		expanded = expandOneTokenString("-lach");
-		assertEquals("(\\-lach \\-lach* *\\-lach* +(artikel:*\\-lach* zitat:*\\-lach*)) ", expanded);
+		assertEquals("(\\-lach \\-lach* *\\-lach* +(artikel:*\\-lach* zitat:*\\-lach* sufo:*\\-lach*)) ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -425,19 +425,19 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldEscapeBrackets() throws Exception {
 		expanded = expandOneTokenString("imb[i]s");
-		assertEquals("(imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s*)) ", expanded);
+		assertEquals("(imb\\[i\\]s imb\\[i\\]s* *imb\\[i\\]s* +(artikel:*imb\\[i\\]s* zitat:*imb\\[i\\]s* sufo:*imb\\[i\\]s*)) ", expanded);
 	}
 
 	@Test
 	public void shouldEscapeParentheses() throws Exception {
 		expanded = expandOneTokenString("imb(i)s");
-		assertEquals("(imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s*)) ", expanded);
+		assertEquals("(imb\\(i\\)s imb\\(i\\)s* *imb\\(i\\)s* +(artikel:*imb\\(i\\)s* zitat:*imb\\(i\\)s* sufo:*imb\\(i\\)s*)) ", expanded);
 	}
 
 	@Test
 	public void shouldEscapePipe() throws Exception {
 		expanded = expandOneTokenString("bar|tuch");
-		assertEquals("(bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch*)) ", expanded);
+		assertEquals("(bar\\|tuch bar\\|tuch* *bar\\|tuch* +(artikel:*bar\\|tuch* zitat:*bar\\|tuch* sufo:*bar\\|tuch*)) ", expanded);
 	}
 
 	@Test(expected = ParseException.class)
@@ -459,7 +459,7 @@ public class TokenFactoryTest {
 	@Test
 	public void shouldExpandOneWord() throws Exception {
 		expanded = expandOneTokenString("imbis");
-		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ", expanded);
+		assertEquals("(imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis* sufo:*imbis*)) ", expanded);
 	}
 
 	private String expandOneTokenString(String ts) throws Exception {

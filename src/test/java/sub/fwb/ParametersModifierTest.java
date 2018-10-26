@@ -133,75 +133,75 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldNotSetNOTinDoubleParens() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT (b)").q;
-		assertEquals("(NOT ((b b* *b* +(artikel:*b* zitat:*b*)) ) ) -type:quelle", expanded);
+		assertEquals("(NOT ((b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) ) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldSetNOTinParens() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT b").q;
-		assertEquals("(NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
+		assertEquals("(NOT (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldNotAddANDBetweenOpenParenAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("a (NOT b)").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND ((NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) ) -type:quelle", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) AND ((NOT (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) ) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenClosingParenAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("(a) NOT b").q;
-		assertEquals("((a a* *a* +(artikel:*a* zitat:*a*)) ) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
+		assertEquals("((a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) ) AND (NOT (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenTermAndNOT() throws Exception {
 		expanded = modifier.changeParamsForQuery("a NOT b").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND (NOT (b b* *b* +(artikel:*b* zitat:*b*)) ) -type:quelle", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) AND (NOT (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) ) -type:quelle", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenParenthesis() throws Exception {
 		expanded = modifier.changeParamsForQuery("(a) (b)").q;
-		assertEquals("((a a* *a* +(artikel:*a* zitat:*a*)) ) AND ((b b* *b* +(artikel:*b* zitat:*b*)) )", expanded);
+		assertEquals("((a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) ) AND ((b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) )", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBeforeParenthesis() throws Exception {
 		expanded = modifier.changeParamsForQuery("a (b)").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND ((b b* *b* +(artikel:*b* zitat:*b*)) )", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) AND ((b b* *b* +(artikel:*b* zitat:*b* sufo:*b*)) )", expanded);
 	}
 
 	@Test
 	public void shouldAddANDAfterParenthesis() throws Exception {
 		expanded = modifier.changeParamsForQuery("(a) b").q;
-		assertEquals("((a a* *a* +(artikel:*a* zitat:*a*)) ) AND (b b* *b* +(artikel:*b* zitat:*b*))", expanded);
+		assertEquals("((a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) ) AND (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*))", expanded);
 	}
 
 	@Test
 	public void shouldAddANDBetweenTerms() throws Exception {
 		expanded = modifier.changeParamsForQuery("a b").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND (b b* *b* +(artikel:*b* zitat:*b*))", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) AND (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*))", expanded);
 	}
 
 	@Test
 	public void shouldHandleComplexParentheses() throws Exception {
 		expanded = modifier.changeParamsForQuery("((imbis) (bla))").q;
 		assertEquals(
-				"(((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ) AND ((bla bla* *bla* +(artikel:*bla* zitat:*bla*)) ) )",
+				"(((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis* sufo:*imbis*)) ) AND ((bla bla* *bla* +(artikel:*bla* zitat:*bla* sufo:*bla*)) ) )",
 				expanded);
 	}
 
 	@Test
 	public void shouldAcceptDoubleParentheses() throws Exception {
 		expanded = modifier.changeParamsForQuery("((imbis))").q;
-		assertEquals("(((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) ) )", expanded);
+		assertEquals("(((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis* sufo:*imbis*)) ) )", expanded);
 	}
 
 	@Test
 	public void shouldAcceptParentheses() throws Exception {
 		expanded = modifier.changeParamsForQuery("(imbis)").q;
-		assertEquals("((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis*)) )", expanded);
+		assertEquals("((imbis imbis* *imbis* +(artikel:*imbis* zitat:*imbis* sufo:*imbis*)) )", expanded);
 	}
 
 	@Test
@@ -336,7 +336,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldSearchExactly() throws Exception {
 		expanded = modifier.changeParamsForQuery("ImBis EXAKT").q;
-		assertEquals("(ImBis ImBis* *ImBis* +(artikel_exakt:*ImBis* zitat_exakt:*ImBis*))", expanded);
+		assertEquals("(ImBis ImBis* *ImBis* +(artikel_exakt:*ImBis* zitat_exakt:*ImBis* sufo_exakt:*ImBis*))", expanded);
 	}
 
 	@Test
@@ -358,7 +358,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldAddParensForNot() throws Exception {
 		expanded = modifier.changeParamsForQuery("NOT lemma:imbis OR (bla)").q;
-		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 ) OR ((bla bla* *bla* +(artikel:*bla* zitat:*bla*)) ) -type:quelle",
+		assertEquals("(NOT lemma:(imbis imbis* *imbis*)^1000 ) OR ((bla bla* *bla* +(artikel:*bla* zitat:*bla* sufo:*bla*)) ) -type:quelle",
 				expanded);
 	}
 
@@ -383,14 +383,14 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldIgnoreSeveralSpaces() throws Exception {
 		expanded = modifier.changeParamsForQuery(" a  b ").q;
-		assertEquals("(a a* *a* +(artikel:*a* zitat:*a*)) AND (b b* *b* +(artikel:*b* zitat:*b*))", expanded);
+		assertEquals("(a a* *a* +(artikel:*a* zitat:*a* sufo:*a*)) AND (b b* *b* +(artikel:*b* zitat:*b* sufo:*b*))", expanded);
 	}
 
 	@Test
 	public void shouldExpandWordAndPhrase() throws Exception {
 		expanded = modifier.changeParamsForQuery("test \"my imbis\"").q;
 		assertEquals(
-				"(test test* *test* +(artikel:*test* zitat:*test*)) AND (\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\"))",
+				"(test test* *test* +(artikel:*test* zitat:*test* sufo:*test*)) AND (\"my imbis\" +(artikel:\"my imbis\" zitat:\"my imbis\"))",
 				expanded);
 	}
 
@@ -405,7 +405,7 @@ public class ParametersModifierTest {
 	@Test
 	public void shouldExpandTwoWords() throws Exception {
 		expanded = modifier.changeParamsForQuery("imb is").q;
-		assertEquals("(imb imb* *imb* +(artikel:*imb* zitat:*imb*)) AND (is is* *is* +(artikel:*is* zitat:*is*))", expanded);
+		assertEquals("(imb imb* *imb* +(artikel:*imb* zitat:*imb* sufo:*imb*)) AND (is is* *is* +(artikel:*is* zitat:*is* sufo:*is*))", expanded);
 	}
 
 }

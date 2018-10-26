@@ -26,11 +26,15 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 				SimpleOrderedMap<Object> currentDoc = (SimpleOrderedMap<Object>) highlightedDocs.getVal(i);
 				String[] originalSnippet = (String[]) currentDoc.get("artikel_text");
 				String[] newSnippet = null;
-				if (onlyLemmaHighlightings(currentDoc)) {
+				if (onlyHighlightingsFor("lemma", currentDoc)) {
 					String[] firstLemmaSnippet = (String[]) currentDoc.getVal(0);
 					firstLemmaSnippet = removeHighlightingTags(firstLemmaSnippet, rb);
 					firstLemmaSnippet = removeFirstWord(firstLemmaSnippet);
 					newSnippet = firstLemmaSnippet;
+				} else if (onlyHighlightingsFor("sufo", currentDoc)) {
+					String[] firstSufoSnippet = (String[]) currentDoc.getVal(0);
+					firstSufoSnippet = removeSufos(firstSufoSnippet);
+					newSnippet = firstSufoSnippet;
 				} else if (isEmpty(originalSnippet)) {
 					newSnippet = chooseOtherSnippet(currentDoc);
 				} else {
@@ -41,13 +45,13 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 		}
 	}
 
-	private boolean onlyLemmaHighlightings(SimpleOrderedMap<Object> currentDoc) {
+	private boolean onlyHighlightingsFor(String field, SimpleOrderedMap<Object> currentDoc) {
 		if (currentDoc.size() == 0) {
 			return false;
 		}
 		for (int i = 0; i < currentDoc.size(); i++) {
 			String currentHlName = currentDoc.getName(i);
-			if (!currentHlName.startsWith("lemma")) {
+			if (!currentHlName.startsWith(field)) {
 				return false;
 			}
 		}
@@ -75,6 +79,13 @@ public class HlSnippetAdaptingComponent extends SearchComponent {
 		if (firstSpace > 0 && thereAreCharsAfterSpace) {
 			hlSnippet = hlSnippet.substring(firstSpace + 1);
 		}
+		return new String[] { hlSnippet };
+	}
+
+	private String[] removeSufos(String[] snippetArray) {
+		String hlSnippet = snippetArray[0];
+		int lastDoubleHash = hlSnippet.lastIndexOf("##");
+		hlSnippet = hlSnippet.substring(lastDoubleHash + 2);
 		return new String[] { hlSnippet };
 	}
 

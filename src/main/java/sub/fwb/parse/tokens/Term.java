@@ -11,6 +11,8 @@ public class Term extends QueryTokenSearchString {
 
 	private String articleField;
 	private String citationField;
+	private String sufoField;
+	private String sufoTextField;
 	private String articleTextField;
 	private String citationTextField;
 	private String searchString;
@@ -23,6 +25,8 @@ public class Term extends QueryTokenSearchString {
 		ParseUtil.checkForProhibitedCharsInTerm(escapedString);
 		articleField = ParseUtil.article(prefixEnding);
 		citationField = ParseUtil.citation(prefixEnding);
+		sufoField = ParseUtil.sufo(prefixEnding);
+		sufoTextField = ParseUtil.sufoText(prefixEnding);
 		articleTextField = ParseUtil.articleText(prefixEnding);
 		citationTextField = ParseUtil.citationText(prefixEnding);
 	}
@@ -163,13 +167,13 @@ public class Term extends QueryTokenSearchString {
 	private class PartOfWord implements SubTerm {
 		@Override
 		public String getModifiedQuery() {
-			return String.format("(%s %s* *%s* +(%s:*%s* %s:*%s*)) ", searchString, searchString, searchString,
-					articleField, searchString, citationField, searchString);
+			return String.format("(%s %s* *%s* +(%s:*%s* %s:*%s* %s:*%s*)) ", searchString, searchString, searchString,
+					articleField, searchString, citationField, searchString, sufoField, searchString);
 		}
 
 		@Override
 		public String getHlQuery() {
-			return String.format("%s:*%s* %s:*%s* ", articleTextField, searchString, citationTextField, searchString);
+			return String.format("%s:*%s* %s:*%s* %s:*%s* ", articleTextField, searchString, citationTextField, searchString, sufoTextField, searchString);
 		}
 
 		@Override
